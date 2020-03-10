@@ -4,4 +4,5 @@ resources:
   - virtual-service.yaml
 
 patchesStrategicMerge:
+  - argocd-cm.yaml
   - argocd-server-deployment.yaml
