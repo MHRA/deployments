@@ -1,0 +1,8 @@
+namespace: argocd
+
+resources:
+  - ../../custom
+
+patchesStrategicMerge:
+  - argocd-cm.yaml
+  - virtual-service.yaml

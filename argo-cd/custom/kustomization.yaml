@@ -1,0 +1,7 @@
+resources:
+  - namespace.yaml
+  - ../base
+  - virtual-service.yaml
+
+patchesStrategicMerge:
+  - argocd-server-deployment.yaml

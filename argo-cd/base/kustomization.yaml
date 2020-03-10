@@ -1,8 +1,4 @@
-namespace: argocd
-
 resources:
-  - namespace.yaml
-  - CustomResourceDefinition-applications.argoproj.io.yaml
   - CustomResourceDefinition-appprojects.argoproj.io.yaml
   - ClusterRole-argocd-application-controller.yaml
   - ClusterRole-argocd-server.yaml
