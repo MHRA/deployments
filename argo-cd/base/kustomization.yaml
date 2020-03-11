@@ -1,5 +1,6 @@
 resources:
   - CustomResourceDefinition-appprojects.argoproj.io.yaml
+  - CustomResourceDefinition-applications.argoproj.io.yaml
   - ClusterRole-argocd-application-controller.yaml
   - ClusterRole-argocd-server.yaml
   - ClusterRoleBinding-argocd-application-controller.yaml
