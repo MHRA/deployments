@@ -1,3 +1,5 @@
 resources:
   - ../base
+
+patchesStrategicMerge:
   - gateway.yaml
