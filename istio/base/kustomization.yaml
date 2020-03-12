@@ -1,2 +1,2 @@
 resources:
-  - gateway.yaml
+  - istio.yaml
