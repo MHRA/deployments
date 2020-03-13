@@ -6,9 +6,7 @@ GitOps deployment configuration
 
 1. Follow the [steps in the products repo](https://github.com/MHRA/products/tree/master/infrastructure) to set up a Kubernetes cluster on Azure using terraform
 
-2. [Install Istio and the SealedSecrets controller](https://github.com/MHRA/products/tree/master/medicines/doc-index-updater/examples) using these other steps in the products repo (but do _not_ install the `doc-index-updater` manifests)
-
-3. Apply all of the manifests for your cluster. The `overlay` argument specifies the environment you are deploying (e.g. `non-prod`):
+2. Install Istio, Sealed Secrets and ArgoCD (which will deploy the rest of the configuration). The `overlay` argument specifies the environment you are deploying (the default is `non-prod`):
 
    ```sh
    cd cluster-init/
@@ -30,6 +28,8 @@ GitOps deployment configuration
 
    ```sh
    cd infrastructure/environments/non-prod
+   source .env
 
+   terraform init
    terraform destroy
    ```
