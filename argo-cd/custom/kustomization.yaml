@@ -6,5 +6,58 @@ resources:
 patchesStrategicMerge:
   - argocd-cm.yaml
   - argocd-server-deployment.yaml
-  - Service-argocd-repo-server.yaml
-  - Service-argocd-server-metrics.yaml
+
+patchesJSON6902:
+  - target:
+      version: v1
+      kind: Service
+      name: argocd-dex-server
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/name
+        value: tcp-0
+      - op: replace
+        path: /spec/ports/1/name
+        value: tcp-1
+  - target:
+      version: v1
+      kind: Service
+      name: argocd-metrics
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/name
+        value: tcp-0
+  - target:
+      version: v1
+      kind: Service
+      name: argocd-redis
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/name
+        value: tcp-0
+  - target:
+      version: v1
+      kind: Service
+      name: argocd-repo-server
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/name
+        value: tcp-0
+      - op: replace
+        path: /spec/ports/1/name
+        value: tcp-1
+  - target:
+      version: v1
+      kind: Service
+      name: argocd-server-metrics
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/name
+        value: tcp-0
+  - target:
+      version: v1
+      kind: Service
+      name: argocd-server
+    patch: |-
+      - op: remove
+        path: /spec/ports/1
