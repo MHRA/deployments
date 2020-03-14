@@ -3,9 +3,9 @@ overlay := non-prod
 .PHONY: default
 default: ## Deploy using Kustomize
 	cd ../istio && make overlay=$(overlay)
-	kubectl wait --for=condition=ready pod -l app=galley -n istio-system --timeout=120s
-	kubectl wait --for=condition=ready pod -l app=pilot -n istio-system --timeout=120s
-	kubectl wait --for=condition=ready pod -l app=istio-ingressgateway -n istio-system --timeout=120s
+	kubectl wait --for=condition=ready pod -l app=galley -n istio-system --timeout=480s
+	kubectl wait --for=condition=ready pod -l app=pilot -n istio-system --timeout=480s
+	kubectl wait --for=condition=ready pod -l app=istio-ingressgateway -n istio-system --timeout=480s
 	cd ../egress && make overlay=$(overlay)
 	cd ../sealed-secrets && make
 	cd ../argo-cd && make overlay=$(overlay)

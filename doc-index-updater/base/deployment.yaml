@@ -43,37 +43,7 @@ spec:
             - name: REDIS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: redis-key
-                  key: key
-            - name: SENTINEL_SFTP_SERVER
-              valueFrom:
-                secretKeyRef:
-                  name: sentinel-creds
-                  key: server
-            - name: SENTINEL_SFTP_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: sentinel-creds
-                  key: user
-            - name: SENTINEL_SFTP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sentinel-creds
-                  key: pass
-            - name: STORAGE_ACCOUNT
-              valueFrom:
-                secretKeyRef:
-                  name: storage-creds
-                  key: account
-            - name: STORAGE_CONTAINER
-              valueFrom:
-                secretKeyRef:
-                  name: storage-creds
-                  key: container
-            - name: STORAGE_MASTER_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: storage-creds
+                  name: redis-creds
                   key: key
             - name: SEARCH_SERVICE
               valueFrom:
@@ -95,6 +65,46 @@ spec:
                 secretKeyRef:
                   name: search-creds
                   key: query_key
+            - name: SENTINEL_SFTP_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-creds
+                  key: server
+            - name: SENTINEL_SFTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-creds
+                  key: user
+            - name: SENTINEL_SFTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-creds
+                  key: pass
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: storage-creds
+                  key: account
+            - name: CREATE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-bus-creds
+                  key: create_key
+            - name: DELETE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-bus-creds
+                  key: delete_key
+            - name: STORAGE_CONTAINER
+              valueFrom:
+                secretKeyRef:
+                  name: storage-creds
+                  key: container
+            - name: STORAGE_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storage-creds
+                  key: key
           ports:
             - containerPort: 8000
           resources:
