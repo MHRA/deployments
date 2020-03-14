@@ -1,16 +1,16 @@
 resources:
-  - ../../base
-  - SealedSecret-create-queue-key.yaml
-  - SealedSecret-delete-queue-key.yaml
-  - SealedSecret-redis-key.yaml
-  - SealedSecret-search-creds.yaml
-  - SealedSecret-sentinel-creds.yaml
-  - SealedSecret-storage-creds.yaml
+- ../../base
+- SealedSecret-create-queue-key.yaml
+- SealedSecret-delete-queue-key.yaml
+- SealedSecret-redis-key.yaml
+- SealedSecret-search-creds.yaml
+- SealedSecret-sentinel-creds.yaml
+- SealedSecret-storage-creds.yaml
 patchesStrategicMerge:
-  - deployment.yaml
-  - ingress.yaml
+- deployment.yaml
+- ingress.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - digest: sha256:82f36ea3e32b2d513ec38b50d3a3070af7fadadfb2d0d30b033ddc5377e63970
-    name: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater
+- digest: sha256:d9630c717e02c959ce6ee7797b2383c5eacdcde419dbf279abbe8e129a21a4de
+  name: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater
