@@ -25,7 +25,7 @@ spec:
             - name: CREATE_QUEUE_POLICY_KEY
               valueFrom:
                 secretKeyRef:
-                  name: create-queue-policy-key
+                  name: service-bus-creds
                   key: create_key
             - name: DELETE_QUEUE_NAME
               value: doc-index-updater-delete-queue
@@ -34,7 +34,7 @@ spec:
             - name: DELETE_QUEUE_POLICY_KEY
               valueFrom:
                 secretKeyRef:
-                  name: delete-queue-policy-key
+                  name: service-bus-creds
                   key: delete_key
             - name: REDIS_SERVER
               value: doc-index-updater-dev.redis.cache.windows.net

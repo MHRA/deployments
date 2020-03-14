@@ -14,14 +14,15 @@ kubectl create secret generic redis-creds \
         --format yaml >SealedSecret-redis-creds.yaml
 
 # Azure Search Service credentials...
+API_KEY=$(az search admin-key show \
+    --resource-group MHRA-dev \
+    --service-name mhraproductsdevelopment \
+    --output tsv --query 'primaryKey')
 kubectl create secret generic search-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal service="insert here" \
-    --from-literal index="insert here" \
-    --from-literal api_key="insert here" \
-    --from-literal query_key="insert here" |
+    --from-literal api_key="$API_KEY" |
     kubeseal \
         --format yaml >SealedSecret-search-creds.yaml
 
