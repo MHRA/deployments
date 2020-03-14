@@ -45,26 +45,17 @@ spec:
                 secretKeyRef:
                   name: redis-creds
                   key: key
-            - name: SEARCH_SERVICE
-              valueFrom:
-                secretKeyRef:
-                  name: search-creds
-                  key: service
-            - name: SEARCH_API_KEY
+            - name: AZURE_SEARCH_INDEX
+              value: products-index
+            - name: AZURE_API_ADMIN_KEY
               valueFrom:
                 secretKeyRef:
                   name: search-creds
                   key: api_key
-            - name: SEARCH_INDEX
-              valueFrom:
-                secretKeyRef:
-                  name: search-creds
-                  key: index
-            - name: SEARCH_QUERY_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: search-creds
-                  key: query_key
+            - name: AZURE_SEARCH_API_VERSION
+              value: "2019-05-06"
+            - name: SEARCH_SERVICE
+              value: mhraproductsdevelopment
             - name: SENTINEL_SFTP_SERVER
               valueFrom:
                 secretKeyRef:
