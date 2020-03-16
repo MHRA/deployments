@@ -8,11 +8,13 @@ default: ## Deploy using Kustomize
 	kubectl wait --for=condition=ready pod -l app=istio-ingressgateway -n istio-system --timeout=480s
 	cd ../egress && make overlay=$(overlay)
 	cd ../sealed-secrets && make
+	cd ../cert-manager && make overlay=$(overlay)
 	cd ../argo-cd && make overlay=$(overlay)
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
 	cd ../argo-cd && make delete overlay=$(overlay) || true
+	cd ../cert-manager && make delete overlay=$(overlay) || true
 	cd ../sealed-secrets && make delete
 	cd ../egress && make delete overlay=$(overlay) || true
 	cd ../istio && make delete overlay=$(overlay) || true
