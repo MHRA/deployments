@@ -5,5 +5,5 @@ resources:
   - redis.yaml
   # - search-service.yaml
   # - sentinel.yaml
-  # - service-bus.yaml
+  - service-bus.yaml
   # - storage-service.yaml
