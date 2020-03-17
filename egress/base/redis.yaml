@@ -46,4 +46,4 @@ spec:
           - port:
               number: 6380
             tls:
-              mode: SIMPLE # initiates HTTPS when accessing doc-index-updater-dev.redis.cache.windows.net
+              mode: SIMPLE # initiates HTTPS when accessing Azure Cache for Redis
