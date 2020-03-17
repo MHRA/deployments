@@ -12,4 +12,4 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
 - digest: sha256:cf08e31d00d098843aafdcf282302bf2aa04b23611ad0edea6477a4c7e0a7796
-  name: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater
+  name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
