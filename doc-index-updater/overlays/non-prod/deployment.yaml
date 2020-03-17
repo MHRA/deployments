@@ -7,4 +7,4 @@ spec:
     spec:
       containers:
         - name: doc-index-updater
-          image: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater
+          image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
