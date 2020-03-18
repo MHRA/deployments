@@ -4,4 +4,4 @@ metadata:
   namespace: istio-system
   name: istiocontrolplane
 spec:
-  profile: sds
+  profile: default

@@ -9,7 +9,7 @@ default: ## Deploy using Kustomize
 	@until kubectl wait --for=condition=ready pod -l app=istiod -n istio-system --timeout=480s; \
 	do \
 		echo "Waiting for istiod"; \
-		sleep 1 ;\
+		sleep 10 ;\
 	done
 
 	kustomize build overlays/$(overlay) | kubectl apply -f -
