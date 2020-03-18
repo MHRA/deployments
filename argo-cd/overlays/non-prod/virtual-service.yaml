@@ -5,3 +5,6 @@ metadata:
 spec:
   hosts:
     - argocd-mhra.red-badger.dev
+  gateways:
+    - istio-ingressgateway
+    - istio-ingressgateway-internal

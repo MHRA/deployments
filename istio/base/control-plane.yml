@@ -26,6 +26,6 @@ spec:
       istio-ingressgateway:
         sds:
           enabled: true
-        loadBalancerIP: 51.145.233.234
+        loadBalancerIP: 51.132.30.131
         serviceAnnotations:
           service.beta.kubernetes.io/azure-load-balancer-resource-group: adazr-rg-1001
