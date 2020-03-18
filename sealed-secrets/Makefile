@@ -4,7 +4,7 @@ overlay := non-prod
 default: ## Create resources
 	cd ./overlays/$(overlay) && \
 		az keyvault secret show \
-			--vault-name mhra-non-prod-01  \
+			--vault-name mhra-non-prod-02  \
 			--name non-prod \
 			--query value \
 			--output tsv > sealed-secrets-key.yaml && \
@@ -15,7 +15,7 @@ default: ## Create resources
 delete: ## Delete resources
 	cd ./overlays/$(overlay) && \
 		az keyvault secret show \
-			--vault-name mhra-non-prod-01 \
+			--vault-name mhra-non-prod-02 \
 			--name non-prod \
 			--query value \
 			--output tsv > sealed-secrets-key.yaml && \
