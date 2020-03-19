@@ -7,14 +7,13 @@ metadata:
     service.beta.kubernetes.io/azure-load-balancer-resource-group: "adazr-rg-1001"
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
   labels:
-    app: istio-ingressgateway-internal
+    app: istio-ingressgateway
     release: istio
-    istio: ingressgateway-internal
+    istio: ingressgateway
 spec:
   type: LoadBalancer
-  loadBalancerIP: "10.5.65.60"
   selector:
-    app: istio-ingressgateway-internal
+    app: istio-ingressgateway
   ports:
     - name: status-port
       port: 15020

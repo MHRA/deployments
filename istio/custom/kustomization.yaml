@@ -1,8 +1,6 @@
 resources:
   - ../base
-  # - service-ingress-internal.yaml
-  # - istio-ingressgateway-internal.yaml
-  # - gateway-internal.yaml
+  - service-ingress-internal.yaml
 
 patchesStrategicMerge:
   - gateway-external.yaml
