@@ -75,3 +75,13 @@ kubectl create secret generic storage-creds \
     --from-literal key="$BLOB_KEY" |
     kubeseal \
         --format yaml >SealedSecret-storage-creds.yaml
+
+# HTTP Basic Auth credentials...
+kubectl create secret generic basic-auth-creds \
+    -n doc-index-updater \
+    -o json \
+    --dry-run \
+    --from-literal username="username" \
+    --from-literal password="password" |
+    kubeseal \
+        --format yaml >SealedSecret-basic-auth-creds.yaml

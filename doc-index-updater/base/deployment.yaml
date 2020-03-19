@@ -96,6 +96,16 @@ spec:
                 secretKeyRef:
                   name: storage-creds
                   key: key
+            - name: BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: basic-auth-creds
+                  key: username
+            - name: BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: basic-auth-creds
+                  key: password
           ports:
             - containerPort: 8000
           resources:
