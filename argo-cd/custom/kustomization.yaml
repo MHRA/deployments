@@ -6,7 +6,6 @@ resources:
 patchesStrategicMerge:
   - argocd-cm.yaml
   - argocd-server-deployment.yaml
-  - prometheus.yaml
 
 patchesJSON6902:
   - target:
@@ -14,7 +13,7 @@ patchesJSON6902:
       kind: Service
       name: argocd-dex-server
     patch: |-
-      - op: replacez
+      - op: replace
         path: /spec/ports/0/name
         value: tcp-0
       - op: replace

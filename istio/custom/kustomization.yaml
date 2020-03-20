@@ -4,3 +4,4 @@ resources:
 
 patchesStrategicMerge:
   - gateway-external.yaml
+  - prometheus.yaml
