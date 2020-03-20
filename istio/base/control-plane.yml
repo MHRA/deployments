@@ -22,6 +22,7 @@ spec:
         enabled: true
         enableHttps: true
         gatewayName: ingressgateway
+
     gateways:
       istio-ingressgateway:
         sds:
