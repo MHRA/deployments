@@ -1,5 +1,6 @@
 resources:
 - ../../base
+- SealedSecret-basic-auth-creds.yaml
 - SealedSecret-redis-creds.yaml
 - SealedSecret-search-creds.yaml
 - SealedSecret-sentinel-creds.yaml
