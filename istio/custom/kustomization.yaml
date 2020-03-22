@@ -1,6 +1,7 @@
 resources:
   - ../base
   - service-ingress-internal.yaml
+  - destination-rule-cert-manager.yaml
 
 patchesStrategicMerge:
   - gateway-external.yaml

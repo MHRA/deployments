@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: istio-gateway
+  namespace: istio-system
+spec:
+  dnsNames:
+    - argocd-mhra.red-badger.com
+  secretName: gateway-certs
+  issuerRef:
+    name: staging
+    kind: ClusterIssuer
