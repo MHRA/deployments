@@ -2,7 +2,7 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Deploy using Kustomize
-	kustomize build ./init | kubectl apply --validate=false -f -
+	kustomize build ./init | kubectl apply -f -
 	@until [ $$(kubectl get crds | grep 'cert-manager.io' | wc -l) -eq 6 ] ;\
 	do \
 		echo "Waiting for CRDs"; \

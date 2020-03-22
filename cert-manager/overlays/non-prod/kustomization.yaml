@@ -1,1 +1,2 @@
-resources: []
+resources:
+  - cluster-issuer.yaml
