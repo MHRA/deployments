@@ -18,10 +18,6 @@ spec:
         enabled: true
       outboundTrafficPolicy:
         mode: REGISTRY_ONLY
-      k8sIngress:
-        enabled: true
-        enableHttps: true
-        gatewayName: ingressgateway
     gateways:
       istio-ingressgateway:
         sds:
