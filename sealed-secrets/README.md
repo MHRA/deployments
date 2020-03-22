@@ -8,8 +8,8 @@ See https://github.com/bitnami-labs/sealed-secrets
 
 ```bash
 az keyvault secret show \
-  --vault-name mhra-non-prod \
-  --name dev \
+  --vault-name mhra-non-prod-01 \
+  --name non-prod \
   --query value \
   --output tsv > sealed-secrets-key.yaml
 ```
@@ -52,7 +52,7 @@ kubectl get secrets \
   -l sealedsecrets.bitnami.com/sealed-secrets-key \
   -o yaml > sealed-secrets-key.yaml
 
-az keyvault secret set --vault-name mhra-non-prod --name dev --file sealed-secrets-key.yaml
+az keyvault secret set --vault-name mhra-non-prod-01 --name non-prod --file sealed-secrets-key.yaml
 ```
 
 - don't forget to **remove the private key** from your computer:

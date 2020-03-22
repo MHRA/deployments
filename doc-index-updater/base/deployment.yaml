@@ -16,26 +16,6 @@ spec:
         - name: doc-index-updater
           image: doc-index-updater
           env:
-            - name: SERVICE_BUS_NAMESPACE
-              value: doc-index-updater-dev
-            - name: CREATE_QUEUE_NAME
-              value: doc-index-updater-create-queue
-            - name: CREATE_QUEUE_POLICY_NAME
-              value: doc-index-updater-create-auth
-            - name: CREATE_QUEUE_POLICY_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: service-bus-creds
-                  key: create_key
-            - name: DELETE_QUEUE_NAME
-              value: doc-index-updater-delete-queue
-            - name: DELETE_QUEUE_POLICY_NAME
-              value: doc-index-updater-delete-auth
-            - name: DELETE_QUEUE_POLICY_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: service-bus-creds
-                  key: delete_key
             - name: REDIS_SERVER
               value: doc-index-updater-dev.redis.cache.windows.net
             - name: REDIS_PORT
@@ -71,6 +51,26 @@ spec:
                 secretKeyRef:
                   name: sentinel-creds
                   key: pass
+            - name: SERVICE_BUS_NAMESPACE
+              value: doc-index-updater-dev
+            - name: CREATE_QUEUE_NAME
+              value: doc-index-updater-create-queue
+            - name: CREATE_QUEUE_POLICY_NAME
+              value: doc-index-updater-create-auth
+            - name: CREATE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-bus-creds
+                  key: create_key
+            - name: DELETE_QUEUE_NAME
+              value: doc-index-updater-delete-queue
+            - name: DELETE_QUEUE_POLICY_NAME
+              value: doc-index-updater-delete-auth
+            - name: DELETE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-bus-creds
+                  key: delete_key
             - name: STORAGE_ACCOUNT
               valueFrom:
                 secretKeyRef:
@@ -96,6 +96,16 @@ spec:
                 secretKeyRef:
                   name: storage-creds
                   key: key
+            - name: BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: basic-auth-creds
+                  key: username
+            - name: BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: basic-auth-creds
+                  key: password
           ports:
             - containerPort: 8000
           resources:

@@ -1,5 +1,4 @@
 resources:
-  - sealed-secrets-key.yaml
   - ServiceAccount-sealed-secrets-controller.yaml
   - CustomResourceDefinition-sealedsecrets.bitnami.com.yaml
   - ClusterRole-secrets-unsealer.yaml
