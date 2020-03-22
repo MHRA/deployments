@@ -2,13 +2,13 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Deploy using Kustomize
-	kustomize build ./init | kubectl apply -f -
+	kustomize build ./init | kubectl apply --validate=false -f -
 	@until [ $$(kubectl get crds | grep 'cert-manager.io' | wc -l) -eq 6 ] ;\
 	do \
 		echo "Waiting for CRDs"; \
 		sleep 1 ;\
 	done ;\
-	kustomize build ./overlays/$(overlay) | kubectl apply --validate=false -f -
+	kustomize build ./overlays/$(overlay) | kubectl apply -f -
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
