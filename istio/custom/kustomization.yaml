@@ -3,4 +3,4 @@ resources:
   - service-ingress-internal.yaml
 
 patchesStrategicMerge:
-  - gateway-external.yaml
+  - gateway.yaml
