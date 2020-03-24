@@ -13,5 +13,5 @@ patchesStrategicMerge:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:0427eed64fcc6f3bddd2a914a39ef2a2ae6e624a5c60466a6e5422b843524f94
+- digest: sha256:8318832cf03292082d7f390a14155f5ec1fc1204fbf8682a40d2dc8c88b08590
   name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
