@@ -4,5 +4,5 @@ metadata:
   name: doc-index-updater
 spec:
   hosts:
-    - doc-index-updater.mhra.gov.uk
+    - doc-index-updater.dev.mhra.gov.uk
     - doc-index-updater.red-badger.dev
