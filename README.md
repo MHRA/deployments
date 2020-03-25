@@ -6,13 +6,13 @@ This repo contains all the manifests for resources running under [Kubernetes](ht
 
 1. An engineer pushes a change to the [Products monorepo](https://github.com/MHRA/products)
 1. A [Github Action](https://github.com/features/actions) runs a workflow
-1. The Github Action builds a Docker image, which also runs analysis and tests
-1. The Github Action pushes the image to the relevant registry
-1. The Github Action shallow clones the deployment repo, uses [Kustomize](https://kustomize.io/) to edit the configuration with the new image's tag (content digest), commits and pushes back to this repository
+1. The workflow builds a Docker image, which also runs analysis and tests
+1. The workflow pushes the image to the relevant registry
+1. The workflow clones _this_ repository (shallow clone), uses [Kustomize](https://kustomize.io/) to edit the relevant configuration with the new image's tag (which is the image's content digest [SHA]), commits and pushes back to this repository
 1. Argo CD running in the cluster pulls the changed configuration
-1. Argo CD synchronises the configuration of the cluster with that specified in this repository
-1. New pods are potentially started and their images pulled by Kubernetes from the relevant registry
-1. Production deployments can be manually synced (although the aim is to make these automatically synchronised as well)
+1. Argo CD synchronises the configuration of the cluster with the configuration specified in _this_ repository
+1. If required, new images are pulled (by Kubernetes) from the relevant registry and new pods started
+1. Production deployments can be manually synced (although the aim is to have these automatically synchronised as well)
 
 ## Creating a cluster from scratch
 
