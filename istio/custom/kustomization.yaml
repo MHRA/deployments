@@ -1,6 +1,7 @@
 resources:
   - ../base
   - service-ingress-internal.yaml
+  - container-azm-ms-agentconfig.yaml
 
 patchesStrategicMerge:
   - gateway.yaml
