@@ -273,6 +273,10 @@ data:
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod_name
+
+    # ^ Above is istio default config
+    # Below are our additions
+
     - job_name: 'doc-index-updater'
       kubernetes_sd_configs:
       - role: pod
@@ -306,6 +310,7 @@ data:
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod_name
+
     - job_name: 'kube-state-metrics'
       static_configs:
       - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
