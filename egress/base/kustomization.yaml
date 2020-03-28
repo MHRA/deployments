@@ -4,6 +4,6 @@ resources:
   - github.yaml
   - redis.yaml
   - search-service.yaml
-  # - sentinel.yaml
+  - sentinel.yaml
   - service-bus.yaml
   - storage-service.yaml

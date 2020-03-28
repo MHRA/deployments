@@ -2,7 +2,14 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Deploy using Kustomize
-	kustomize build ./overlays/$(overlay) | kubectl apply -f -
+	az keyvault secret show \
+		--vault-name mhra-non-prod-02  \
+		--name sentinel-non-prod \
+		--query value \
+		--output tsv > ./base/sentinel.yaml && \
+	kustomize build . | kubectl apply -f - && \
+	kustomize build ./overlays/$(overlay) | kubectl apply -f - && \
+	rm ./base/sentinel.yaml
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
