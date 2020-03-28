@@ -7,7 +7,6 @@ default: ## Deploy using Kustomize
 		--name sentinel-non-prod \
 		--query value \
 		--output tsv > ./base/sentinel.yaml && \
-	kustomize build . | kubectl apply -f - && \
 	kustomize build ./overlays/$(overlay) | kubectl apply -f - && \
 	rm ./base/sentinel.yaml
 
