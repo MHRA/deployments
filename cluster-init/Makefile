@@ -3,6 +3,7 @@ overlay := non-prod
 .PHONY: default
 default: ## Deploy using Kustomize
 	cd ../istio && make overlay=$(overlay)
+	cd ../egress && make overlay=$(overlay)
 	cd ../sealed-secrets && make overlay=$(overlay)
 	cd ../argo-cd && make overlay=$(overlay)
 
@@ -10,6 +11,7 @@ default: ## Deploy using Kustomize
 delete: ## Deploy using Kustomize
 	cd ../argo-cd && make delete overlay=$(overlay) || true
 	cd ../sealed-secrets && make delete overlay=$(overlay) || true
+	cd ../egress && make overlay=$(overlay)
 	cd ../istio && make delete overlay=$(overlay) || true
 
 .PHONY: help
