@@ -7,4 +7,15 @@ spec:
     spec:
       containers:
         - name: doc-index-updater
-          image: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater
+          image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
+          env:
+            - name: REDIS_SERVER
+              value: doc-index-updater-non-prod.redis.cache.windows.net
+            - name: SERVICE_BUS_NAMESPACE
+              value: doc-index-updater-non-prod
+            - name: SEARCH_SERVICE
+              value: mhraproductsnonprod
+            - name: SERVICE_BUS_NAMESPACE
+              value: doc-index-updater-non-prod
+            - name: RUST_LOG
+              value: doc_index_updater=debug,info

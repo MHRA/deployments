@@ -2,8 +2,8 @@
 
 # Redis credentials...
 REDIS_KEY=$(az redis list-keys \
-    --resource-group MHRA-dev \
-    --name doc-index-updater-dev \
+    --resource-group adazr-rg-1001 \
+    --name doc-index-updater-non-prod \
     --output tsv --query 'primaryKey')
 kubectl create secret generic redis-creds \
     -n doc-index-updater \
@@ -15,8 +15,8 @@ kubectl create secret generic redis-creds \
 
 # Azure Search Service credentials...
 API_KEY=$(az search admin-key show \
-    --resource-group MHRA-dev \
-    --service-name mhraproductsdevelopment \
+    --resource-group adazr-rg-1001 \
+    --service-name mhraproductsnonprod \
     --output tsv --query 'primaryKey')
 kubectl create secret generic search-creds \
     -n doc-index-updater \
@@ -39,21 +39,19 @@ kubectl create secret generic sentinel-creds \
 
 # Azure Service Bus credentials...
 SB_CREATE_KEY=$(az servicebus queue authorization-rule keys list \
-    --resource-group MHRA-dev \
-    --namespace-name doc-index-updater-dev \
+    --resource-group adazr-rg-1001 \
+    --namespace-name doc-index-updater-non-prod \
     --queue-name doc-index-updater-create-queue \
     --name doc-index-updater-create-auth \
     --query primaryKey \
     --output tsv)
-SB_DELETE_KEY=$(
-    az servicebus queue authorization-rule keys list \
-        --resource-group MHRA-dev \
-        --namespace-name doc-index-updater-dev \
-        --queue-name doc-index-updater-delete-queue \
-        --name doc-index-updater-delete-auth \
-        --query primaryKey \
-        --output tsv
-)
+SB_DELETE_KEY=$(az servicebus queue authorization-rule keys list \
+    --resource-group adazr-rg-1001 \
+    --namespace-name doc-index-updater-non-prod \
+    --queue-name doc-index-updater-delete-queue \
+    --name doc-index-updater-delete-auth \
+    --query primaryKey \
+    --output tsv)
 kubectl create secret generic service-bus-creds \
     -n doc-index-updater \
     -o json \
@@ -64,12 +62,26 @@ kubectl create secret generic service-bus-creds \
         --format yaml >SealedSecret-service-bus-creds.yaml
 
 # Azure Blob Storage credentials...
+BLOB_KEY=$(az storage account keys list \
+    --account-name=mhraproductsnonprod \
+    --query='[0].value' \
+    --output=tsv)
 kubectl create secret generic storage-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal account="insert here" \
-    --from-literal container="insert here" \
-    --from-literal key="insert here" |
+    --from-literal account="mhraproductsnonprod" \
+    --from-literal container="docs" \
+    --from-literal key="$BLOB_KEY" |
     kubeseal \
         --format yaml >SealedSecret-storage-creds.yaml
+
+# HTTP Basic Auth credentials...
+kubectl create secret generic basic-auth-creds \
+    -n doc-index-updater \
+    -o json \
+    --dry-run \
+    --from-literal username="username" \
+    --from-literal password="password" |
+    kubeseal \
+        --format yaml >SealedSecret-basic-auth-creds.yaml

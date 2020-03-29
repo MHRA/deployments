@@ -5,3 +5,4 @@ metadata:
 spec:
   hosts:
     - argocd-mhra.red-badger.dev
+    - argocd.test.mhra.gov.uk

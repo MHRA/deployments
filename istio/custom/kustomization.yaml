@@ -1,2 +1,6 @@
 resources:
+  - ../base
+  - service-ingress-internal.yaml
+
+patchesStrategicMerge:
   - gateway.yaml

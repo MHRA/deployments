@@ -1,5 +1,6 @@
 resources:
 - ../../base
+- SealedSecret-basic-auth-creds.yaml
 - SealedSecret-redis-creds.yaml
 - SealedSecret-search-creds.yaml
 - SealedSecret-sentinel-creds.yaml
@@ -8,8 +9,9 @@ resources:
 patchesStrategicMerge:
 - deployment.yaml
 - ingress.yaml
+
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:0b696601072b255fd89e3cf65a0c87a8a7859c3ac2cff9625f308ea036ce89e8
-  name: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater
+- digest: sha256:4f98ee72eefd2c02ebfec8a3dab8ae0c9a9357959523e414746a0571b500eedf
+  name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
