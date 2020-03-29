@@ -1,12 +1,25 @@
 overlay := non-prod
 
 .PHONY: default
-default: ## Deploy using Kustomize
-	kustomize build ./overlays/$(overlay) | kubectl apply -f -
+default: 1-crds install ## Deploy using Kustomize
+
+.PHONY: 1-crds
+1-crds: ## Install ArgoCD CRDs
+	kustomize build 1-crds | kubectl apply -f -
+
+.PHONY: install
+install: ## Install ArgoCD resources
+	@until [ $$(kubectl get crds | grep 'argoproj.io' | wc -l) -eq 2 ] ;\
+	do \
+		echo "Waiting for CRDs"; \
+		sleep 2 ;\
+	done ;\
+	kustomize build overlays/$(overlay) | kubectl apply -f -
 
 .PHONY: delete
-delete: ## Deploy using Kustomize
-	kustomize build ./overlays/$(overlay) | kubectl delete  --ignore-not-found -f -
+delete: ## Remove ArgoCD
+	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f - || true
+	kustomize build 1-crds | kubectl delete  --ignore-not-found -f - || true
 
 .PHONY: help
 help: ## Display this help screen
