@@ -12,10 +12,6 @@ delete: ## Deploy using Kustomize
 	cd ../sealed-secrets && make delete overlay=$(overlay) || true
 	cd ../istio && make delete overlay=$(overlay) || true
 
-.PHONY: local-cluster
-local-cluster:
-	kind create cluster --config=kind.yaml
-
 .PHONY: help
 help: ## Display this help screen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
