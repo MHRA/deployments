@@ -2,7 +2,7 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Add egress rules
-	kustomize build ./overlays/$(overlay) | kubectl apply -f - && \
+	kustomize build ./overlays/$(overlay) | kubectl apply -f -
 
 .PHONY: delete
 delete: ## Remove egress rules
