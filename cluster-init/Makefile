@@ -2,6 +2,7 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Deploy using Kustomize
+	cd ../kube-state-metrics/ && make
 	cd ../istio && make overlay=$(overlay)
 	cd ../egress && make overlay=$(overlay)
 	cd ../sealed-secrets && make overlay=$(overlay)
@@ -13,6 +14,7 @@ delete: ## Deploy using Kustomize
 	cd ../sealed-secrets && make delete overlay=$(overlay) || true
 	cd ../egress && make overlay=$(overlay)
 	cd ../istio && make delete overlay=$(overlay) || true
+	cd ../kube-state-metrics/ && make delete || true
 
 .PHONY: help
 help: ## Display this help screen
