@@ -11,7 +11,7 @@ spec:
   source:
     path: doc-index-updater/overlays/dev
     repoURL: https://github.com/MHRA/deployments.git
-    targetRevision: master
+    targetRevision: istio-1.5
   syncPolicy:
     automated:
       prune: true
