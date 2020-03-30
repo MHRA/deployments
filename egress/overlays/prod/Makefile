@@ -1,4 +1,4 @@
-overlay := non-prod
+overlay := prod
 
 .PHONY: default
 default: ## Deploy using Kustomize

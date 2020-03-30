@@ -13,6 +13,11 @@ default: ## Deploy using Kustomize
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
+	SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+		--vault-name mhra-non-prod-02  \
+		--name non-prod-sentinel-ip \
+		--query value \
+		--output tsv) && \
 	kustomize build . | kubectl delete  --ignore-not-found -f -
 
 .PHONY: help
