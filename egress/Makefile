@@ -1,8 +1,15 @@
 overlay := non-prod
 
 .PHONY: default
-default: ## Add egress rules
-	kustomize build ./overlays/$(overlay) | kubectl apply -f -
+default: ## Deploy using Kustomize
+	SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+		--vault-name mhra-non-prod-02  \
+		--name non-prod-sentinel-ip \
+		--query value \
+		--output tsv) && \
+	kustomize build ./overlays/$(overlay) | \
+		sed -e "s/\$${SENTINEL_IP_ADDRESS}/$${SENTINEL_IP_ADDRESS}/g" | \
+		kubectl apply -f -
 
 .PHONY: delete
 delete: ## Remove egress rules
