@@ -2,7 +2,7 @@ namespace: argocd
 
 resources:
   - ../../3-custom
-  - ../../applications/non-prod
+  - ../../applications/dev
 
 patchesStrategicMerge:
   - argocd-cm.yaml
