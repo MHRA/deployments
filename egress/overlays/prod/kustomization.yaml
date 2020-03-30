@@ -1,0 +1,35 @@
+resources:
+  - ../../base
+  - sentinel.yaml
+
+patchesJSON6902:
+  - target:
+      group: networking.istio.io
+      version: v1alpha3
+      kind: ServiceEntry
+      name: redis-in-azure
+    patch: |-
+      - op: replace
+        path: /spec/hosts/0
+        value: doc-index-updater-prod.redis.cache.windows.net
+  - target:
+      group: networking.istio.io
+      version: v1alpha3
+      kind: VirtualService
+      name: redis-in-azure
+    patch: |-
+      - op: replace
+        path: /spec/hosts/0
+        value: doc-index-updater-prod.redis.cache.windows.net
+      - op: replace
+        path: /spec/tcp/0/route/0/destination/host
+        value: doc-index-updater-prod.redis.cache.windows.net
+  - target:
+      group: networking.istio.io
+      version: v1alpha3
+      kind: DestinationRule
+      name: redis-in-azure
+    patch: |-
+      - op: replace
+        path: /spec/host
+        value: doc-index-updater-prod.redis.cache.windows.net
