@@ -1,10 +1,10 @@
 overlay := non-prod
 
 .PHONY: default
-default: 1-crds install ## Deploy using Kustomize
+default: crds install ## Deploy using Kustomize
 
-.PHONY: 1-crds
-1-crds: ## Install ArgoCD CRDs
+.PHONY: crds
+crds: ## Install ArgoCD CRDs
 	kustomize build 1-crds | kubectl apply -f -
 
 .PHONY: install
