@@ -10,12 +10,12 @@ spec:
           image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
           env:
             - name: REDIS_SERVER
-              value: doc-index-updater-non-prod.redis.cache.windows.net
+              value: doc-index-updater-dev.redis.cache.windows.net
             - name: SERVICE_BUS_NAMESPACE
-              value: doc-index-updater-non-prod
+              value: doc-index-updater-dev
             - name: SEARCH_SERVICE
-              value: mhraproductsnonprod
+              value: mhraproductsdevelopment
             - name: SERVICE_BUS_NAMESPACE
-              value: doc-index-updater-non-prod
+              value: doc-index-updater-dev
             - name: RUST_LOG
               value: doc_index_updater=debug,info
