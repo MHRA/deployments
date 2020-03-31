@@ -2,14 +2,19 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Deploy using Kustomize
-	SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+	DEV_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
 		--vault-name mhra-non-prod-02  \
-		--name non-prod-sentinel-ip \
+		--name non-prod-dev-sentinel-ip \
+		--query value \
+		--output tsv) && \
+	UAT_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+		--vault-name mhra-non-prod-02  \
+		--name non-prod-uat-sentinel-ip \
 		--query value \
 		--output tsv) && \
 	kustomize build ./overlays/$(overlay) | \
-		sed -e "s/\$${SENTINEL_IP_ADDRESS}/$${SENTINEL_IP_ADDRESS}/g" | \
-		kubectl apply -f -
+		sed -e "s/\$${DEV_SENTINEL_IP_ADDRESS}/$${DEV_SENTINEL_IP_ADDRESS}/g" | \
+		sed -e "s/\$${UAT_SENTINEL_IP_ADDRESS}/$${UAT_SENTINEL_IP_ADDRESS}/g"
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
