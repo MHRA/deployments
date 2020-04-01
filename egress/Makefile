@@ -14,7 +14,8 @@ default: ## Deploy using Kustomize
 		--output tsv) && \
 	kustomize build ./overlays/$(overlay) | \
 		sed -e "s/\$${DEV_SENTINEL_IP_ADDRESS}/$${DEV_SENTINEL_IP_ADDRESS}/g" | \
-		sed -e "s/\$${UAT_SENTINEL_IP_ADDRESS}/$${UAT_SENTINEL_IP_ADDRESS}/g"
+		sed -e "s/\$${UAT_SENTINEL_IP_ADDRESS}/$${UAT_SENTINEL_IP_ADDRESS}/g" | \
+		kubectl apply -f -
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
