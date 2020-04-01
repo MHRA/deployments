@@ -12,7 +12,7 @@ default: ## Deploy using Kustomize
 		kubectl apply -f -
 
 .PHONY: delete
-delete: ## Deploy using Kustomize
+delete: ## Remove egress rules
 	kustomize build ./overlays/$(overlay) | kubectl delete  --ignore-not-found -f -
 
 .PHONY: help
