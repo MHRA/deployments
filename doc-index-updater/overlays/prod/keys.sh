@@ -2,7 +2,7 @@
 
 # Redis credentials...
 REDIS_KEY=$(az redis list-keys \
-    --resource-group adazr-rg-1001 \
+    --resource-group apazr-rg-1001 \
     --name doc-index-updater-prod \
     --output tsv --query 'primaryKey')
 kubectl create secret generic redis-creds \
@@ -15,7 +15,7 @@ kubectl create secret generic redis-creds \
 
 # Azure Search Service credentials...
 API_KEY=$(az search admin-key show \
-    --resource-group adazr-rg-1001 \
+    --resource-group apazr-rg-1001 \
     --service-name mhraproductsprod \
     --output tsv --query 'primaryKey')
 kubectl create secret generic search-creds \
@@ -39,14 +39,14 @@ kubectl create secret generic sentinel-creds \
 
 # Azure Service Bus credentials...
 SB_CREATE_KEY=$(az servicebus queue authorization-rule keys list \
-    --resource-group adazr-rg-1001 \
+    --resource-group apazr-rg-1001 \
     --namespace-name doc-index-updater-prod \
     --queue-name doc-index-updater-create-queue \
     --name doc-index-updater-create-auth \
     --query primaryKey \
     --output tsv)
 SB_DELETE_KEY=$(az servicebus queue authorization-rule keys list \
-    --resource-group adazr-rg-1001 \
+    --resource-group apazr-rg-1001 \
     --namespace-name doc-index-updater-prod \
     --queue-name doc-index-updater-delete-queue \
     --name doc-index-updater-delete-auth \

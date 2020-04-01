@@ -2,7 +2,7 @@
 
 # Redis credentials...
 REDIS_KEY=$(az redis list-keys \
-    --resource-group adazr-rg-1001 \
+    --resource-group mhra-products-development \
     --name doc-index-updater-non-prod \
     --output tsv --query 'primaryKey')
 kubectl create secret generic redis-creds \
@@ -15,8 +15,8 @@ kubectl create secret generic redis-creds \
 
 # Azure Search Service credentials...
 API_KEY=$(az search admin-key show \
-    --resource-group adazr-rg-1001 \
-    --service-name mhraproductsnonprod \
+    --resource-group mhra-products-development \
+    --service-name mhraproductsdevelopment \
     --output tsv --query 'primaryKey')
 kubectl create secret generic search-creds \
     -n doc-index-updater \
@@ -39,14 +39,14 @@ kubectl create secret generic sentinel-creds \
 
 # Azure Service Bus credentials...
 SB_CREATE_KEY=$(az servicebus queue authorization-rule keys list \
-    --resource-group adazr-rg-1001 \
+    --resource-group mhra-products-development \
     --namespace-name doc-index-updater-non-prod \
     --queue-name doc-index-updater-create-queue \
     --name doc-index-updater-create-auth \
     --query primaryKey \
     --output tsv)
 SB_DELETE_KEY=$(az servicebus queue authorization-rule keys list \
-    --resource-group adazr-rg-1001 \
+    --resource-group mhra-products-development \
     --namespace-name doc-index-updater-non-prod \
     --queue-name doc-index-updater-delete-queue \
     --name doc-index-updater-delete-auth \
@@ -63,14 +63,14 @@ kubectl create secret generic service-bus-creds \
 
 # Azure Blob Storage credentials...
 BLOB_KEY=$(az storage account keys list \
-    --account-name=mhraproductsnonprod \
+    --account-name=mhraproductsdevelopment \
     --query='[0].value' \
     --output=tsv)
 kubectl create secret generic storage-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal account="mhraproductsnonprod" \
+    --from-literal account="mhraproductsdevelopment" \
     --from-literal container="docs" \
     --from-literal key="$BLOB_KEY" |
     kubeseal \
