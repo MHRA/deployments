@@ -4,5 +4,4 @@ metadata:
   name: argocd
 spec:
   hosts:
-    - argocd-mhra.red-badger.prod
-    - argocd.mhra.gov.uk
+    - argocd-prod.test.mhra.gov.uk
