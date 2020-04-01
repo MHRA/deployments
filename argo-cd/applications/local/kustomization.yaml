@@ -1,0 +1,4 @@
+resources:
+  - applications.yaml
+  - doc-index-updater.yaml
+  - egress.yaml

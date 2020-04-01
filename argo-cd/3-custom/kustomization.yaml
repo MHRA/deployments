@@ -1,6 +1,6 @@
 resources:
   - namespace.yaml
-  - ../base
+  - ../2-base
   - virtual-service.yaml
 
 patchesStrategicMerge:
