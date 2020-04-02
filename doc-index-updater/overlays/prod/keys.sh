@@ -27,13 +27,28 @@ kubectl create secret generic search-creds \
         --format yaml >SealedSecret-search-creds.yaml
 
 # Sentinel credentials...
+SENTINEL_SERVER=$(az keyvault secret show \
+    --vault-name mhra-prod \
+    --name sentinel-ip \
+    --query value \
+    --output tsv)
+SENTINEL_USERNAME=$(az keyvault secret show \
+    --vault-name mhra-prod \
+    --name sentinel-username \
+    --query value \
+    --output tsv)
+SENTINEL_PASSWORD=$(az keyvault secret show \
+    --vault-name mhra-prod \
+    --name sentinel-password \
+    --query value \
+    --output tsv)
 kubectl create secret generic sentinel-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal server="127.0.0.1" \
-    --from-literal user="insert here" \
-    --from-literal pass="insert here" |
+    --from-literal server="$SENTINEL_SERVER" \
+    --from-literal user="$SENTINEL_USERNAME" \
+    --from-literal pass="$SENTINEL_PASSWORD" |
     kubeseal \
         --format yaml >SealedSecret-sentinel-creds.yaml
 
@@ -77,11 +92,21 @@ kubectl create secret generic storage-creds \
         --format yaml >SealedSecret-storage-creds.yaml
 
 # HTTP Basic Auth credentials...
+BASIC_AUTH_USERNAME=$(az keyvault secret show \
+    --vault-name mhra-prod \
+    --name basic-auth-username \
+    --query value \
+    --output tsv)
+BASIC_AUTH_PASSWORD=$(az keyvault secret show \
+    --vault-name mhra-prod \
+    --name basic-auth-password \
+    --query value \
+    --output tsv)
 kubectl create secret generic basic-auth-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal username="TODO" \
-    --from-literal password="TODO" |
+    --from-literal username="$BASIC_AUTH_USERNAME" \
+    --from-literal password="$BASIC_AUTH_PASSWORD" |
     kubeseal \
         --format yaml >SealedSecret-basic-auth-creds.yaml
