@@ -3,7 +3,7 @@
 # Redis credentials...
 REDIS_KEY=$(az redis list-keys \
     --resource-group apazr-rg-1001 \
-    --name doc-index-updater-prod \
+    --name doc-index-updater-production \
     --output tsv --query 'primaryKey')
 kubectl create secret generic redis-creds \
     -n doc-index-updater \
@@ -16,7 +16,7 @@ kubectl create secret generic redis-creds \
 # Azure Search Service credentials...
 API_KEY=$(az search admin-key show \
     --resource-group apazr-rg-1001 \
-    --service-name mhraproductsprod \
+    --service-name mhraproductsproduction \
     --output tsv --query 'primaryKey')
 kubectl create secret generic search-creds \
     -n doc-index-updater \
@@ -55,14 +55,14 @@ kubectl create secret generic sentinel-creds \
 # Azure Service Bus credentials...
 SB_CREATE_KEY=$(az servicebus queue authorization-rule keys list \
     --resource-group apazr-rg-1001 \
-    --namespace-name doc-index-updater-prod \
+    --namespace-name doc-index-updater-production \
     --queue-name doc-index-updater-create-queue \
     --name doc-index-updater-create-auth \
     --query primaryKey \
     --output tsv)
 SB_DELETE_KEY=$(az servicebus queue authorization-rule keys list \
     --resource-group apazr-rg-1001 \
-    --namespace-name doc-index-updater-prod \
+    --namespace-name doc-index-updater-production \
     --queue-name doc-index-updater-delete-queue \
     --name doc-index-updater-delete-auth \
     --query primaryKey \
@@ -78,7 +78,7 @@ kubectl create secret generic service-bus-creds \
 
 # Azure Blob Storage credentials...
 BLOB_KEY=$(az storage account keys list \
-    --account-name=mhraproductsprod \
+    --account-name=mhraproductsproduction \
     --query='[0].value' \
     --output=tsv)
 kubectl create secret generic storage-creds \
