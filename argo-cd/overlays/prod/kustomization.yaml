@@ -1,7 +1,7 @@
 namespace: argocd
 
 resources:
-  - ../../custom
+  - ../../3-custom
   - ../../applications/prod
 
 patchesStrategicMerge:
