@@ -12,6 +12,8 @@ spec:
           env:
             - name: REDIS_SERVER
               value: doc-index-updater-production.redis.cache.windows.net
+            - name: REDIS_PORT
+              value: "6380"
             - name: SEARCH_SERVICE
               value: mhraproductsproduction
             - name: SERVICE_BUS_NAMESPACE
