@@ -7,12 +7,12 @@ vault-non-prod := mhra-non-prod-02
 default: ## Apply egress configuration
 	DEV_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
 		--vault-name $(vault-non-prod)  \
-		--name dev-sentinel-ip \
+		--name non-prod-dev-sentinel-ip \
 		--query value \
 		--output tsv) && \
 	UAT_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
 		--vault-name $(vault-non-prod)  \
-		--name uat-sentinel-ip \
+		--name non-prod-uat-sentinel-ip \
 		--query value \
 		--output tsv) && \
 	PROD_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
@@ -23,8 +23,7 @@ default: ## Apply egress configuration
 	kustomize build ./overlays/$(overlay) | \
 		sed -e "s/\$${DEV_SENTINEL_IP_ADDRESS}/$${DEV_SENTINEL_IP_ADDRESS}/g" | \
 		sed -e "s/\$${UAT_SENTINEL_IP_ADDRESS}/$${UAT_SENTINEL_IP_ADDRESS}/g" | \
-		sed -e "s/\$${PROD_SENTINEL_IP_ADDRESS}/$${PROD_SENTINEL_IP_ADDRESS}/g" | \
-		kubectl apply -f -
+		sed -e "s/\$${PROD_SENTINEL_IP_ADDRESS}/$${PROD_SENTINEL_IP_ADDRESS}/g"
 
 .PHONY: delete
 delete: ## Remove egress configuration
