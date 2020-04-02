@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: doc-index-updater
-          image: mhraproductsprodregistry.azurecr.io/products/doc-index-updater
+          image: mhraproductsproductionregistry.azurecr.io/products/doc-index-updater
           env:
             - name: REDIS_SERVER
               value: doc-index-updater-prod.redis.cache.windows.net
