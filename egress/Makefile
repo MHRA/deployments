@@ -11,7 +11,7 @@ default: ## Deploy using Kustomize
 		--name sentinel-ip \
 		--query value \
 		--output tsv) && \
-	kustomize build . | \
+	kustomize build overlays/$(overlay) | \
 		sed -e "s/\$${SENTINEL_IP_ADDRESS}/$${SENTINEL_IP_ADDRESS}/g" | \
 		kubectl apply -f -
 
@@ -22,7 +22,7 @@ delete: ## Deploy using Kustomize
 		--name sentinel-ip \
 		--query value \
 		--output tsv) && \
-	kustomize build . | kubectl delete  --ignore-not-found -f -
+	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f -
 
 .PHONY: help
 help: ## Display this help screen
