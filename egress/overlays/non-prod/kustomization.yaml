@@ -1,6 +1,7 @@
 resources:
   - ../../base
-  - sentinel.yaml
+  - sentinel-dev.yaml
+  - sentinel-uat.yaml
 
 patchesJSON6902:
   - target:

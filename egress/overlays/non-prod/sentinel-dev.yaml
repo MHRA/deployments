@@ -1,12 +1,12 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: sentinel
+  name: sentinel-dev
 spec:
   hosts:
-    - sentinel.com # not used when addresses present
+    - sentinel.dev # not used when addresses present
   addresses:
-    - ${SENTINEL_IP_ADDRESS}
+    - ${DEV_SENTINEL_IP_ADDRESS}
   ports:
     - number: 22
       name: ssh
@@ -14,20 +14,20 @@ spec:
   resolution: STATIC
   location: MESH_EXTERNAL
   endpoints:
-    - address: ${SENTINEL_IP_ADDRESS}
+    - address: ${DEV_SENTINEL_IP_ADDRESS}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: sentinel
+  name: sentinel-dev
 spec:
   hosts:
-    - sentinel.com
+    - sentinel.dev
   tcp:
     - match:
         - port: 22
       route:
         - destination:
-            host: sentinel.com
+            host: sentinel.dev
             port:
               number: 22

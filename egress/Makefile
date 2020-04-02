@@ -2,26 +2,32 @@ overlay := non-prod
 
 vault-prod := mhra-prod
 vault-non-prod := mhra-non-prod-02
-vault-dev := mhra-non-prod-02
 
 .PHONY: default
-default: ## Deploy using Kustomize
-	SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
-		--vault-name $(vault-$(overlay))  \
+default: ## Apply egress configuration
+	DEV_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+		--vault-name $(vault-non-prod)  \
+		--name dev-sentinel-ip \
+		--query value \
+		--output tsv) && \
+	UAT_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+		--vault-name $(vault-non-prod)  \
+		--name uat-sentinel-ip \
+		--query value \
+		--output tsv) && \
+	PROD_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
+		--vault-name $(vault-prod)  \
 		--name sentinel-ip \
 		--query value \
 		--output tsv) && \
-	kustomize build overlays/$(overlay) | \
-		sed -e "s/\$${SENTINEL_IP_ADDRESS}/$${SENTINEL_IP_ADDRESS}/g" | \
+	kustomize build ./overlays/$(overlay) | \
+		sed -e "s/\$${DEV_SENTINEL_IP_ADDRESS}/$${DEV_SENTINEL_IP_ADDRESS}/g" | \
+		sed -e "s/\$${UAT_SENTINEL_IP_ADDRESS}/$${UAT_SENTINEL_IP_ADDRESS}/g" | \
+		sed -e "s/\$${PROD_SENTINEL_IP_ADDRESS}/$${PROD_SENTINEL_IP_ADDRESS}/g" | \
 		kubectl apply -f -
 
 .PHONY: delete
-delete: ## Deploy using Kustomize
-	SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
-		--vault-name $(vault-$(overlay))  \
-		--name sentinel-ip \
-		--query value \
-		--output tsv) && \
+delete: ## Remove egress configuration
 	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f -
 
 .PHONY: help
