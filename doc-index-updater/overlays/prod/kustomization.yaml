@@ -1,6 +1,5 @@
 resources:
   - ../../base
-  # - The below still to add for production once resources provisioned - leaving in so throws error if we forget
   - SealedSecret-basic-auth-creds.yaml
   - SealedSecret-redis-creds.yaml
   - SealedSecret-search-creds.yaml
