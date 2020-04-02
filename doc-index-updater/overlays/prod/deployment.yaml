@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: doc-index-updater
 spec:
+  replicas: 2
   template:
     spec:
       containers:
