@@ -2,6 +2,11 @@ resources:
   - ../../base
   - sentinel.yaml
 
+patchesStrategicMerge:
+  - search-service.yaml
+  - service-bus.yaml
+  - storage-service.yaml
+
 patchesJSON6902:
   - target:
       group: networking.istio.io
