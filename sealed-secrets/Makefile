@@ -10,9 +10,9 @@ default: ## Create resources
 		--vault-name $(vault-$(overlay))  \
 		--name sealing-key \
 		--query value \
-		--output tsv > sealed-secrets-key.yaml && \
-	kustomize build . | kubectl apply -f - && \
-	rm sealed-secrets-key.yaml
+		--output tsv > overlays/$(overlay)/sealed-secrets-key.yaml && \
+	kustomize build overlays/$(overlay) | kubectl apply -f - && \
+	rm overlays/$(overlay)/sealed-secrets-key.yaml
 
 .PHONY: delete
 delete: ## Delete resources
@@ -20,9 +20,9 @@ delete: ## Delete resources
 		--vault-name $(vault-$(overlay)) \
 		--name sealing-key \
 		--query value \
-		--output tsv > sealed-secrets-key.yaml && \
-	kustomize build . | kubectl delete  --ignore-not-found -f - && \
-	rm sealed-secrets-key.yaml
+		--output tsv > overlays/$(overlay)/sealed-secrets-key.yaml && \
+	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f - && \
+	rm overlays/$(overlay)/sealed-secrets-key.yaml
 
 .PHONY: help
 help: ## Display this help screen
