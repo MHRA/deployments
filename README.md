@@ -37,3 +37,109 @@ This repo contains all the manifests for resources running under [Kubernetes](ht
    ```
 
 1. If you want to delete the cluster infrastructure for your environment [you can do this from the products repo](https://github.com/MHRA/products/tree/master/infrastructure/docs/destroy-provision-aks.md).
+
+---
+
+## Useful tools for working with this repo
+
+1. `kubectl` - The official client for the Kubernetes API
+
+   https://kubernetes.io/docs/reference/kubectl/overview/
+
+   ```sh
+   brew install kubernetes-cli
+   ```
+
+   It may be useful to alias this to something easier to type (and maybe add to your shell rc, e.g. `~/.zshrc`).
+
+   ```sh
+   alias k=kubectl
+   ```
+
+   There's also a `zsh` plugin for `kubectl` for your `~/.zshrc`, e.g.:
+
+   ```sh
+   plugins=(git kubectl zsh-syntax-highlighting)
+   ```
+
+1. `kubectx` - tools for switching K8s contexts (clusters) and namespaces
+
+   https://kubectx.dev/
+
+   ```sh
+   brew install kubectx
+   ```
+
+   It may be useful to alias these tools to something easier to type (and maybe add to your shell rc, e.g. `~/.zshrc`).
+
+   ```sh
+   alias kctx=kubectx
+   alias kns=kubens
+   ```
+
+   You should be able to use `Tab` autocompletion with `kctx` on contexts from your `~/.kube/config`, and with `kns` on namespaces from the current context. Really useful for quickly changing clusters/namespaces.
+
+1. `kube-ps1` - customize your command prompt to display the current context and namespace
+
+   https://github.com/jonmosco/kube-ps1
+
+   ```sh
+   brew install kube-ps1
+   ```
+
+   And for your `~/.zshrc` ...
+
+   ```sh
+   source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+   PS1='$(kube_ps1)'$PS1
+   ```
+
+1. `stern` - easily tail container logs
+
+   https://github.com/wercker/stern
+
+   ```sh
+   brew install stern
+   ```
+
+   Aggregates logs from all containers whose names match the pattern, e.g. tailing logs from `istio-ingressgateway`:
+
+   ```sh
+   kns istio-system && stern ingress
+   ```
+
+1. `istioctl` - official client for the Istio API
+
+   https://istio.io/docs/reference/commands/istioctl/
+
+   ```sh
+   brew install istioctl
+   ```
+
+1. `kubeseal` - Bitnami Sealed Secrets CLI
+
+   https://github.com/bitnami-labs/sealed-secrets
+
+   ```sh
+   brew install kubeseal
+   ```
+
+   This is used by some of the scripts/Makefiles in this repo to encrypt secrets so that they can be committed to this repo.
+
+1. `kind` - Kubernetes In Docker
+
+   https://kind.sigs.k8s.io/
+
+   ```sh
+   brew install kind
+   ```
+
+   Useful for creating a local multi-node cluster for testing configurations.
+
+1. `argocd` - official cli for working with ArgoCD
+
+   ```sh
+   brew install argocd
+   ```
+
+   Your mileage may vary, and you may need to use port-forwarding (or grpc-web) for this to be useful, because we use Istio ingress gateway. It's probably easier to use the web gui.
