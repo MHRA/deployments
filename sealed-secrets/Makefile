@@ -1,10 +1,14 @@
 overlay := non-prod
 
+vault-prod := mhra-prod
+vault-non-prod := mhra-non-prod-02
+vault-dev := mhra-non-prod-02
+
 .PHONY: default
 default: ## Create resources
 	az keyvault secret show \
-		--vault-name mhra-non-prod-02  \
-		--name non-prod \
+		--vault-name $(vault-$(overlay))  \
+		--name sealing-key \
 		--query value \
 		--output tsv > sealed-secrets-key.yaml && \
 	kustomize build . | kubectl apply -f - && \
@@ -13,8 +17,8 @@ default: ## Create resources
 .PHONY: delete
 delete: ## Delete resources
 	az keyvault secret show \
-		--vault-name mhra-non-prod-02 \
-		--name non-prod \
+		--vault-name $(vault-$(overlay)) \
+		--name sealing-key \
 		--query value \
 		--output tsv > sealed-secrets-key.yaml && \
 	kustomize build . | kubectl delete  --ignore-not-found -f - && \
