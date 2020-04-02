@@ -85,7 +85,7 @@ kubectl create secret generic storage-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal account="mhraproductsprod" \
+    --from-literal account="mhraproductsproduction" \
     --from-literal container="docs" \
     --from-literal key="$BLOB_KEY" |
     kubeseal \
