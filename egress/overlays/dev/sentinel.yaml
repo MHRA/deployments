@@ -2,6 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
   name: sentinel
+  namespace: istio-system
 spec:
   hosts:
     - sentinel.com # not used when addresses present
