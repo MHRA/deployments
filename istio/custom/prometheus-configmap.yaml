@@ -14,6 +14,14 @@ metadata:
 data:
   prometheus.rules.yml: |
     groups:
+      - name: traffic
+        rules:
+        - record: job:incoming_requests_per_minute_per_pod:mean
+          expr: |
+            sum by (namespace, pod_name) (rate(istio_requests_total[1m]))
+          labels:
+            azure_monitor: true
+
       - name: request_latency
         rules:
         - record: job:doc_index_updater_success_response_latency_milliseconds:mean
@@ -31,6 +39,22 @@ data:
             sum(rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater", response_code=~"5.."}[5m]))
             /
             sum(rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater", response_code!~"5.."}[5m]))
+          labels:
+            azure_monitor: true
+
+      - name: saturation
+        rules:
+        - record: job:cpu_usage_seconds_per_pod:mean
+          expr: |
+            sum by (namespace, pod_name) (rate(container_cpu_usage_seconds_total{image!=""}[1m]))
+          labels:
+            azure_monitor: true
+
+        - record: job:memory_usage_percent_per_pod:mean
+          expr: |
+            sum(container_memory_working_set_bytes) by (namespace, pod_name)
+            /
+            sum(label_join(kube_pod_container_resource_limits_memory_bytes, "pod_name", "", "pod")) by (namespace, pod_name)
           labels:
             azure_monitor: true
 
