@@ -5,8 +5,8 @@ metadata:
   namespace: istio-system
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: "adarz-spoke-products-dev-sn-01"
-    service.beta.kubernetes.io/azure-load-balancer-resource-group: "mhra-products-development"
+    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: adarz-spoke-products-dev-sn-01
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: mhra-products-development
   labels:
     app: istio-ingressgateway
     release: istio

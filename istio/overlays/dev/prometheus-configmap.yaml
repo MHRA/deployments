@@ -12,9 +12,35 @@ metadata:
   name: prometheus
   namespace: istio-system
 data:
+  prometheus.rules.yml: |
+    groups:
+      - name: request_latency
+        rules:
+        - record: job:doc_index_updater_success_response_latency_milliseconds:mean
+          expr: |
+            sum (rate(istio_request_duration_milliseconds_sum{destination_app="doc-index-updater", namespace="doc-index-updater"}[5m]))
+            /
+            sum (rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater"}[5m]))
+          labels:
+            azure_monitor: true
+
+      - name: request_error_rate
+        rules:
+        - record: job:doc_index_updater_request_error_rate:mean
+          expr: |
+            sum(rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater", response_code=~"5.."}[5m]))
+            /
+            sum(rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater", response_code!~"5.."}[5m]))
+          labels:
+            azure_monitor: true
+
   prometheus.yml: |-
     global:
       scrape_interval: 15s
+
+    rule_files:
+    - "prometheus.rules.yml"
+
     scrape_configs:
 
     # Mixer scrapping. Defaults to Prometheus and mixer on same namespace.

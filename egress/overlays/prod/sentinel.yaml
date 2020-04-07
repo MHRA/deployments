@@ -6,7 +6,7 @@ spec:
   hosts:
     - sentinel.com # not used when addresses present
   addresses:
-    - ${SENTINEL_IP_ADDRESS}
+    - ${PROD_SENTINEL_IP_ADDRESS}
   ports:
     - number: 22
       name: ssh
@@ -14,7 +14,7 @@ spec:
   resolution: STATIC
   location: MESH_EXTERNAL
   endpoints:
-    - address: ${SENTINEL_IP_ADDRESS}
+    - address: ${PROD_SENTINEL_IP_ADDRESS}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService

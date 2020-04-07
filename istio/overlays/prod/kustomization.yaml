@@ -1,0 +1,3 @@
+resources:
+  - ../../custom
+  - service-ingress-internal.yaml

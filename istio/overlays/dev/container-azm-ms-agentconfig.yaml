@@ -58,7 +58,7 @@ data:
 
         # An array of urls to scrape metrics from.
         urls = [
-           "http://prometheus.istio-system.svc.cluster.local:9090/federate?match[]={job=%22kubernetes-pods%22}&match[]={job=%22envoy-stats%22}&match[]={job=%22kubernetes-cadvisor%22}&match[]={job=%22kubernetes-nodes%22}"
+           "http://prometheus.istio-system.svc.cluster.local:9090/federate?match[]={azure_monitor=%22true%22}"
         ]
 
         # An array of Kubernetes services to scrape metrics from.
