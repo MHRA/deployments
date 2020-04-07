@@ -1,4 +1,4 @@
 resources:
   - namespace.yaml
-  - peer-authentication.yaml
+  # - peer-authentication.yaml
   - profile.yaml
