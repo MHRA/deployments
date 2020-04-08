@@ -1,25 +1,27 @@
 overlay := non-prod
 
 .PHONY: default
-default: crds install ## Deploy using Kustomize
+default: init1 init2 ## Deploy using Kustomize
 
-.PHONY: crds
-crds: ## Install ArgoCD CRDs
-	kustomize build 1-crds | kubectl apply -f -
+.PHONY: init1
+init1: ## Install ArgoCD CRDs and secrets
+	kustomize build overlays-1/$(overlay) | kubectl apply -f -
 
-.PHONY: install
-install: ## Install ArgoCD resources
-	@until [ $$(kubectl get crds | grep 'argoproj.io' | wc -l) -eq 2 ] ;\
+.PHONY: init2
+init2: ## Install ArgoCD resources
+	@until [ $$(kubectl get crds | grep 'argoproj.io' | wc -l) -eq 2 ] && \
+				 [ $$(kubectl get -n argocd secret --no-headers -l unsealing=unsealed | wc -l) -eq \
+				   $$(kubectl get -n argocd sealedsecret --no-headers -l unsealing=block | wc -l) ] ;\
 	do \
-		echo "Waiting for CRDs"; \
+		echo "Waiting for CRDs and secrets"; \
 		sleep 2 ;\
 	done ;\
-	kustomize build overlays/$(overlay) | kubectl apply -f -
+	kustomize build overlays-2/$(overlay) | kubectl apply -f - 
 
 .PHONY: delete
 delete: ## Remove ArgoCD
-	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f - || true
-	kustomize build 1-crds | kubectl delete  --ignore-not-found -f - || true
+	kustomize build overlays-2/$(overlay) | kubectl delete  --ignore-not-found -f - || true
+	kustomize build overlays-1/$(overlay) | kubectl delete  --ignore-not-found -f - || true
 
 .PHONY: help
 help: ## Display this help screen

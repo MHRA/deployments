@@ -1,0 +1,4 @@
+namespace: argocd
+
+resources:
+  - ../../1-crds

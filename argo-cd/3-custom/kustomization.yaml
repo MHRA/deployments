@@ -1,5 +1,4 @@
 resources:
-  - namespace.yaml
   - ../2-base
   - virtual-service.yaml
 
