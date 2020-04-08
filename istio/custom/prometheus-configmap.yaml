@@ -16,7 +16,7 @@ data:
     groups:
       - name: traffic
         rules:
-        - record: job:incoming_requests_per_minute_per_pod:mean
+        - record: job:incoming_requests_per_second_per_pod:mean
           expr: |
             sum by (namespace, pod_name) (rate(istio_requests_total[1m]))
           labels:
@@ -24,21 +24,30 @@ data:
 
       - name: request_latency
         rules:
-        - record: job:doc_index_updater_success_response_latency_milliseconds:mean
+        - record: job:success_response_latency_milliseconds_per_pod:mean
           expr: |
-            sum (rate(istio_request_duration_milliseconds_sum{destination_app="doc-index-updater", namespace="doc-index-updater"}[5m]))
+            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_sum{response_code!~"5.."}[1m]))
             /
-            sum (rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater"}[5m]))
+            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code!~"5.."}[1m]))
+          labels:
+            azure_monitor: true
+
+        rules:
+        - record: job:error_response_latency_milliseconds_per_pod:mean
+          expr: |
+            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_sum{response_code=~"5.."}[1m]))
+            /
+            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code=~"5.."}[1m]))
           labels:
             azure_monitor: true
 
       - name: request_error_rate
         rules:
-        - record: job:doc_index_updater_request_error_rate:mean
+        - record: job:request_error_rate_per_pod:mean
           expr: |
-            sum(rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater", response_code=~"5.."}[5m]))
+            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code=~"5.."}[1m]))
             /
-            sum(rate(istio_request_duration_milliseconds_count{destination_app="doc-index-updater", namespace="doc-index-updater", response_code!~"5.."}[5m]))
+            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code!~"5.."}[1m]))
           labels:
             azure_monitor: true
 
