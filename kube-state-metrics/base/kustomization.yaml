@@ -1,3 +1,5 @@
+namespace: kube-system
+
 resources:
   - cluster-role-binding.yaml
   - cluster-role.yaml

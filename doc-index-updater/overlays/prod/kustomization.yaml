@@ -1,3 +1,5 @@
+namespace: doc-index-updater
+
 resources:
   - ../../base
   - SealedSecret-basic-auth-creds.yaml
