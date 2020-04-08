@@ -16,7 +16,5 @@ spec:
               value: doc-index-updater-non-prod
             - name: SEARCH_SERVICE
               value: mhraproductsnonprod
-            - name: SERVICE_BUS_NAMESPACE
-              value: doc-index-updater-non-prod
             - name: RUST_LOG
               value: doc_index_updater=debug,info
