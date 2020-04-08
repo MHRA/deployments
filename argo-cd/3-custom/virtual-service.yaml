@@ -4,7 +4,7 @@ metadata:
   name: argocd
 spec:
   gateways:
-    - ingressgateway.istio-system.svc.cluster.local
+    - istio-system/ingressgateway
   http:
     - route:
         - destination:
