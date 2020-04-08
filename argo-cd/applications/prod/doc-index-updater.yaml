@@ -2,7 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: doc-index-updater
-  namespace: argocd
 spec:
   destination:
     namespace: doc-index-updater
@@ -11,7 +10,7 @@ spec:
   source:
     path: doc-index-updater/overlays/prod
     repoURL: https://github.com/MHRA/deployments.git
-    targetRevision: timlee/add-prod-config
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true

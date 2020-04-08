@@ -2,7 +2,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: applications
-  namespace: argocd
 spec:
   destination:
     namespace: argocd
@@ -11,7 +10,7 @@ spec:
   source:
     path: argo-cd/applications/prod
     repoURL: https://github.com/MHRA/deployments.git
-    targetRevision: timlee/add-prod-config
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
