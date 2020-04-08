@@ -1,2 +1,4 @@
+namespace: doc-index-updater
+
 resources:
   - ../../base
