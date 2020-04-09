@@ -62,6 +62,14 @@ This repo contains all the manifests for resources running under [Kubernetes](ht
    plugins=(git kubectl zsh-syntax-highlighting)
    ```
 
+1. `kustomize` - create a set of manifests for Kubernetes
+
+   https://kustomize.io/
+
+   ```sh
+   brew install kustomize
+   ```
+
 1. `kubectx` - tools for switching K8s contexts (clusters) and namespaces
 
    https://kubectx.dev/
