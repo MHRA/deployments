@@ -1,7 +1,7 @@
 namespace: istio-system
 
 resources:
-  - ../../custom
+  - ../../init-2
   - container-azm-ms-agentconfig.yaml
   - prometheus-configmap.yaml
   - service-ingress-internal.yaml

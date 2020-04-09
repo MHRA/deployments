@@ -28,7 +28,7 @@ default: ## Apply egress configuration
 
 .PHONY: delete
 delete: ## Remove egress configuration
-	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f -
+	kustomize build overlays/$(overlay) | kubectl delete  --ignore-not-found -f - || true
 
 .PHONY: help
 help: ## Display this help screen

@@ -1,5 +1,0 @@
-namespace: kube-system
-
-resources:
-  - sealed-secrets-key.yaml
-  - ../../base

@@ -1,5 +1,5 @@
 namespace: istio-system
 
 resources:
-  - ../../custom
+  - ../../init-2
   - profile.yaml
