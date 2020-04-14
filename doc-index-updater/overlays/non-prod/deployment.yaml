@@ -13,15 +13,6 @@ spec:
             - name: sftp_keys
               mountPath: "/etc/.ssh"
               readOnly: true
-          volumes:
-            - name: sftp_keys
-              secret:
-                secretName: sentinel-creds
-                items:
-                  - key: public_key
-                    path: id_rsa.pub
-                  - key: private_key
-                    path: id_rsa
           env:
             - name: REDIS_SERVER
               value: doc-index-updater-non-prod.redis.cache.windows.net
@@ -40,3 +31,12 @@ spec:
               value: /etc/.ssh/id_rsa.pub
             - name: SENTINEL_PRIVATE_KEY_PATH
               value: /etc/.ssh/id_rsa
+      volumes:
+        - name: sftp_keys
+          secret:
+            secretName: sentinel-creds
+            items:
+              - key: public_key
+                path: id_rsa.pub
+              - key: private_key
+                path: id_rsa
