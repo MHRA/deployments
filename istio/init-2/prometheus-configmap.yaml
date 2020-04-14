@@ -31,7 +31,6 @@ data:
           labels:
             azure_monitor: true
 
-        rules:
         - record: job:error_response_latency_milliseconds_per_pod:mean
           expr: |
             sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_sum{response_code=~"5.."}[1m]))
