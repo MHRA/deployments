@@ -9,6 +9,19 @@ spec:
       containers:
         - name: doc-index-updater
           image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
+          volumeMounts:
+            - name: sftp_keys
+              mountPath: "/etc/.ssh"
+              readOnly: true
+          volumes:
+            - name: sftp_keys
+              secret:
+                secretName: sentinel-creds
+                items:
+                  - key: public_key
+                    path: id_rsa.pub
+                  - key: private_key
+                    path: id_rsa
           env:
             - name: REDIS_SERVER
               value: doc-index-updater-non-prod.redis.cache.windows.net
@@ -18,3 +31,12 @@ spec:
               value: mhraproductsnonprod
             - name: RUST_LOG
               value: doc_index_updater=debug,info
+            - name: SENTINEL_PRIVATE_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sentinel-creds
+                  key: private_key_password
+            - name: SENTINEL_PUB_KEY_PATH
+              value: /etc/.ssh/id_rsa.pub
+            - name: SENTINEL_PRIVATE_KEY_PATH
+              value: /etc/.ssh/id_rsa
