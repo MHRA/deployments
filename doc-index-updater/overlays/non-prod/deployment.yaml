@@ -10,7 +10,7 @@ spec:
         - name: doc-index-updater
           image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
           volumeMounts:
-            - name: sftp_keys
+            - name: sftp-keys
               mountPath: "/etc/.ssh"
               readOnly: true
           env:
@@ -32,7 +32,7 @@ spec:
             - name: SENTINEL_PRIVATE_KEY_PATH
               value: /etc/.ssh/id_rsa
       volumes:
-        - name: sftp_keys
+        - name: sftp-keys
           secret:
             secretName: sentinel-creds
             items:
