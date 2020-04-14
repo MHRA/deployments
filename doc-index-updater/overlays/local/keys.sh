@@ -33,7 +33,9 @@ kubectl create secret generic sentinel-creds \
     --dry-run \
     --from-literal server="127.0.0.1" \
     --from-literal user="insert here" \
-    --from-literal pass="insert here" |
+    --from-literal public_key="insert here" \
+    --from-literal private_key="insert here" \
+    --from-literal private_key_password="insert here" |
     kubeseal \
         --format yaml >SealedSecret-sentinel-creds.yaml
 

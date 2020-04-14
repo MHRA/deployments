@@ -27,13 +27,40 @@ kubectl create secret generic search-creds \
         --format yaml >SealedSecret-search-creds.yaml
 
 # Sentinel credentials...
+SENTINEL_SERVER_IP=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name dev-sentinel-ip \
+    --query value \
+    --output tsv)
+SENTINEL_USERNAME=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name dev-sentinel-username \
+    --query value \
+    --output tsv)
+SENTINEL_PUBLIC_KEY=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name dev-sentinel-public-key \
+    --query value \
+    --output tsv)
+SENTINEL_PRIVATE_KEY=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name dev-sentinel-private-key \
+    --query value \
+    --output tsv)
+SENTINEL_PRIVATE_KEY_PASSWORD=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name dev-sentinel-private-key-password \
+    --query value \
+    --output tsv)
 kubectl create secret generic sentinel-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal server="127.0.0.1" \
-    --from-literal user="insert here" \
-    --from-literal pass="insert here" |
+    --from-literal server="$SENTINEL_SERVER_IP" \
+    --from-literal user="$SENTINEL_USERNAME" \
+    --from-literal public_key="$SENTINEL_PUBLIC_KEY" \
+    --from-literal private_key="$SENTINEL_PRIVATE_KEY" \
+    --from-literal private_key_password="$SENTINEL_PRIVATE_KEY_PASSWORD" |
     kubeseal \
         --format yaml >SealedSecret-sentinel-creds.yaml
 
