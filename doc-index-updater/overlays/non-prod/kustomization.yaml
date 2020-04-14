@@ -1,20 +1,20 @@
 namespace: doc-index-updater
 
 resources:
-- ../../base
-- SealedSecret-basic-auth-creds.yaml
-- SealedSecret-redis-creds.yaml
-- SealedSecret-search-creds.yaml
-- SealedSecret-sentinel-creds.yaml
-- SealedSecret-service-bus-creds.yaml
-- SealedSecret-storage-creds.yaml
+  - ../../base
+  - SealedSecret-basic-auth-creds.yaml
+  - SealedSecret-redis-creds.yaml
+  - SealedSecret-search-creds.yaml
+  - SealedSecret-sentinel-creds.yaml
+  - SealedSecret-service-bus-creds.yaml
+  - SealedSecret-storage-creds.yaml
 patchesStrategicMerge:
-- deployment.yaml
-- ingress.yaml
-- lock-timeout.yaml
+  - deployment.yaml
+  - ingress.yaml
+  - lock-timeout.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:21da20fb8717709dedc56242f5d93b2efd8d3f80aee71181e6ff7679d117e28b
-  name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
+  - digest: sha256:69e1febbcf815c25ed4f8d84775e48a3c6cb7fde8bea3b24d8db43f13dc610c5
+    name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
