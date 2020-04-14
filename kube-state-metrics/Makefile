@@ -4,7 +4,7 @@ default: ## Deploy using Kustomize
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
-	kustomize build ./base | kubectl delete  --ignore-not-found -f -
+	kustomize build ./base | kubectl delete  --ignore-not-found -f - || true
 
 .PHONY: help
 help: ## Display this help screen

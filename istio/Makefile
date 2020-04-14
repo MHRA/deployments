@@ -1,34 +1,35 @@
 overlay := non-prod
 
 .PHONY: default
-default: operator profile custom ## Install Istio
+default: operator init1 init2 ## Install Istio
 
 .PHONY: operator
 operator: ## Install Istio Operator
 	istioctl operator init
-	kubectl wait --for=condition=ready pod -l name=istio-operator -n istio-operator --timeout=480s
+	@until kubectl wait --for=condition=ready pod -l name=istio-operator -n istio-operator --timeout=480s; \
+	do \
+		echo "Waiting for istio operator"; \
+		sleep 10 ;\
+	done
 
-.PHONY: profile
-profile: ## Install Istio Profile
-	kustomize build profile | kubectl apply -f -
+.PHONY: init1
+init1: ## Install SSL certs and Istio profile
+	kustomize build overlays-1/$(overlay) | kubectl apply -f -
 	@until kubectl wait --for=condition=ready pod -l app=istiod -n istio-system --timeout=480s; \
 	do \
 		echo "Waiting for istiod"; \
 		sleep 10 ;\
 	done
 
-.PHONY: custom
-custom: ## Install custom Istio config
-ifeq ($(overlay), local)
-	./certs.sh
-endif
-
-	kustomize build overlays/$(overlay) | kubectl apply -f -	
+.PHONY: init2
+init2: ## Install custom manifests
+	kustomize build overlays-2/$(overlay) | kubectl apply -f -
 
 .PHONY: delete
 delete: ## Remove Istio
-	kubectl delete istiooperators.install.istio.io -n istio-system istiocontrolplane || true
-	istioctl operator remove
+	kubectl delete istiooperators.install.istio.io -n istio-system istiocontrolplane --ignore-not-found || true
+	istioctl operator remove || true
+	kustomize build overlays-1/$(overlay) | kubectl delete -f - --ignore-not-found || true
 
 .PHONY: help
 help: ## Display this help screen
