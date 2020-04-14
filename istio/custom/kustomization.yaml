@@ -2,3 +2,5 @@ namespace: istio-system
 
 resources:
   - gateway.yaml
+  - container-azm-ms-agentconfig.yaml
+  - prometheus-configmap.yaml
