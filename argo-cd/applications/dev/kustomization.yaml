@@ -3,3 +3,4 @@ namespace: argocd
 resources:
   - applications.yaml
   - doc-index-updater.yaml
+  - hello-world.yaml
