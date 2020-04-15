@@ -10,7 +10,7 @@ spec:
   source:
     path: hello-world/overlays/dev
     repoURL: https://github.com/MHRA/deployments.git
-    targetRevision: hello-world
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
