@@ -55,7 +55,7 @@ spec:
                 secretKeyRef:
                   name: sentinel-creds
                   key: private_key_password
-            - name: SENTINEL_PUB_KEY_PATH
+            - name: SENTINEL_PUBLIC_KEY_PATH
               value: /etc/.ssh/id_rsa.pub
             - name: SENTINEL_PRIVATE_KEY_PATH
               value: /etc/.ssh/id_rsa
