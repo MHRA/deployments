@@ -29,27 +29,27 @@ kubectl create secret generic search-creds \
 # Sentinel credentials...
 SENTINEL_SERVER_IP=$(az keyvault secret show \
     --vault-name mhra-non-prod-02 \
-    --name non-prod-dev-sentinel-ip \
+    --name non-prod-uat-sentinel-ip \
     --query value \
     --output tsv)
 SENTINEL_USERNAME=$(az keyvault secret show \
     --vault-name mhra-non-prod-02 \
-    --name non-prod-dev-sentinel-username \
+    --name non-prod-uat-sentinel-username \
     --query value \
     --output tsv)
 SENTINEL_PUBLIC_KEY=$(az keyvault secret show \
     --vault-name mhra-non-prod-02 \
-    --name non-prod-dev-sentinel-public-key \
+    --name non-prod-uat-sentinel-public-key \
     --query value \
     --output tsv)
 SENTINEL_PRIVATE_KEY=$(az keyvault secret show \
     --vault-name mhra-non-prod-02 \
-    --name non-prod-dev-sentinel-private-key \
+    --name non-prod-uat-sentinel-private-key \
     --query value \
     --output tsv)
 SENTINEL_PRIVATE_KEY_PASSWORD=$(az keyvault secret show \
     --vault-name mhra-non-prod-02 \
-    --name non-prod-dev-sentinel-private-key-password \
+    --name non-prod-uat-sentinel-private-key-password \
     --query value \
     --output tsv)
 kubectl create secret generic sentinel-creds \
