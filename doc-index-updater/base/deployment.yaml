@@ -15,6 +15,10 @@ spec:
       containers:
         - name: doc-index-updater
           image: doc-index-updater
+          volumeMounts:
+            - name: sftp-keys
+              mountPath: "/etc/.ssh"
+              readOnly: true
           env:
             - name: REDIS_SERVER
               value: doc-index-updater-dev.redis.cache.windows.net
@@ -46,11 +50,15 @@ spec:
                 secretKeyRef:
                   name: sentinel-creds
                   key: user
-            - name: SENTINEL_SFTP_PASSWORD
+            - name: SENTINEL_PRIVATE_KEY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: sentinel-creds
-                  key: pass
+                  key: private_key_password
+            - name: SENTINEL_PUBLIC_KEY_PATH
+              value: /etc/.ssh/id_rsa.pub
+            - name: SENTINEL_PRIVATE_KEY_PATH
+              value: /etc/.ssh/id_rsa
             - name: SERVICE_BUS_NAMESPACE
               value: doc-index-updater-dev
             - name: CREATE_QUEUE_NAME
@@ -129,3 +137,12 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 20
             timeoutSeconds: 30
+      volumes:
+        - name: sftp-keys
+          secret:
+            secretName: sentinel-creds
+            items:
+              - key: public_key
+                path: id_rsa.pub
+              - key: private_key
+                path: id_rsa
