@@ -7,4 +7,4 @@ spec:
     spec:
       containers:
         - name: hello-world
-          image: mhraproductsdevelopmentregistry.azurecr.io/products/hello-world
+          image: mhraproductsnonprodregistry.azurecr.io/products/hello-world
