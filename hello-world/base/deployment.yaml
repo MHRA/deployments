@@ -27,14 +27,14 @@ spec:
           readinessProbe:
             httpGet:
               path: /hello/test
-              port: 8000
+              port: 3030
             initialDelaySeconds: 5
             periodSeconds: 15
             timeoutSeconds: 30
           livenessProbe:
             httpGet:
               path: /hello/test
-              port: 8000
+              port: 3030
             initialDelaySeconds: 5
             periodSeconds: 20
             timeoutSeconds: 30
