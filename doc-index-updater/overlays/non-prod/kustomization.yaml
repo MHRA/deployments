@@ -1,30 +1,30 @@
 namespace: doc-index-updater
 
 resources:
-  - ../../base
-  - SealedSecret-basic-auth-creds.yaml
-  - SealedSecret-redis-creds.yaml
-  - SealedSecret-search-creds.yaml
-  - SealedSecret-sentinel-creds.yaml
-  - SealedSecret-service-bus-creds.yaml
-  - SealedSecret-storage-creds.yaml
+- ../../base
+- SealedSecret-basic-auth-creds.yaml
+- SealedSecret-redis-creds.yaml
+- SealedSecret-search-creds.yaml
+- SealedSecret-sentinel-creds.yaml
+- SealedSecret-service-bus-creds.yaml
+- SealedSecret-storage-creds.yaml
 patchesStrategicMerge:
-  - deployment.yaml
-  - ingress.yaml
-  - lock-timeout.yaml
+- deployment.yaml
+- ingress.yaml
+- lock-timeout.yaml
 
-patchesJSON6902:
-  - target:
-      version: v1
-      group: apps
-      kind: Deployment
-      name: doc-index-updater
-    patch: |-
-      - op: remove
-        path: /spec/template/spec/containers/0/env/9
+patchesJson6902:
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/containers/0/env/9
+  target:
+    group: apps
+    kind: Deployment
+    name: doc-index-updater
+    version: v1
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - digest: sha256:69e1febbcf815c25ed4f8d84775e48a3c6cb7fde8bea3b24d8db43f13dc610c5
-    name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
+- digest: sha256:c39a0e8e3efea44f468fd1626e3b884a0592fbe1dd5238e628187c1702bd3c09
+  name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
