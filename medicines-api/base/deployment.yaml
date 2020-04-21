@@ -29,6 +29,8 @@ spec:
               value: mhraproductsproduction
             - name: AZURE_SEARCH_API_VERSION
               value: "2017-11-11"
+            - name: RUST_LOG
+              value: info
           ports:
             - containerPort: 8000
           resources:
