@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: medicines-api
+spec:
+  destination:
+    namespace: medicines-api
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: medicines-api/overlays/non-prod
+    repoURL: https://github.com/MHRA/deployments.git
+    targetRevision: add_search_api
+  syncPolicy:
+    automated:
+      prune: true
