@@ -5,6 +5,7 @@ default: ## Deploy cluster management tools
 	cd ../kube-state-metrics/ && make
 	cd ../sealed-secrets && make overlay=$(overlay)
 	cd ../istio && make overlay=$(overlay)
+	cd ../observability/ && make
 	cd ../egress && make overlay=$(overlay)
 	cd ../argo-cd && make overlay=$(overlay)
 
@@ -12,6 +13,7 @@ default: ## Deploy cluster management tools
 delete: ## Remove cluster management tools
 	cd ../argo-cd && make delete overlay=$(overlay) || true
 	cd ../egress && make delete overlay=$(overlay) || true
+	cd ../observability/ && make delete || true
 	cd ../istio && make delete overlay=$(overlay) || true
 	cd ../sealed-secrets && make delete overlay=$(overlay) || true
 	cd ../kube-state-metrics/ && make delete || true

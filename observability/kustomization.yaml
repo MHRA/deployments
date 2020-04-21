@@ -1,0 +1,3 @@
+resources:
+  - container-azm-ms-agentconfig.yaml
+  - prometheus-configmap.yaml
