@@ -10,6 +10,7 @@ metadata:
     install.operator.istio.io/owner-name: istiocontrolplane
     release: istio
   name: prometheus
+  namespace: istio-system
 data:
   prometheus.rules.yml: |
     groups:
