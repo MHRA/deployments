@@ -15,3 +15,5 @@ spec:
     global:
       outboundTrafficPolicy:
         mode: REGISTRY_ONLY
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true
