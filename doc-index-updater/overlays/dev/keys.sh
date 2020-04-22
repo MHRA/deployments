@@ -104,11 +104,21 @@ kubectl create secret generic storage-creds \
         --format yaml >SealedSecret-storage-creds.yaml
 
 # HTTP Basic Auth credentials...
+BASIC_AUTH_USERNAME=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name basic-auth-username \
+    --query value \
+    --output tsv)
+BASIC_AUTH_PASSWORD=$(az keyvault secret show \
+    --vault-name mhra-dev \
+    --name basic-auth-password \
+    --query value \
+    --output tsv)
 kubectl create secret generic basic-auth-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal username="username" \
-    --from-literal password="password" |
+    --from-literal username="$BASIC_AUTH_USERNAME" \
+    --from-literal password="$BASIC_AUTH_PASSWORD" |
     kubeseal \
         --format yaml >SealedSecret-basic-auth-creds.yaml
