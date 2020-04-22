@@ -36,3 +36,27 @@ patchesJSON6902:
       - op: replace
         path: /spec/host
         value: doc-index-updater-non-prod.redis.cache.windows.net
+  - target:
+      group: networking.istio.io
+      version: v1alpha3
+      kind: ServiceEntry
+      name: service-bus
+    patch: |-
+      - op: replace
+        path: /spec/hosts/0
+        value: doc-index-updater-non-prod.servicebus.windows.net
+  - target:
+      group: networking.istio.io
+      version: v1alpha3
+      kind: VirtualService
+      name: service-bus
+    patch: |-
+      - op: replace
+        path: /spec/hosts/0
+        value: doc-index-updater-non-prod.servicebus.windows.net
+      - op: replace
+        path: /spec/tls/0/match/0/sni_hosts/0
+        value: doc-index-updater-non-prod.servicebus.windows.net
+      - op: replace
+        path: /spec/tls/0/route/0/destination/host
+        value: doc-index-updater-non-prod.servicebus.windows.net
