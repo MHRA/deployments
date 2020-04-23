@@ -11,5 +11,5 @@ patchesStrategicMerge:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:232bfef69b1416b8434b231781eb805d375ac29c5d4ba21f1d3a4eb5ed967568
+- digest: sha256:c2af60a47f7bb3ab5e5e37ba025746c1a40cd69d7e131494426efd57affb6530
   name: mhraproductsnonprodregistry.azurecr.io/products/medicines-api
