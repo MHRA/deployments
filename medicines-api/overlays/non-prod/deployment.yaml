@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: medicines-api
 spec:
-  replicas: 2
+  replicas: 3
   template:
     spec:
       containers:
