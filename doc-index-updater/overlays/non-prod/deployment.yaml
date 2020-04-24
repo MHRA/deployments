@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: doc-index-updater
 spec:
-  replicas: 2
+  replicas: 1
   template:
     spec:
       containers:
@@ -17,4 +17,4 @@ spec:
             - name: SEARCH_SERVICE
               value: mhraproductsnonprod
             - name: RUST_LOG
-              value: doc_index_updater=debug,info
+              value: doc_index_updater=debug
