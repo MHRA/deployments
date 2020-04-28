@@ -2,3 +2,6 @@ namespace: istio-system
 
 resources:
   - ../../base
+
+patchesStrategicMerge:
+  - search-service.yaml
