@@ -17,4 +17,3 @@ spec:
         mode: REGISTRY_ONLY
     sidecarInjectorWebhook:
       rewriteAppHTTPProbe: true
-    prometheus:
