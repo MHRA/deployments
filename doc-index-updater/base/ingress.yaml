@@ -13,3 +13,18 @@ spec:
             port:
               number: 80
             host: doc-index-updater
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater-allow
+spec:
+  selector:
+    matchLabels:
+      app: doc-index-updater
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+          ipBlocks:
+            - /0
