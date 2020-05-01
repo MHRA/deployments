@@ -11,4 +11,4 @@ spec:
     - from:
         - source:
             ipBlocks:
-              - 0.0.0.0/0
+              - 10.0.219.91
