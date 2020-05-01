@@ -26,5 +26,4 @@ spec:
   rules:
     - from:
         - source:
-          ipBlocks:
-            - /0
+          ipBlocks: ["/0"]

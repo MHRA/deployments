@@ -18,5 +18,4 @@ spec:
   rules:
     - from:
         - source:
-          ipBlocks:
-            - 10.5.65.0/26
+          ipBlocks: ["10.5.65.0/26"]
