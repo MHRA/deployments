@@ -5,3 +5,17 @@ metadata:
 spec:
   hosts:
     - doc-index-updater.test.mhra.gov.uk
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater-allow
+spec:
+  selector:
+    matchLabels:
+      app: doc-index-updater
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+          ipBlocks: ["10.5.65.0/26"]
