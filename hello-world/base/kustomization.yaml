@@ -2,6 +2,7 @@ namespace: hello-world
 
 resources:
   - namespace.yaml
+  - service-account.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml

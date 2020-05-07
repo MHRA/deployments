@@ -2,6 +2,7 @@ namespace: medicines-api
 
 resources:
   - namespace.yaml
+  - service-account.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml

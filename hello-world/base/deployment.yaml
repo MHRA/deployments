@@ -12,6 +12,7 @@ spec:
       labels:
         app: hello-world
     spec:
+      serviceAccountName: hello-world
       containers:
         - name: hello-world
           image: hello-world
