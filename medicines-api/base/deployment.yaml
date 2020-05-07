@@ -12,7 +12,7 @@ spec:
       labels:
         app: medicines-api
     spec:
-      serviceAccountName: doc-index-updater
+      serviceAccountName: medicines-api
       containers:
         - name: medicines-api
           image: medicines-api
