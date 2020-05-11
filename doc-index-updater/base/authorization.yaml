@@ -9,10 +9,20 @@ spec:
       app: doc-index-updater
   action: ALLOW
   rules:
-    - from:
+    - to:
+        - operation:
+            notPaths:
+              - "/pars"
+              - "/pars/*"
+    - to:
+        - operation:
+            paths:
+              - "/pars"
+              - "/pars/*"
+      from:
         - source:
             requestPrincipals:
               - "*"
-  #     # when:
-  #   - key: request.auth.claims[groups]
-  #     values: ["group1"]
+    #  when:
+    #   - key: request.auth.claims[groups]
+    #     values: ["medical_writers"]
