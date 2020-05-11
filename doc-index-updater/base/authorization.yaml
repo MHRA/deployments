@@ -23,6 +23,3 @@ spec:
         - source:
             requestPrincipals:
               - "*"
-    #  when:
-    #   - key: request.auth.claims[groups]
-    #     values: ["medical_writers"]
