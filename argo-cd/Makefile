@@ -23,6 +23,11 @@ delete: ## Remove ArgoCD
 	kustomize build overlays-2/$(overlay) | kubectl delete  --ignore-not-found -f - || true
 	kustomize build overlays-1/$(overlay) | kubectl delete  --ignore-not-found -f - || true
 
+.PHONY: open
+open: ## Open the UI in your default browser
+	( sleep 1 && open http://localhost:23001 ) &
+	kubectl port-forward -n argocd svc/argocd-server 23001:80
+
 .PHONY: help
 help: ## Display this help screen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
