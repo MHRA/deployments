@@ -6,4 +6,3 @@ resources:
 
 patchesStrategicMerge:
   - argocd-cm.yaml
-  - virtual-service.yaml
