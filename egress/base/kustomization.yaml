@@ -6,3 +6,4 @@ resources:
   - search-service.yaml
   - service-bus.yaml
   - storage-service.yaml
+  - microsoft-jwks.yaml
