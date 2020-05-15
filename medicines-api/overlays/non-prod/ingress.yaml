@@ -4,4 +4,4 @@ metadata:
   name: medicines-api
 spec:
   hosts:
-    - non-prod.mhra.gov.uk
+    - medicines-api.non-prod.mhra.gov.uk
