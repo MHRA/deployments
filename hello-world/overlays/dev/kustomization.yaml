@@ -6,5 +6,5 @@ patchesStrategicMerge:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:1a333b96c445fee66d71acdf21787521ec88bbd42ec89f324dccb03fcdd51b95
+- digest: sha256:73546117b7d314c9ae03730abc84e2ab7fb1705101c69f71a18934a240e455d1
   name: mhraproductsnonprodregistry.azurecr.io/products/hello-world
