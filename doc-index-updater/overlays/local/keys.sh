@@ -74,6 +74,7 @@ kubectl create secret generic storage-creds \
     --dry-run \
     --from-literal account="mhraproductsdevelopment" \
     --from-literal container="docs" \
+    --from-literal container_temporary="temporary-docs" \
     --from-literal key="$BLOB_KEY" |
     kubeseal \
         --format yaml >SealedSecret-storage-creds.yaml
