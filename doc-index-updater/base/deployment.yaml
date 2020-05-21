@@ -100,7 +100,7 @@ spec:
                 secretKeyRef:
                   name: storage-creds
                   key: container
-           - name: STORAGE_CONTAINER_TEMPORARY
+            - name: STORAGE_CONTAINER_TEMPORARY
               valueFrom:
                 secretKeyRef:
                   name: storage-creds
