@@ -1,6 +1,5 @@
 resources:
   - ../2-base
-  - virtual-service.yaml
 
 patchesStrategicMerge:
   - argocd-cm.yaml
