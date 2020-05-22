@@ -26,4 +26,4 @@ spec:
           when:
             - key: request.auth.claims[groups]
               values:
-                - "dev_writers_group_id"
+                - "non_prod_writers_group_id"
