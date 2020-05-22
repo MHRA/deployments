@@ -1,0 +1,83 @@
+[
+  {
+    "acceptMappedClaims": null,
+    "addIns": [],
+    "allowGuestsSignIn": null,
+    "allowPassthroughUsers": null,
+    "appId": "26f95b21-63b2-475f-8a35-d39cea4cfd61",
+    "appLogoUrl": null,
+    "appPermissions": null,
+    "appRoles": [
+      {
+        "allowedMemberTypes": [
+          "User"
+        ],
+        "description": "used to secure the pars upload endpoint via JWT",
+        "displayName": "pars_upload",
+        "id": "792b9d82-7f01-4c6a-9350-7099b500e3a1",
+        "isEnabled": false,
+        "value": "id_token"
+      }
+    ],
+    "applicationTemplateId": null,
+    "availableToOtherTenants": false,
+    "deletionTimestamp": null,
+    "displayName": "pars-upload-dev",
+    "errorUrl": null,
+    "groupMembershipClaims": "SecurityGroup",
+    "homepage": "https://mhraparsdev.azureedge.net",
+    "identifierUris": [],
+    "informationalUrls": {
+      "marketing": null,
+      "privacy": null,
+      "support": null,
+      "termsOfService": null
+    },
+    "isDeviceOnlyAuthSupported": null,
+    "keyCredentials": [],
+    "knownClientApplications": [],
+    "logo@odata.mediaEditLink": "directoryObjects/579a6ea5-4863-42ed-9acd-f84ee54c34d3/Microsoft.DirectoryServices.Application/logo",
+    "logoUrl": null,
+    "logoutUrl": null,
+    "mainLogo@odata.mediaEditLink": "directoryObjects/579a6ea5-4863-42ed-9acd-f84ee54c34d3/Microsoft.DirectoryServices.Application/mainLogo",
+    "oauth2AllowIdTokenImplicitFlow": true,
+    "oauth2AllowImplicitFlow": false,
+    "oauth2AllowUrlPathMatching": false,
+    "oauth2Permissions": [
+      {
+        "adminConsentDescription": "Allow the application to access pars-upload-dev on behalf of the signed-in user.",
+        "adminConsentDisplayName": "Access pars-upload-dev",
+        "id": "6ab6353d-ae80-4351-8bd4-5ee589522909",
+        "isEnabled": true,
+        "type": "User",
+        "userConsentDescription": "Allow the application to access pars-upload-dev on your behalf.",
+        "userConsentDisplayName": "Access pars-upload-dev",
+        "value": "user_impersonation"
+      }
+    ],
+    "oauth2RequirePostResponse": false,
+    "objectId": "579a6ea5-4863-42ed-9acd-f84ee54c34d3",
+    "objectType": "Application",
+    "odata.type": "Microsoft.DirectoryServices.Application",
+    "optionalClaims": null,
+    "orgRestrictions": [],
+    "parentalControlSettings": {
+      "countriesBlockedForMinors": [],
+      "legalAgeGroupRule": "Allow"
+    },
+    "passwordCredentials": [],
+    "preAuthorizedApplications": null,
+    "publicClient": null,
+    "publisherDomain": "MHRA.onmicrosoft.com",
+    "recordConsentConditions": null,
+    "replyUrls": [
+      "https://mhraparsdev.azureedge.net",
+      "http://localhost:3000"
+    ],
+    "requiredResourceAccess": [],
+    "samlMetadataUrl": null,
+    "signInAudience": "AzureADMyOrg",
+    "tokenEncryptionKeyId": null,
+    "wwwHomepage": null
+  }
+]
