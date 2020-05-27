@@ -19,6 +19,12 @@ spec:
             paths:
               - "/pars"
               - "/pars/*"
+            methods: ["OPTIONS"]
+    - to:
+        - operation:
+            paths:
+              - "/pars"
+              - "/pars/*"
       from:
         - source:
             requestPrincipals:
