@@ -5,3 +5,20 @@ metadata:
 spec:
   hosts:
     - doc-index-updater.test.mhra.gov.uk
+  http:
+    - route:
+        - destination:
+            port:
+              number: 80
+            host: doc-index-updater
+        corsPolicy:
+          allowOrigin:
+            - test.mhra.gov.uk
+            - mhraparsnon-prod.azureedge.net
+            - mhraparsnonprod.z33.web.core.windows.net
+          allowMethods:
+            - POST
+          allowCredentials: false
+          allowHeaders:
+            - Authorization
+          maxAge: "24h"
