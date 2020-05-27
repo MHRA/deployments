@@ -18,3 +18,5 @@ spec:
               value: mhraproductsnonprod
             - name: RUST_LOG
               value: doc_index_updater=debug
+            - name: PARS_UPLOAD_SITE_ORIGIN
+              value: https://mhraparsnon-prod.azureedge.net
