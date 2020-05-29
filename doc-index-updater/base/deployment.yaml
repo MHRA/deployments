@@ -120,6 +120,21 @@ spec:
                 secretKeyRef:
                   name: basic-auth-creds
                   key: password
+            - name: LOG_STORAGE_CONTAINER
+              valueFrom:
+                secretKeyRef:
+                  name: logs-storage-creds
+                  key: container
+            - name: LOG_STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: logs-storage-creds
+                  key: account
+            - name: LOG_STORAGE_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: logs-storage-creds
+                  key: key
           ports:
             - containerPort: 8000
           resources:

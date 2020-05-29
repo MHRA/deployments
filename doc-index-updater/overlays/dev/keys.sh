@@ -104,6 +104,21 @@ kubectl create secret generic storage-creds \
     kubeseal \
         --format yaml >SealedSecret-storage-creds.yaml
 
+# Azure Log Blob Storage credentials...
+LOG_BLOB_KEY=$(az storage account keys list \
+    --account-name=mhralogsdev \
+    --query='[0].value' \
+    --output=tsv)
+kubectl create secret generic logs-storage-creds \
+    -n doc-index-updater \
+    -o json \
+    --dry-run \
+    --from-literal account="mhralogsdev" \
+    --from-literal container="transaction-logs" \
+    --from-literal key="$LOG_BLOB_KEY" |
+    kubeseal \
+        --format yaml >SealedSecret-logs-storage-creds.yaml
+
 # HTTP Basic Auth credentials...
 BASIC_AUTH_USERNAME=$(az keyvault secret show \
     --vault-name mhra-dev \
