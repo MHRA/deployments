@@ -2,6 +2,7 @@ namespace: istio-system
 
 resources:
   - github.yaml
+  - logs-storage-service.yaml
   - redis.yaml
   - search-service.yaml
   - service-bus.yaml
