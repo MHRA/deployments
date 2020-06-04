@@ -15,15 +15,9 @@ default: ## Apply egress configuration
 		--name non-prod-uat-sentinel-ip \
 		--query value \
 		--output tsv) && \
-	PROD_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
-		--vault-name $(vault-prod)  \
-		--name sentinel-ip \
-		--query value \
-		--output tsv) && \
 	kustomize build ./overlays/$(overlay) | \
 		sed -e "s/\$${DEV_SENTINEL_IP_ADDRESS}/$${DEV_SENTINEL_IP_ADDRESS}/g" | \
 		sed -e "s/\$${UAT_SENTINEL_IP_ADDRESS}/$${UAT_SENTINEL_IP_ADDRESS}/g" | \
-		sed -e "s/\$${PROD_SENTINEL_IP_ADDRESS}/$${PROD_SENTINEL_IP_ADDRESS}/g" | \
 		kubectl apply -f -
 
 .PHONY: delete

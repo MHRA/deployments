@@ -5,6 +5,7 @@ metadata:
 spec:
   hosts:
     - doc-index-updater.test.mhra.gov.uk
+    - doc-index-updater.non-prod.mhra.gov.uk
   http:
     - route:
         - destination:
