@@ -1,0 +1,7 @@
+namespace: argocd
+
+resources:
+  - ../../1-crds
+
+patchesStrategicMerge:
+  - argocd-sealed-secret.yaml
