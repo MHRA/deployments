@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medicines-api
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: medicines-api
+          image: mhraproducts4853registry.azurecr.io/products/medicines-api
+          env:
+            - name: SEARCH_SERVICE
+              value: mhraproducts4853
+            - name: RUST_LOG
+              value: api=debug,info

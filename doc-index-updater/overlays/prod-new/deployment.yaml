@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-index-updater
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: doc-index-updater
+          image: mhraproducts4853registry.azurecr.io/products/doc-index-updater
+          env:
+            - name: REDIS_SERVER
+              value: doc-index-updater-4853.redis.cache.windows.net
+            - name: SEARCH_SERVICE
+              value: mhraproducts4853
+            - name: SERVICE_BUS_NAMESPACE
+              value: doc-index-updater-4853
+            - name: RUST_LOG
+              value: doc_index_updater=debug,info
