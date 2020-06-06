@@ -7,9 +7,9 @@ vault-non-prod := mhra-non-prod-02
 .PHONY: default
 default: ## Apply egress configuration
 ifeq ($(overlay), prod-new)
-	prod
+	make prod overlay=$(overlay)
 else
-	nonprod
+	make nonprod overlay=$(overlay)
 endif
 
 .PHONY: nonprod
@@ -33,7 +33,7 @@ nonprod:
 prod:
 	PROD_SENTINEL_IP_ADDRESS=$$(az keyvault secret show \
 		--vault-name $(vault-prod-new)  \
-		--name non-prod-dev-sentinel-ip \
+		--name sentinel-ip \
 		--query value \
 		--output tsv) && \
 	kustomize build ./overlays/$(overlay) | \
