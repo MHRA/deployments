@@ -1,0 +1,6 @@
+namespace: argocd
+
+resources:
+  - applications.yaml
+  - doc-index-updater.yaml
+  - medicines-api.yaml
