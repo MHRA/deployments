@@ -106,14 +106,14 @@ kubectl create secret generic storage-creds \
 
 # Azure Log Blob Storage credentials...
 LOG_BLOB_KEY=$(az storage account keys list \
-    --account-name=logsmhraproducts4853 \
+    --account-name=mhralogs4853 \
     --query='[0].value' \
     --output=tsv)
 kubectl create secret generic logs-storage-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal account="logsmhraproducts4853" \
+    --from-literal account="mhralogs4853" \
     --from-literal container="transaction-logs" \
     --from-literal key="$LOG_BLOB_KEY" |
     kubeseal \
