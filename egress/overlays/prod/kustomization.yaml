@@ -5,6 +5,7 @@ resources:
   - sentinel.yaml
 
 patchesStrategicMerge:
+  - logs-storage-service.yaml
   - search-service.yaml
   - service-bus.yaml
   - storage-service.yaml

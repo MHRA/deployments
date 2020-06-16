@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: logs-storage-service
+spec:
+  hosts:
+    - logsmhraproduction.blob.core.windows.net
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: logs-storage-service
+spec:
+  hosts:
+    - logsmhraproduction.blob.core.windows.net
+  tls:
+    - match:
+        - port: 443
+          sni_hosts:
+            - logsmhraproduction.blob.core.windows.net
+      route:
+        - destination:
+            host: logsmhraproduction.blob.core.windows.net
+            port:
+              number: 443
+          weight: 100
