@@ -1,4 +1,3 @@
-# Sentinel credentials...
 CER=$(az keyvault secret show \
     --vault-name mhra-prod \
     --name doc-index-updater-mhra-gov-uk-cer \

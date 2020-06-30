@@ -3,3 +3,6 @@ namespace: istio-system
 resources:
   - ../../init-2
   - service-ingress-internal.yaml
+
+patchesStrategicMerge:
+  - gateway.yaml
