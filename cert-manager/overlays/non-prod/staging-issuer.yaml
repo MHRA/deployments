@@ -7,7 +7,7 @@ spec:
     email: tbd
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      name: prod-issuer-account-key
+      name: cert-issuer-account-key
     solvers:
       - http01:
           ingress:
