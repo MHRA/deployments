@@ -2,37 +2,19 @@ az keyvault secret show \
     --vault-name mhra-non-prod-02 \
     --name doc-index-updater-mhra-gov-uk-cer \
     --query value \
-    --output tsv >test.crt
+    --output tsv >doc-index-updater.crt
 az keyvault secret show \
     --vault-name mhra-non-prod-02 \
     --name doc-index-updater-mhra-gov-uk-key \
     --query value \
-    --output tsv >test.key
+    --output tsv >doc-index-updater.key
 kubectl create secret tls istio-ingressgateway-certs \
     -n istio-system \
     -o json \
     --dry-run \
-    --cert=./test.crt \
-    --key=./test.key |
+    --cert=./doc-index-updater.crt \
+    --key=./doc-index-updater.key |
     kubeseal \
         --format yaml >sealed-secret-ingressgateway-certs.yaml
-rm test.crt
-rm test.key
-
-az keyvault secret show \
-    --vault-name mhra-non-prod-02 \
-    --name non-prod-mhra-gov-uk-cer \
-    --query value \
-    --output tsv >nonprod.crt
-az keyvault secret show \
-    --vault-name mhra-non-prod-02 \
-    --name non-prod-mhra-gov-uk-key \
-    --query value \
-    --output tsv >nonprod.key
-kubectl create secret tls non-prod-istio-ingressgateway-certs \
-    -n istio-system \
-    -o json \
-    --cert=./nonprod.crt \
-    --key=./nonprod.key
-rm nonprod.crt
-rm nonprod.key
+rm doc-index-updater.crt
+rm doc-index-updater.key
