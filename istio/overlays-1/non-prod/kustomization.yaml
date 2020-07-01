@@ -3,4 +3,3 @@ namespace: istio-system
 resources:
   - ../../init-1
   - sealed-secret-ingressgateway-certs.yaml
-  - sealed-secret-non-prod-ingressgateway-certs.yaml
