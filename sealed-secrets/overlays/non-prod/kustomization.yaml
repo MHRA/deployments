@@ -1,3 +1,0 @@
-resources:
-  - sealed-secrets-key.yaml
-  - ../../base

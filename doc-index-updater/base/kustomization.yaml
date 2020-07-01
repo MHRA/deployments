@@ -2,7 +2,9 @@ namespace: doc-index-updater
 
 resources:
   - namespace.yaml
+  - service-account.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
-  - destination-rule.yaml
+  - authentication.yaml
+  - authorization.yaml

@@ -1,0 +1,8 @@
+namespace: argocd
+
+resources:
+  - ../../3-custom
+  - ../../applications/non-prod
+
+patchesStrategicMerge:
+  - argocd-cm.yaml

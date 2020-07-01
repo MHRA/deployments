@@ -1,0 +1,19 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: istiocontrolplane
+spec:
+  profile: demo
+  # meshConfig:
+  #   outboundTrafficPolicy:
+  #     mode: REGISTRY_ONLY
+  components:
+    egressGateways:
+      - name: istio-egressgateway
+        enabled: false
+  values:
+    global:
+      outboundTrafficPolicy:
+        mode: REGISTRY_ONLY
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      serviceAccountName: hello-world
+      containers:
+        - name: hello-world
+          image: hello-world
+          ports:
+            - containerPort: 3030
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 10m
+              memory: 100Mi
+          readinessProbe:
+            httpGet:
+              path: /hello/test
+              port: 3030
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /hello/test
+              port: 3030
+            initialDelaySeconds: 5
+            periodSeconds: 20
+            timeoutSeconds: 30

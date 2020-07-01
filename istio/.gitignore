@@ -3,3 +3,5 @@ csr.txt
 key.txt
 root-crt.txt
 root-key.txt
+*.crt
+*.key

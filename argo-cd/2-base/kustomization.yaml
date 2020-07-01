@@ -1,0 +1,7 @@
+resources:
+  - install.yaml
+
+images:
+  - name: argoproj/argocd
+    newName: argoproj/argocd
+    newTag: v1.5.1

@@ -4,7 +4,7 @@ metadata:
   name: service-bus
 spec:
   hosts:
-    - doc-index-updater-non-prod.servicebus.windows.net
+    - doc-index-updater-dev.servicebus.windows.net
   ports:
     - number: 443
       name: https
@@ -18,15 +18,15 @@ metadata:
   name: service-bus
 spec:
   hosts:
-    - doc-index-updater-non-prod.servicebus.windows.net
+    - doc-index-updater-dev.servicebus.windows.net
   tls:
     - match:
         - port: 443
           sni_hosts:
-            - doc-index-updater-non-prod.servicebus.windows.net
+            - doc-index-updater-dev.servicebus.windows.net
       route:
         - destination:
-            host: doc-index-updater-non-prod.servicebus.windows.net
+            host: doc-index-updater-dev.servicebus.windows.net
             port:
               number: 443
           weight: 100

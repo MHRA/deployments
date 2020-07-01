@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello-world
+spec:
+  destination:
+    namespace: hello-world
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: hello-world/overlays/dev
+    repoURL: https://github.com/MHRA/deployments.git
+    targetRevision: master

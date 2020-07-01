@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: sentinel-uat
+spec:
+  hosts:
+    - sentinel.uat # not used when addresses present
+  addresses:
+    - ${UAT_SENTINEL_IP_ADDRESS}
+  ports:
+    - number: 22
+      name: ssh
+      protocol: tcp
+  resolution: STATIC
+  location: MESH_EXTERNAL
+  endpoints:
+    - address: ${UAT_SENTINEL_IP_ADDRESS}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: sentinel-uat
+spec:
+  hosts:
+    - sentinel.uat
+  tcp:
+    - match:
+        - port: 22
+      route:
+        - destination:
+            host: sentinel.uat
+            port:
+              number: 22

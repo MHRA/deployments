@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: doc-index-updater
 spec:
+  replicas: 1
   template:
     spec:
       containers:
@@ -15,5 +16,7 @@ spec:
               value: doc-index-updater-non-prod
             - name: SEARCH_SERVICE
               value: mhraproductsnonprod
-            - name: SERVICE_BUS_NAMESPACE
-              value: doc-index-updater-non-prod
+            - name: RUST_LOG
+              value: doc_index_updater=debug
+            - name: PARS_UPLOAD_SITE_ORIGIN
+              value: https://mhraparsnon-prod.azureedge.net

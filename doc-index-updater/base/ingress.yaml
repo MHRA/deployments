@@ -1,4 +1,4 @@
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: doc-index-updater
@@ -6,7 +6,7 @@ spec:
   hosts:
     - doc-index-updater.localhost
   gateways:
-    - ingressgateway.istio-system.svc.cluster.local
+    - istio-system/ingressgateway
   http:
     - route:
         - destination:
