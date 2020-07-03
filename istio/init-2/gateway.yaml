@@ -18,12 +18,6 @@ spec:
         protocol: HTTPS
       hosts:
         - "*"
-      # tls:
-      #   mode: SIMPLE
-      #   credentialName: gateway-certs
-      #   privateKey: sds
-      #   serverCertificate: sds
       tls:
         mode: SIMPLE
-        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
-        privateKey: /etc/istio/ingressgateway-certs/tls.key
+        credentialName: selfsigned-cert-tls

@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: selfsigned-cert
+spec:
+  dnsNames:
+    - doc-index-updater.non-prod.mhra.gov.uk
+  secretName: selfsigned-cert-tls
+  issuerRef:
+    name: test-selfsigned
