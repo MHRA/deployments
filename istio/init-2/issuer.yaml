@@ -1,6 +1,14 @@
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
-  name: test-selfsigned
+  name: staging
 spec:
-  selfSigned: {}
+  acme:
+    email: tim.lee@mhra.gov.uk
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: cert-issuer-account-key
+    solvers:
+      - http01:
+          ingress:
+            class: istio
