@@ -2,6 +2,5 @@ namespace: istio-system
 
 resources:
   - issuer.yaml
-  - certificate.yaml
   - gateway.yaml
   - peer-authentication.yaml

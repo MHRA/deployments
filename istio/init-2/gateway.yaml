@@ -14,19 +14,11 @@ spec:
         httpsRedirect: true # sends 301 redirect for http requests
     - port:
         number: 443
-        name: https-443-doc-index-updater
+        name: https-443
         protocol: HTTPS
       hosts:
-        - doc-index-updater.non-prod.mhra.gov.uk
+        - "*"
       tls:
         mode: SIMPLE
-        credentialName: cert-doc-index-updater
-    - port:
-        number: 443
-        name: https-443-medicines-api
-        protocol: HTTPS
-      hosts:
-        - medicines-api.non-prod.mhra.gov.uk
-      tls:
-        mode: SIMPLE
-        credentialName: cert-medicines-api
+        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+        privateKey: /etc/istio/ingressgateway-certs/tls.key
