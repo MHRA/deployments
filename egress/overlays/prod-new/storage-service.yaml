@@ -16,7 +16,7 @@ spec:
   tls:
     - match:
         - port: 443
-          sni_hosts:
+          sniHosts:
             - mhraproducts4853.blob.core.windows.net
       route:
         - destination:
