@@ -16,7 +16,7 @@ spec:
   tls:
     - match:
         - port: 443
-          sni_hosts:
+          sniHosts:
             - doc-index-updater-4853.servicebus.windows.net
       route:
         - destination:
