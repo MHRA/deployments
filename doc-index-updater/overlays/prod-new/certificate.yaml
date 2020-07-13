@@ -5,8 +5,8 @@ metadata:
   namespace: istio-system
 spec:
   dnsNames:
-    - doc-index-updater.non-prod.mhra.gov.uk
+    - doc-index-updater.api.mhra.gov.uk
   secretName: cert-doc-index-updater
   issuerRef:
-    name: production
+    name: staging
     kind: ClusterIssuer

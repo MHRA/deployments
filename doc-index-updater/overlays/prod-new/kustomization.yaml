@@ -2,6 +2,8 @@ namespace: doc-index-updater
 
 resources:
   - ../../base
+  - certificate.yaml
+  - gateway.yaml
   - SealedSecret-basic-auth-creds.yaml
   - SealedSecret-logs-storage-creds.yaml
   - SealedSecret-redis-creds.yaml

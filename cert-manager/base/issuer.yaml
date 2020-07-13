@@ -19,7 +19,7 @@ metadata:
   name: production
 spec:
   acme:
-    email: tim.lee@mhra.gov.uk
+    email: andy.snow@mhra.gov.uk
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: cert-issuer-account-key
