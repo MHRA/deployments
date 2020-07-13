@@ -2,6 +2,8 @@ namespace: medicines-api
 
 resources:
   - ../../base
+  - certificate.yaml
+  - gateway.yaml
   - SealedSecret-search-creds.yaml
 
 patchesStrategicMerge:
