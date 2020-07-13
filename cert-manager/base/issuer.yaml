@@ -1,5 +1,5 @@
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: staging
 spec:
@@ -14,7 +14,7 @@ spec:
             class: istio
 ---
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: production
 spec:

@@ -2,6 +2,3 @@ namespace: cert-manager
 
 resources:
   - ../../base/
-  - staging-issuer.yaml
-# patchesStrategicMerge:
-#   - namespace.yaml
