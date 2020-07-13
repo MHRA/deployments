@@ -14,21 +14,3 @@ spec:
         mode: SIMPLE
         serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
         privateKey: /etc/istio/ingressgateway-certs/tls.key
-    - port:
-        number: 443
-        name: https-443-doc-index-updater-api
-        protocol: HTTPS
-      hosts:
-        - doc-index-updater.api.mhra.gov.uk
-      tls:
-        mode: SIMPLE
-        credentialName: cert-doc-index-updater
-    - port:
-        number: 443
-        name: https-443-medicines-api
-        protocol: HTTPS
-      hosts:
-        - medicines.api.mhra.gov.uk
-      tls:
-        mode: SIMPLE
-        credentialName: cert-medicines-api
