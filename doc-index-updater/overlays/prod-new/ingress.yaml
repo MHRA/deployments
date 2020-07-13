@@ -6,3 +6,6 @@ spec:
   hosts:
     - doc-index-updater.mhra.gov.uk
     - doc-index-updater.api.mhra.gov.uk
+  gateways:
+    - istio-system/ingressgateway
+    - istio-system/doc-index-updater-ingressgateway
