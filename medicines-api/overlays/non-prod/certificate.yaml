@@ -2,11 +2,11 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
   name: cert-medicines-api
-  namespace: medicines-api
+  namespace: istio-system
 spec:
   dnsNames:
     - medicines-api.non-prod.mhra.gov.uk
   secretName: cert-medicines-api
   issuerRef:
     name: staging
-    # name: production
+    kind: ClusterIssuer
