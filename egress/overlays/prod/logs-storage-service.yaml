@@ -16,7 +16,7 @@ spec:
   tls:
     - match:
         - port: 443
-          sni_hosts:
+          sniHosts:
             - logsmhraproduction.blob.core.windows.net
       route:
         - destination:

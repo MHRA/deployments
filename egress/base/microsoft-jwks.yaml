@@ -22,7 +22,7 @@ spec:
   tls:
     - match:
         - port: 443
-          sni_hosts:
+          sniHosts:
             - login.microsoftonline.com
       route:
         - destination:

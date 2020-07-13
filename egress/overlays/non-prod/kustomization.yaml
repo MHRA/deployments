@@ -55,7 +55,7 @@ patchesJSON6902:
         path: /spec/hosts/0
         value: doc-index-updater-non-prod.servicebus.windows.net
       - op: replace
-        path: /spec/tls/0/match/0/sni_hosts/0
+        path: /spec/tls/0/match/0/sniHosts/0
         value: doc-index-updater-non-prod.servicebus.windows.net
       - op: replace
         path: /spec/tls/0/route/0/destination/host
