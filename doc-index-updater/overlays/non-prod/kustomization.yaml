@@ -1,22 +1,22 @@
 resources:
-  - ../../base
-  - SealedSecret-basic-auth-creds.yaml
-  - certificate.yaml
-  - gateway.yaml
-  - SealedSecret-logs-storage-creds.yaml
-  - SealedSecret-redis-creds.yaml
-  - SealedSecret-search-creds.yaml
-  - SealedSecret-sentinel-creds.yaml
-  - SealedSecret-service-bus-creds.yaml
-  - SealedSecret-storage-creds.yaml
+- ../../base
+- SealedSecret-basic-auth-creds.yaml
+- certificate.yaml
+- gateway.yaml
+- SealedSecret-logs-storage-creds.yaml
+- SealedSecret-redis-creds.yaml
+- SealedSecret-search-creds.yaml
+- SealedSecret-sentinel-creds.yaml
+- SealedSecret-service-bus-creds.yaml
+- SealedSecret-storage-creds.yaml
 patchesStrategicMerge:
-  - deployment.yaml
-  - ingress.yaml
-  - lock-timeout.yaml
+- deployment.yaml
+- ingress.yaml
+- lock-timeout.yaml
     # - authentication.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - digest: sha256:c82fe98409e03cbaa25892d62025192ab7df3ffefcd65ce6623ca869a1a6cfcd
-    name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
+- digest: sha256:79051e172aa99a4f135626d697aba13fe886059399c58df1d92a7a1fe6f5a6dd
+  name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
