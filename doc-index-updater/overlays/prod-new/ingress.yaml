@@ -9,7 +9,7 @@ spec:
   gateways:
     - istio-system/ingressgateway
     - istio-system/doc-index-updater-ingressgateway
-    http:
+  http:
     - route:
         - destination:
             port:
