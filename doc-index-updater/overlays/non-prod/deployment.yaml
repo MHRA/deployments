@@ -4,7 +4,7 @@ metadata:
   name: doc-index-updater
   namespace: doc-index-updater
 spec:
-  replicas: 2
+  replicas: 1
   template:
     spec:
       containers:
