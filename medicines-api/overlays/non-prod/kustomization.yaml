@@ -1,15 +1,15 @@
 resources:
-  - ../../base
-  - certificate.yaml
-  - gateway.yaml
-  - SealedSecret-search-creds.yaml
+- ../../base
+- certificate.yaml
+- gateway.yaml
+- SealedSecret-search-creds.yaml
 
 patchesStrategicMerge:
-  - deployment.yaml
-  - ingress.yaml
+- deployment.yaml
+- ingress.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - digest: sha256:9b9e1e71f3534412fa1412dd834274da5740d1ffbaf241c0cf429eac04f77ede
-    name: mhraproductsnonprodregistry.azurecr.io/products/medicines-api
+- digest: sha256:0e32156c834df7a96bf1280d69f9e567bd3cd0c83140007cd56380e60569f265
+  name: mhraproductsnonprodregistry.azurecr.io/products/medicines-api
