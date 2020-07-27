@@ -13,10 +13,10 @@ patchesStrategicMerge:
 - deployment.yaml
 - ingress.yaml
 - lock-timeout.yaml
-    # - authentication.yaml
+- authentication.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:79051e172aa99a4f135626d697aba13fe886059399c58df1d92a7a1fe6f5a6dd
+- digest: sha256:1f8d08b4da09128629167ff53d9f30681f37274feaf52337010243b8e11ee0a2
   name: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater
