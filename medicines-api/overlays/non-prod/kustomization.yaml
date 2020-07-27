@@ -3,6 +3,7 @@ resources:
   - certificate.yaml
   - gateway.yaml
   - SealedSecret-search-creds.yaml
+  - storage-account.yaml
 
 patchesStrategicMerge:
   - deployment.yaml
