@@ -3,7 +3,7 @@ name: validate-config
 on:
   push:
     branches:
-      - "**"
+      - "master"
     paths:
       - "**/*.yaml"
   pull_request:
