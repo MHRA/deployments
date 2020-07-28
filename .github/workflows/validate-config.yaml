@@ -30,4 +30,4 @@ jobs:
           command: |
             set -eux
             set -o pipefail
-            find . -name kustomization.yaml -not -path "./sealed-secrets/init-1/*" | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /' | sh | exit $?
+            find . -name kustomization.yaml | grep -v "sealed-secrets/init-1" | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /' | sh | exit $?
