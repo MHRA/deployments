@@ -6,6 +6,11 @@ on:
       - "**"
     paths:
       - "**/*.yaml"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "**/*.yaml"
 
 jobs:
   build-and-test:
