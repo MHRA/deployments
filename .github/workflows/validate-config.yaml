@@ -28,4 +28,4 @@ jobs:
         with:
           kustomize: 3.4.0
           command: |
-            $(find . -name kustomization.yaml | grep -v "sealed-secrets/init-1" | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /') > /dev/null
+            find . -name kustomization.yaml | grep -v "sealed-secrets/init-1" | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /'
