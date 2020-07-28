@@ -28,5 +28,6 @@ jobs:
         with:
           kustomize: 3.4.0
           command: |
+            set -eux
             set -o pipefail
-            find . -name kustomization.yaml | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /' | sh
+            find . -name kustomization.yaml | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /' | sh | exit $?
