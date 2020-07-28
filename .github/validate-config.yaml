@@ -1,0 +1,27 @@
+name: validate-config
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "**/*.yaml"
+
+jobs:
+  build-and-test:
+    name: Validate configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+        with:
+          path: deployments
+
+      - name: Validate config
+        uses: stefanprodan/kube-tools@v1
+        with:
+          kustomize: 3.4.0
+          command: |
+            set -eux
+            find . -name kustomization.yaml | sed 's/kustomization.yaml//' | sed 's/^/kustomize build /' | sh
