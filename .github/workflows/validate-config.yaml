@@ -28,4 +28,6 @@ jobs:
         with:
           kustomize: 3.4.0
           command: |
-            for file in $(find . -name kustomization.yaml); do kustomize build $(dirname $file) > /dev/null; done
+            for file in $(find . -name kustomization.yaml | grep -v "sealed-secrets/init-1")
+              do kustomize build $(dirname $file) > /dev/null
+            done
