@@ -1,7 +1,7 @@
 overlay := non-prod
 
 .PHONY: default
-default: init1 helm-install init2
+default: init1 helmInstall init2
 
 .PHONY: init1
 init1: ## Configure cert-manager namespace
