@@ -3,11 +3,22 @@ kind: IstioOperator
 metadata:
   name: istiocontrolplane
 spec:
-  profile: demo
+  profile: default
   # meshConfig:
   #   outboundTrafficPolicy:
   #     mode: REGISTRY_ONLY
+  addonComponents:
+    kiali:
+      enabled: true
+    grafana:
+      enabled: false
+    prometheus:
+      enabled: true
+    tracing:
+      enabled: true
   components:
+    telemetry:
+      enabled: true
     egressGateways:
       - name: istio-egressgateway
         enabled: false
@@ -15,5 +26,14 @@ spec:
     global:
       outboundTrafficPolicy:
         mode: REGISTRY_ONLY
+      # proxy:
+      #   accessLogEncoding: JSON
+      #   accessLogFile: /dev/stdout
     sidecarInjectorWebhook:
       rewriteAppHTTPProbe: true
+    telemetry:
+      enabled: true
+      v1:
+        enabled: false
+      v2:
+        enabled: true
