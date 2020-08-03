@@ -151,3 +151,11 @@ This repo contains all the manifests for resources running under [Kubernetes](ht
    ```
 
    Your mileage may vary, and you may need to use port-forwarding (or grpc-web) for this to be useful, because we use Istio ingress gateway. It's probably easier to use the web gui.
+
+1. `helm` - manage templating and installation of helm charts
+
+   ```sh
+   brew install helm
+   ```
+
+   Currently used to configure the cert-manager.

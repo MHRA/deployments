@@ -1,8 +1,23 @@
 overlay := non-prod
 
 .PHONY: default
-default: ## Deploy using Kustomize
-	kustomize build ./overlays/$(overlay) | kubectl apply --validate=false -f -
+default: init1 helm-install init2
+
+.PHONY: init1
+init1: ## Configure cert-manager namespace
+	kustomize build ./overlays-1/$(overlay) | kubectl apply -f -
+
+.PHONY: helmInstall
+helmInstall: ## Install cert-manager config using helm
+	helm install \ 
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v0.15.1 \                       
+  --set installCRDs=true
+
+.PHONY: init2
+init2: ## Configure issuers
+	kustomize build ./overlays-2/$(overlay) | kubectl apply -f -
 
 .PHONY: delete
 delete: ## Delete
