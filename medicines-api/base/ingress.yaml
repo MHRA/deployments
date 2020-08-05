@@ -6,7 +6,7 @@ spec:
   hosts:
     - medicines-api.localhost
   gateways:
-    - istio-system/ingressgateway
+    - istio-system/istio-ingressgateway
   http:
     - route:
         - destination:

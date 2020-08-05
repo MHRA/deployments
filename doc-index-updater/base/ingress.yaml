@@ -6,7 +6,7 @@ spec:
   hosts:
     - doc-index-updater.localhost
   gateways:
-    - istio-system/ingressgateway
+    - istio-system/istio-ingressgateway
   http:
     - route:
         - destination:
