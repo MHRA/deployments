@@ -14,6 +14,23 @@ helmInstall: ## Install cert-manager config using helm
 		--namespace cert-manager \
 		--version v0.15.1 \
 		--set installCRDs=true
+	@until kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=480s; \
+	do \
+		echo "Waiting for cert-manager webhook"; \
+		sleep 10 ;\
+	done
+	@until kubectl wait --for=condition=ready pod -l app=cainjector -n cert-manager --timeout=480s; \
+	do \
+		echo "Waiting for cert-manager cainjector"; \
+		sleep 10 ;\
+	done
+	@until kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=480s; \
+	do \
+		echo "Waiting for cert-manager"; \
+		sleep 10 ;\
+	done
+	sleep 20
+
 
 .PHONY: init2
 init2: ## Configure issuers
@@ -22,7 +39,7 @@ init2: ## Configure issuers
 .PHONY: delete
 delete: ## Delete
 	kustomize build ./overlays-2/$(overlay) | kubectl delete --ignore-not-found -f -
-	helm uninstall cert-manager
+	helm uninstall --namespace cert-manager cert-manager
 	kustomize build ./overlays-1/$(overlay) | kubectl delete --ignore-not-found -f -
 
 .PHONY: help
