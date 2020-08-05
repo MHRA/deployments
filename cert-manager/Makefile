@@ -9,11 +9,10 @@ init1: ## Configure cert-manager namespace
 
 .PHONY: helmInstall
 helmInstall: ## Install cert-manager config using helm
-	helm install \ 
-  cert-manager jetstack/cert-manager \
-  --namespace cert-manager \
-  --version v0.15.1 \                       
-  --set installCRDs=true
+	helm install cert-manager jetstack/cert-manager \
+		--namespace cert-manager \
+		--version v0.15.1 \                
+		--set installCRDs=true
 
 .PHONY: init2
 init2: ## Configure issuers
@@ -21,7 +20,9 @@ init2: ## Configure issuers
 
 .PHONY: delete
 delete: ## Delete
-	kustomize build ./overlays/$(overlay) | kubectl delete --ignore-not-found -f -
+	kustomize build ./overlays-2/$(overlay) | kubectl delete --ignore-not-found -f -
+	helm uninstall cert-manager
+	kustomize build ./overlays-1/$(overlay) | kubectl delete --ignore-not-found -f -
 
 .PHONY: help
 help: ## Display this help screen
