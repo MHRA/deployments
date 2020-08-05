@@ -3,7 +3,7 @@
 # Redis credentials...
 REDIS_KEY=$(az redis list-keys \
     --resource-group apazr-rg-1001 \
-    --name doc-index-updater-production \
+    --name doc-index-updater-4853 \
     --output tsv --query 'primaryKey')
 kubectl create secret generic redis-creds \
     -n doc-index-updater \
@@ -16,7 +16,7 @@ kubectl create secret generic redis-creds \
 # Azure Search Service credentials...
 API_KEY=$(az search admin-key show \
     --resource-group apazr-rg-1001 \
-    --service-name mhraproductsproduction \
+    --service-name mhraproducts4853 \
     --output tsv --query 'primaryKey')
 kubectl create secret generic search-creds \
     -n doc-index-updater \
@@ -67,14 +67,14 @@ kubectl create secret generic sentinel-creds \
 # Azure Service Bus credentials...
 SB_CREATE_KEY=$(az servicebus queue authorization-rule keys list \
     --resource-group apazr-rg-1001 \
-    --namespace-name doc-index-updater-production \
+    --namespace-name doc-index-updater-4853 \
     --queue-name doc-index-updater-create-queue \
     --name doc-index-updater-create-auth \
     --query primaryKey \
     --output tsv)
 SB_DELETE_KEY=$(az servicebus queue authorization-rule keys list \
     --resource-group apazr-rg-1001 \
-    --namespace-name doc-index-updater-production \
+    --namespace-name doc-index-updater-4853 \
     --queue-name doc-index-updater-delete-queue \
     --name doc-index-updater-delete-auth \
     --query primaryKey \
@@ -90,14 +90,14 @@ kubectl create secret generic service-bus-creds \
 
 # Azure Blob Storage credentials...
 BLOB_KEY=$(az storage account keys list \
-    --account-name=mhraproductsproduction \
+    --account-name=mhraproducts4853 \
     --query='[0].value' \
     --output=tsv)
 kubectl create secret generic storage-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal account="mhraproductsproduction" \
+    --from-literal account="mhraproducts4853" \
     --from-literal container="docs" \
     --from-literal container_temporary="temporary-docs" \
     --from-literal key="$BLOB_KEY" |
@@ -106,14 +106,14 @@ kubectl create secret generic storage-creds \
 
 # Azure Log Blob Storage credentials...
 LOG_BLOB_KEY=$(az storage account keys list \
-    --account-name=logsmhraproduction \
+    --account-name=mhralogs4853 \
     --query='[0].value' \
     --output=tsv)
 kubectl create secret generic logs-storage-creds \
     -n doc-index-updater \
     -o json \
     --dry-run \
-    --from-literal account="logsmhraproduction" \
+    --from-literal account="mhralogs4853" \
     --from-literal container="transaction-logs" \
     --from-literal key="$LOG_BLOB_KEY" |
     kubeseal \
