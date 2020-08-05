@@ -28,27 +28,27 @@ kubectl create secret generic search-creds \
 
 # Sentinel credentials...
 SENTINEL_SERVER_IP=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name sentinel-ip \
     --query value \
     --output tsv)
 SENTINEL_USERNAME=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name sentinel-username \
     --query value \
     --output tsv)
 SENTINEL_PUBLIC_KEY=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name sentinel-public-key \
     --query value \
     --output tsv)
 SENTINEL_PRIVATE_KEY=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name sentinel-private-key \
     --query value \
     --output tsv)
 SENTINEL_PRIVATE_KEY_PASSWORD=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name sentinel-private-key-password \
     --query value \
     --output tsv)
@@ -121,12 +121,12 @@ kubectl create secret generic logs-storage-creds \
 
 # HTTP Basic Auth credentials...
 BASIC_AUTH_USERNAME=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name basic-auth-username \
     --query value \
     --output tsv)
 BASIC_AUTH_PASSWORD=$(az keyvault secret show \
-    --vault-name mhra-prod \
+    --vault-name mhraproducts4853 \
     --name basic-auth-password \
     --query value \
     --output tsv)
