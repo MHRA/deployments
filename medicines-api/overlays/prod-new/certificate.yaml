@@ -8,5 +8,5 @@ spec:
     - medicines.api.mhra.gov.uk
   secretName: cert-medicines-api
   issuerRef:
-    name: staging
+    name: production
     kind: ClusterIssuer
