@@ -9,7 +9,8 @@ init1: ## Configure cert-manager namespace
 
 .PHONY: helmInstall
 helmInstall: ## Install cert-manager config using helm
-	helm install cert-manager jetstack/cert-manager \
+	helm upgrade cert-manager jetstack/cert-manager \
+		--install \
 		--namespace cert-manager \
 		--version v0.15.1 \
 		--set installCRDs=true
