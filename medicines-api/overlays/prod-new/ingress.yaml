@@ -8,4 +8,4 @@ spec:
     - medicines.api.mhra.gov.uk
   gateways:
     - istio-system/ingressgateway
-    # - istio-system/medicines-api-ingressgateway
+    - istio-system/medicines-api-ingressgateway
