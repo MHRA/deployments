@@ -8,5 +8,5 @@ spec:
     - medicines-api.non-prod.mhra.gov.uk
     - medicines-api.test.mhra.gov.uk
   gateways:
-    - istio-system/ingressgateway
+    - istio-system/istio-ingressgateway
     - istio-system/medicines-api-ingressgateway
