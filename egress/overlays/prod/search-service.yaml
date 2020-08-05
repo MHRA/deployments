@@ -4,7 +4,7 @@ metadata:
   name: search-service
 spec:
   hosts:
-    - mhraproductsproduction.search.windows.net
+    - mhraproducts4853.search.windows.net
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -12,15 +12,15 @@ metadata:
   name: search-service
 spec:
   hosts:
-    - mhraproductsproduction.search.windows.net
+    - mhraproducts4853.search.windows.net
   tls:
     - match:
         - port: 443
           sniHosts:
-            - mhraproductsproduction.search.windows.net
+            - mhraproducts4853.search.windows.net
       route:
         - destination:
-            host: mhraproductsproduction.search.windows.net
+            host: mhraproducts4853.search.windows.net
             port:
               number: 443
           weight: 100
