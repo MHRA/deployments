@@ -4,7 +4,7 @@ resources:
   - gateway.yaml
   - ingress.yaml
   - SealedSecret-search-creds.yaml
-  - storage-account.yaml
+  # - storage-account.yaml
 
 patchesStrategicMerge:
   - deployment.yaml
