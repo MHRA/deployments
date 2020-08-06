@@ -5,10 +5,8 @@ metadata:
   namespace: doc-index-updater
 spec:
   hosts:
-    - doc-index-updater.test.mhra.gov.uk
     - doc-index-updater.non-prod.mhra.gov.uk
   gateways:
-    - istio-system/istio-ingressgateway
     - istio-system/doc-index-updater-ingressgateway
   http:
     - route:
@@ -18,7 +16,7 @@ spec:
             host: doc-index-updater
       corsPolicy:
         allowOrigin:
-          - test.mhra.gov.uk
+          - non-prod.mhra.gov.uk
           - mhraparsnon-prod.azureedge.net
           - mhraparsnonprod.z33.web.core.windows.net
         allowMethods:

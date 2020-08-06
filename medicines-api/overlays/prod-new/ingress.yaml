@@ -7,5 +7,4 @@ spec:
   hosts:
     - medicines.api.mhra.gov.uk
   gateways:
-    - istio-system/istio-ingressgateway
     - istio-system/medicines-api-ingressgateway

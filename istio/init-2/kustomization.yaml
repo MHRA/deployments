@@ -1,5 +1,4 @@
 namespace: istio-system
 
 resources:
-  - gateway.yaml
   - peer-authentication.yaml
