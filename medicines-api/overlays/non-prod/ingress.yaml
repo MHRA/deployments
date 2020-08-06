@@ -8,3 +8,9 @@ spec:
     - medicines-api.non-prod.mhra.gov.uk
   gateways:
     - istio-system/medicines-api-ingressgateway
+  http:
+    - route:
+        - destination:
+            port:
+              number: 80
+            host: medicines-api
