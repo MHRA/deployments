@@ -2,6 +2,7 @@ resources:
   - ../../base
   - certificate.yaml
   - gateway.yaml
+  - ingress.yaml
   - SealedSecret-search-creds.yaml
   - storage-account.yaml
 
