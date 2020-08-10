@@ -1,5 +1,10 @@
 overlay := non-prod
 
+resourcegroup-dev := mhra-products-development
+resourcegroup-non-prod := adazr-rg-1001
+resourcegroup-prod := apazr-rg-1001
+resourcegroup-prod-new := apazr-rg-1001
+
 .PHONY: default
 default: operator init1 init2 ## Install Istio
 
@@ -14,7 +19,11 @@ operator: ## Install Istio Operator
 
 .PHONY: init1
 init1: ## Install SSL certs and Istio profile
-	kustomize build overlays-1/$(overlay) | kubectl apply -f -
+	NODE_RESOURCE_GROUP=$$(az aks show --name non-prod --resource-group $(resourcegroup-$(overlay)) --query nodeResourceGroup -o tsv) && \
+	PUBLIC_IP=$$(az network public-ip show --name products-public-ip --resource-group $${NODE_RESOURCE_GROUP} --query ipAddress -o tsv) && \
+		kustomize build overlays-1/$(overlay) | \
+		sed -e "s/\$${PUBLIC_IP}/$${PUBLIC_IP}/g" | \
+		kubectl apply -f -
 	@until kubectl wait --for=condition=ready pod -l app=istiod -n istio-system --timeout=480s; \
 	do \
 		echo "Waiting for istiod"; \

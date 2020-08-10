@@ -19,6 +19,16 @@ spec:
   components:
     telemetry:
       enabled: true
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-ingressgateway
+              patches:
+                - path: spec.loadBalancerIP
+                  value: "${PUBLIC_IP}"
     egressGateways:
       - name: istio-egressgateway
         enabled: false
