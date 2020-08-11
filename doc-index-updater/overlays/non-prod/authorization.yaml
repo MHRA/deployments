@@ -32,4 +32,4 @@ spec:
       from:
         - source:
             requestPrincipals:
-              - "https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/v2.0"
+              - "https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/*"
