@@ -19,7 +19,7 @@ spec:
       corsPolicy:
         allowOrigin:
           - test.mhra.gov.uk
-          - mhraparsnon-prod.azureedge.net
+          - mhraparsnonprod.azureedge.net
           - mhraparsnonprod.z33.web.core.windows.net
         allowMethods:
           - POST
