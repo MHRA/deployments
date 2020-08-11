@@ -1,0 +1,35 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  rules:
+    - to:
+        - operation:
+            notPaths:
+              - "/pars"
+              - "/pars/*"
+      from:
+        - source:
+            requestPrincipals:
+              - "*"
+    - to:
+        - operation:
+            paths:
+              - "/pars"
+              - "/pars/*"
+            methods: ["OPTIONS"]
+      from:
+        - source:
+            requestPrincipals:
+              - "*"
+    - to:
+        - operation:
+            paths:
+              - "/pars"
+              - "/pars/*"
+      from:
+        - source:
+            requestPrincipals:
+              - "https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/v2.0"
