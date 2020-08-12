@@ -19,7 +19,7 @@ patchesJSON6902:
     patch: |-
       - op: replace
         path: /spec/hosts/0
-        value: doc-index-updater-production.redis.cache.windows.net
+        value: doc-index-updater-4853.redis.cache.windows.net
   - target:
       group: networking.istio.io
       version: v1alpha3
@@ -28,10 +28,10 @@ patchesJSON6902:
     patch: |-
       - op: replace
         path: /spec/hosts/0
-        value: doc-index-updater-production.redis.cache.windows.net
+        value: doc-index-updater-4853.redis.cache.windows.net
       - op: replace
         path: /spec/tcp/0/route/0/destination/host
-        value: doc-index-updater-production.redis.cache.windows.net
+        value: doc-index-updater-4853.redis.cache.windows.net
   - target:
       group: networking.istio.io
       version: v1alpha3
@@ -40,4 +40,4 @@ patchesJSON6902:
     patch: |-
       - op: replace
         path: /spec/host
-        value: doc-index-updater-production.redis.cache.windows.net
+        value: doc-index-updater-4853.redis.cache.windows.net

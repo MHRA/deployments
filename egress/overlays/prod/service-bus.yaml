@@ -4,7 +4,7 @@ metadata:
   name: service-bus
 spec:
   hosts:
-    - doc-index-updater-production.servicebus.windows.net
+    - doc-index-updater-4853.servicebus.windows.net
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -12,15 +12,15 @@ metadata:
   name: service-bus
 spec:
   hosts:
-    - doc-index-updater-production.servicebus.windows.net
+    - doc-index-updater-4853.servicebus.windows.net
   tls:
     - match:
         - port: 443
           sniHosts:
-            - doc-index-updater-production.servicebus.windows.net
+            - doc-index-updater-4853.servicebus.windows.net
       route:
         - destination:
-            host: doc-index-updater-production.servicebus.windows.net
+            host: doc-index-updater-4853.servicebus.windows.net
             port:
               number: 443
           weight: 100
