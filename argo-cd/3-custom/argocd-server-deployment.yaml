@@ -4,6 +4,9 @@ metadata:
   name: argocd-server
 spec:
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/proxyCPU: 50m
     spec:
       containers:
         - name: argocd-server

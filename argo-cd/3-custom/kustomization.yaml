@@ -2,7 +2,11 @@ resources:
   - ../2-base
 
 patchesStrategicMerge:
+  - argocd-application-controller.yaml
   - argocd-cm.yaml
+  - argocd-dex-server.yaml
+  - argocd-redis.yaml
+  - argocd-repo-server.yaml
   - argocd-server-deployment.yaml
 
 patchesJSON6902:
