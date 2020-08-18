@@ -29,6 +29,12 @@ spec:
               patches:
                 - path: spec.loadBalancerIP
                   value: "${PUBLIC_IP}"
+      - name: istio-ingressgateway-internal
+        enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-ingressgateway
     egressGateways:
       - name: istio-egressgateway
         enabled: false
