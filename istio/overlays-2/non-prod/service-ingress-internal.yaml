@@ -10,6 +10,10 @@ metadata:
     app: istio-ingressgateway
     release: istio
     istio: ingressgateway
+    install.operator.istio.io/owning-resource: istiocontrolplane
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    operator.istio.io/component: IngressGateways
+    operator.istio.io/managed: Reconcile
 spec:
   type: LoadBalancer
   loadBalancerIP: 10.5.65.36

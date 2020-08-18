@@ -10,7 +10,7 @@ spec:
   source:
     path: doc-index-updater/overlays/non-prod
     repoURL: https://github.com/MHRA/deployments.git
-    targetRevision: master
+    targetRevision: ingress
   syncPolicy:
     automated:
       prune: true
