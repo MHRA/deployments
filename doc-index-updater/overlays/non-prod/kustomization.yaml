@@ -3,7 +3,6 @@ resources:
   - SealedSecret-basic-auth-creds.yaml
   - certificate.yaml
   - gateway.yaml
-  - ingress.yaml
   - SealedSecret-logs-storage-creds.yaml
   - SealedSecret-redis-creds.yaml
   - SealedSecret-search-creds.yaml
@@ -11,9 +10,10 @@ resources:
   - SealedSecret-service-bus-creds.yaml
   - SealedSecret-storage-creds.yaml
 patchesStrategicMerge:
-  - deployment.yaml
-  - lock-timeout.yaml
   - authentication.yaml
+  - deployment.yaml
+  - ingress.yaml
+  - lock-timeout.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization

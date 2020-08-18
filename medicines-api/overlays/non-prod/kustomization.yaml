@@ -2,12 +2,12 @@ resources:
   - ../../base
   - certificate.yaml
   - gateway.yaml
-  - ingress.yaml
   - SealedSecret-search-creds.yaml
   # - storage-account.yaml
 
 patchesStrategicMerge:
   - deployment.yaml
+  - ingress.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
