@@ -18,7 +18,7 @@ data:
         rules:
         - record: job:incoming_requests_per_second_per_pod:mean
           expr: |
-            sum by (namespace, pod_name) (rate(istio_requests_total[1m]))
+            sum by (namespace, pod) (rate(istio_requests_total[1m]))
           labels:
             azure_monitor: true
 
@@ -26,17 +26,17 @@ data:
         rules:
         - record: job:success_response_latency_milliseconds_per_pod:mean
           expr: |
-            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_sum{response_code!~"5.."}[1m]))
+            sum by (namespace, pod) (rate(istio_request_duration_milliseconds_sum{response_code!~"5.."}[1m]))
             /
-            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code!~"5.."}[1m]))
+            sum by (namespace, pod) (rate(istio_request_duration_milliseconds_count{response_code!~"5.."}[1m]))
           labels:
             azure_monitor: true
 
         - record: job:error_response_latency_milliseconds_per_pod:mean
           expr: |
-            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_sum{response_code=~"5.."}[1m]))
+            sum by (namespace, pod) (rate(istio_request_duration_milliseconds_sum{response_code=~"5.."}[1m]))
             /
-            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code=~"5.."}[1m]))
+            sum by (namespace, pod) (rate(istio_request_duration_milliseconds_count{response_code=~"5.."}[1m]))
           labels:
             azure_monitor: true
 
@@ -44,9 +44,9 @@ data:
         rules:
         - record: job:request_error_rate_per_pod:mean
           expr: |
-            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code=~"5.."}[1m]))
+            sum by (namespace, pod) (rate(istio_request_duration_milliseconds_count{response_code=~"5.."}[1m]))
             /
-            sum by (namespace, pod_name) (rate(istio_request_duration_milliseconds_count{response_code!~"5.."}[1m]))
+            sum by (namespace, pod) (rate(istio_request_duration_milliseconds_count{response_code!~"5.."}[1m]))
           labels:
             azure_monitor: true
 
@@ -54,15 +54,15 @@ data:
         rules:
         - record: job:cpu_usage_seconds_per_pod:mean
           expr: |
-            sum by (namespace, pod_name) (rate(container_cpu_usage_seconds_total{image!=""}[1m]))
+            sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{image!=""}[1m]))
           labels:
             azure_monitor: true
 
         - record: job:memory_usage_percent_per_pod:mean
           expr: |
-            sum(container_memory_working_set_bytes) by (namespace, pod_name)
+            sum(container_memory_working_set_bytes) by (namespace, pod)
             /
-            sum(label_join(kube_pod_container_resource_limits_memory_bytes, "pod_name", "", "pod")) by (namespace, pod_name)
+            sum(label_join(kube_pod_container_resource_limits_memory_bytes, "pod", "", "pod")) by (namespace, pod)
           labels:
             azure_monitor: true
 
