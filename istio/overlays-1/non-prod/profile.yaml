@@ -3,22 +3,7 @@ kind: IstioOperator
 metadata:
   name: istiocontrolplane
 spec:
-  profile: default
-  # meshConfig:
-  #   outboundTrafficPolicy:
-  #     mode: REGISTRY_ONLY
-  addonComponents:
-    kiali:
-      enabled: true
-    grafana:
-      enabled: false
-    prometheus:
-      enabled: true
-    tracing:
-      enabled: true
   components:
-    telemetry:
-      enabled: true
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
@@ -43,21 +28,3 @@ spec:
                     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
                     service.beta.kubernetes.io/azure-load-balancer-internal-subnet: adarz-spoke-products-sn-01
                     service.beta.kubernetes.io/azure-load-balancer-resource-group: adazr-rg-1001
-    egressGateways:
-      - name: istio-egressgateway
-        enabled: false
-  values:
-    global:
-      outboundTrafficPolicy:
-        mode: REGISTRY_ONLY
-      # proxy:
-      #   accessLogEncoding: JSON
-      #   accessLogFile: /dev/stdout
-    sidecarInjectorWebhook:
-      rewriteAppHTTPProbe: true
-    telemetry:
-      enabled: true
-      v1:
-        enabled: false
-      v2:
-        enabled: true
