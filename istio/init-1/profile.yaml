@@ -34,7 +34,7 @@ spec:
         k8s:
           overlays:
             - kind: Service
-              name: istio-ingressgateway
+              name: istio-ingressgateway-internal
     egressGateways:
       - name: istio-egressgateway
         enabled: false
