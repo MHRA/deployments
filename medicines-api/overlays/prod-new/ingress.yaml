@@ -5,6 +5,7 @@ metadata:
   namespace: medicines-api
 spec:
   hosts:
+    - istio-system/istio-ingressgateway
     - medicines.api.mhra.gov.uk
   gateways:
     - istio-system/medicines-api-ingressgateway

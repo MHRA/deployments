@@ -8,6 +8,7 @@ spec:
     - doc-index-updater.mhra.gov.uk
     - doc-index-updater.api.mhra.gov.uk
   gateways:
+    - istio-system/istio-ingressgateway
     - istio-system/doc-index-updater-ingressgateway
   http:
     - route:
