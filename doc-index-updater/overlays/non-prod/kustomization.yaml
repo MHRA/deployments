@@ -9,6 +9,7 @@ resources:
   - SealedSecret-sentinel-creds.yaml
   - SealedSecret-service-bus-creds.yaml
   - SealedSecret-storage-creds.yaml
+  - SealedSecret-test-wildcard-cert.yaml
 patchesStrategicMerge:
   - authentication.yaml
   - deployment.yaml

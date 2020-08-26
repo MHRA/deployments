@@ -157,6 +157,6 @@ kubectl create secret tls test-wildcard-cert \
     --cert=./doc-index-updater.crt \
     --key=./doc-index-updater.key |
     kubeseal \
-        --format yaml >Sealed-secret-test-wildcard-cert.yaml
+        --format yaml >SealedSecret-test-wildcard-cert.yaml
 rm doc-index-updater.crt
 rm doc-index-updater.key
