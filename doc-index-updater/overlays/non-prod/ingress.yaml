@@ -17,7 +17,7 @@ spec:
               number: 80
             host: doc-index-updater
       corsPolicy:
-        allowOrigins:
+        allowOrigin:
           - non-prod.mhra.gov.uk
           - test.mhra.gov.uk
           - mhraparsnonprod.azureedge.net
