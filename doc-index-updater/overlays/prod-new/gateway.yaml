@@ -6,6 +6,14 @@ metadata:
 spec:
   servers:
     - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - doc-index-updater.api.mhra.gov.uk
+      tls:
+        httpsRedirect: true # sends 301 redirect for http requests
+    - port:
         number: 443
         name: https-443-doc-index-updater
         protocol: HTTPS
@@ -14,3 +22,28 @@ spec:
       tls:
         mode: SIMPLE
         credentialName: cert-doc-index-updater
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: doc-index-updater-issued-cert-ingressgateway
+  namespace: istio-system
+spec:
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - doc-index-updater.mhra.gov.uk
+      tls:
+        httpsRedirect: true # sends 301 redirect for http requests
+    - port:
+        number: 443
+        name: https-443-doc-index-updater
+        protocol: HTTPS
+      hosts:
+        - doc-index-updater.mhra.gov.uk
+      tls:
+        mode: SIMPLE
+        credentialName: issued-doc-index-updater-cert

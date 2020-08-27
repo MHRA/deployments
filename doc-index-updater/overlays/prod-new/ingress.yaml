@@ -5,11 +5,11 @@ metadata:
   namespace: doc-index-updater
 spec:
   hosts:
-    - doc-index-updater.mhra.gov.uk
     - doc-index-updater.api.mhra.gov.uk
+    - doc-index-updater.mhra.gov.uk
   gateways:
-    - istio-system/istio-ingressgateway
     - istio-system/doc-index-updater-ingressgateway
+    - istio-system/doc-index-updater-issued-cert-ingressgateway
   http:
     - route:
         - destination:

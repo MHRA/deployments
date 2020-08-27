@@ -3,6 +3,7 @@ resources:
   - certificate.yaml
   - gateway.yaml
   - SealedSecret-basic-auth-creds.yaml
+  - SealedSecret-issued-doc-index-updater-cert.yaml
   - SealedSecret-logs-storage-creds.yaml
   - SealedSecret-redis-creds.yaml
   - SealedSecret-search-creds.yaml
