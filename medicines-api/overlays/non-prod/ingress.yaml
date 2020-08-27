@@ -14,3 +14,20 @@ spec:
             port:
               number: 80
             host: medicines-api
+            http:
+              - route:
+                  - destination:
+                      port:
+                        number: 80
+                      host: doc-index-updater
+      corsPolicy:
+        allowOrigins:
+          - *
+        allowMethods:
+          - GET
+          - POST
+        allowHeaders:
+          - Authorization
+          - Accept
+          - Content-Type
+        
