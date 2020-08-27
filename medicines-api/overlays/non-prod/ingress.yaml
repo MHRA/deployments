@@ -16,7 +16,7 @@ spec:
             host: medicines-api
       corsPolicy:
         allowOrigins:
-          regex: *
+          - "*"
         allowMethods:
           - GET
           - POST
