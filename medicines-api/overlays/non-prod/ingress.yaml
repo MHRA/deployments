@@ -21,8 +21,6 @@ spec:
                         number: 80
                       host: doc-index-updater
       corsPolicy:
-        allowOrigins:
-          - *
         allowMethods:
           - GET
           - POST
@@ -30,4 +28,3 @@ spec:
           - Authorization
           - Accept
           - Content-Type
-        
