@@ -5,7 +5,23 @@ metadata:
   namespace: medicines-api
 spec:
   hosts:
-    - istio-system/istio-ingressgateway
     - medicines.api.mhra.gov.uk
   gateways:
     - istio-system/medicines-api-ingressgateway
+  http:
+    - route:
+        - destination:
+            port:
+              number: 80
+            host: medicines-api
+      corsPolicy:
+        allowOrigins:
+          - prefix: "https://products.mhra.gov.uk"
+        allowMethods:
+          - GET
+          - POST
+        allowHeaders:
+          - Authorization
+          - Accept
+          - Content-Type
+        maxAge: "24h"

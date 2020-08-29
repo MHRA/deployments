@@ -15,8 +15,8 @@ spec:
               number: 80
             host: medicines-api
       corsPolicy:
-        allowOrigin:
-          - mhraproductsnonprod.azureedge.net
+        allowOrigins:
+          - prefix: "https://mhraproductsnonprod.azureedge.net"
         allowMethods:
           - GET
           - POST
