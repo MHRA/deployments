@@ -10,7 +10,7 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - medicines-api.mhra.gov.uk
+        - medicines.api.mhra.gov.uk
       tls:
         httpsRedirect: true # sends 301 redirect for http requests
     - port:

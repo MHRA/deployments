@@ -16,7 +16,7 @@ spec:
             host: medicines-api
       corsPolicy:
         allowOrigins:
-          - prefix: "https://products.mhra.gov.uk"
+          - prefix: "*"
         allowMethods:
           - GET
           - POST

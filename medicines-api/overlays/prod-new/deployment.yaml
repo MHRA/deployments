@@ -6,6 +6,9 @@ metadata:
 spec:
   replicas: 2
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/proxyCPU: 50m
     spec:
       containers:
         - name: medicines-api
@@ -15,3 +18,10 @@ spec:
               value: mhraproducts4853
             - name: RUST_LOG
               value: api=debug,info
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
