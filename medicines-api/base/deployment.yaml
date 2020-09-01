@@ -27,7 +27,7 @@ spec:
                   name: search-creds
                   key: api_key
             - name: SEARCH_SERVICE
-              value: mhraproductsproduction
+              value: mhraproductsnonprod
             - name: AZURE_SEARCH_API_VERSION
               value: "2017-11-11"
           ports:
