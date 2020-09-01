@@ -19,9 +19,11 @@ spec:
       corsPolicy:
         allowOrigins:
           - prefix: https://mhraparsnonprod.azureedge.net
+          - prefix: https://mhraparsnonprod.z33.web.core.windows.net
         allowMethods:
           - POST
         allowCredentials: false
         allowHeaders:
           - Authorization
+          - username
         maxAge: "24h"
