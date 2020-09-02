@@ -7,10 +7,11 @@ spec:
   servers:
     - port:
         number: 80
-        name: http-non-prod-mhra-gov-uk
+        name: http
         protocol: HTTP
       hosts:
         - doc-index-updater.non-prod.mhra.gov.uk
+        - doc-index-updater.test.mhra.gov.uk
       tls:
         httpsRedirect: true # sends 301 redirect for http requests
     - port:
@@ -22,14 +23,6 @@ spec:
       tls:
         mode: SIMPLE
         credentialName: cert-doc-index-updater
-    - port:
-        number: 80
-        name: http-test-mhra-gov-uk
-        protocol: HTTP
-      hosts:
-        - doc-index-updater.test.mhra.gov.uk
-      tls:
-        httpsRedirect: true # sends 301 redirect for http requests
     - port:
         number: 443
         name: https-443-test-mhra-gov-uk
