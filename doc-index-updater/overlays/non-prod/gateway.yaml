@@ -1,13 +1,13 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: doc-index-updater-non-prod-ingressgateway
+  name: doc-index-updater-ingressgateway
   namespace: istio-system
 spec:
   servers:
     - port:
         number: 80
-        name: http
+        name: http-non-prod-mhra-gov-uk
         protocol: HTTP
       hosts:
         - doc-index-updater.non-prod.mhra.gov.uk
@@ -15,24 +15,16 @@ spec:
         httpsRedirect: true # sends 301 redirect for http requests
     - port:
         number: 443
-        name: https-443-doc-index-updater
+        name: https-443-non-prod-mhra-gov-uk
         protocol: HTTPS
       hosts:
         - doc-index-updater.non-prod.mhra.gov.uk
       tls:
         mode: SIMPLE
         credentialName: cert-doc-index-updater
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: doc-index-updater-test-ingressgateway
-  namespace: istio-system
-spec:
-  servers:
     - port:
         number: 80
-        name: http
+        name: http-test-mhra-gov-uk
         protocol: HTTP
       hosts:
         - doc-index-updater.test.mhra.gov.uk
@@ -40,10 +32,10 @@ spec:
         httpsRedirect: true # sends 301 redirect for http requests
     - port:
         number: 443
-        name: https-443-doc-index-updater
+        name: https-443-test-mhra-gov-uk
         protocol: HTTPS
       hosts:
         - doc-index-updater.test.mhra.gov.uk
       tls:
         mode: SIMPLE
-        credentialName: test-wildcard-cert
+        credentialName: test-mhra-gov-uk-cert

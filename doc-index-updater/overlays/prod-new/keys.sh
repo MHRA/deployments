@@ -150,13 +150,13 @@ az keyvault secret show \
     --name doc-index-updater-mhra-gov-uk-key \
     --query value \
     --output tsv >doc-index-updater.key
-kubectl create secret tls issued-doc-index-updater-cert \
+kubectl create secret tls doc-index-updater-mhra-gov-uk-cert \
     -n istio-system \
     -o json \
     --dry-run \
     --cert=./doc-index-updater.crt \
     --key=./doc-index-updater.key |
     kubeseal \
-        --format yaml >SealedSecret-issued-doc-index-updater-cert.yaml
+        --format yaml >SealedSecret-doc-index-updater-mhra-gov-uk-cert.yaml
 rm doc-index-updater.crt
 rm doc-index-updater.key
