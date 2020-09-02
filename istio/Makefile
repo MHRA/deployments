@@ -4,6 +4,11 @@ resourcegroup-dev := mhra-products-development
 resourcegroup-non-prod := adazr-rg-1001
 resourcegroup-prod := apazr-rg-1001
 resourcegroup-prod-new := apazr-rg-1001
+clustername-dev := dev
+clustername-non-prod := non-prod
+clustername-prod := production
+clustername-prod-new := production
+
 
 .PHONY: default
 default: operator init1 init2 ## Install Istio
@@ -19,7 +24,7 @@ operator: ## Install Istio Operator
 
 .PHONY: init1
 init1: ## Install SSL certs and Istio profile
-	NODE_RESOURCE_GROUP=$$(az aks show --name non-prod --resource-group $(resourcegroup-$(overlay)) --query nodeResourceGroup -o tsv) && \
+	NODE_RESOURCE_GROUP=$$(az aks show --name $(clustername-$(overlay)) --resource-group $(resourcegroup-$(overlay)) --query nodeResourceGroup -o tsv) && \
 	PUBLIC_IP=$$(az network public-ip show --name products-public-ip --resource-group $${NODE_RESOURCE_GROUP} --query ipAddress -o tsv) && \
 		kustomize build overlays-1/$(overlay) | \
 		sed -e "s/\$${PUBLIC_IP}/$${PUBLIC_IP}/g" | \
