@@ -1,0 +1,30 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: istiocontrolplane
+spec:
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-ingressgateway
+              patches:
+                - path: spec.loadBalancerIP
+                  value: "${PUBLIC_IP}"
+      - name: istio-ingressgateway-internal
+        enabled: true
+        k8s:
+          overlays:
+            - kind: Service
+              name: istio-ingressgateway-internal
+              patches:
+                - path: spec.loadBalancerIP
+                  value: "10.6.65.36"
+                - path: metadata.annotations
+                  value:
+                    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+                    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: adarz-spoke-products-dev-sn-01
+                    service.beta.kubernetes.io/azure-load-balancer-resource-group: mhra-products-development

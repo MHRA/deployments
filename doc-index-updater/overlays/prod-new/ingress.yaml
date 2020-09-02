@@ -5,10 +5,9 @@ metadata:
   namespace: doc-index-updater
 spec:
   hosts:
-    - doc-index-updater.mhra.gov.uk
     - doc-index-updater.api.mhra.gov.uk
+    - doc-index-updater.mhra.gov.uk
   gateways:
-    - istio-system/istio-ingressgateway
     - istio-system/doc-index-updater-ingressgateway
   http:
     - route:
@@ -17,9 +16,9 @@ spec:
               number: 80
             host: doc-index-updater
       corsPolicy:
-        allowOrigin:
-          - pars.mhra.gov.uk
-          - mhrapars4853.azureedge.net
+        allowOrigins:
+          - prefix: https://pars.mhra.gov.uk
+          - prefix: https://mhrapars4853.azureedge.net
         allowMethods:
           - POST
         allowCredentials: false

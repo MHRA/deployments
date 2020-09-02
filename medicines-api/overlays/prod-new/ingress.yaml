@@ -7,5 +7,21 @@ spec:
   hosts:
     - medicines.api.mhra.gov.uk
   gateways:
-    - istio-system/istio-ingressgateway
     - istio-system/medicines-api-ingressgateway
+  http:
+    - route:
+        - destination:
+            port:
+              number: 80
+            host: medicines-api
+      corsPolicy:
+        allowOrigins:
+          - prefix: "*"
+        allowMethods:
+          - GET
+          - POST
+        allowHeaders:
+          - Authorization
+          - Accept
+          - Content-Type
+        maxAge: "24h"

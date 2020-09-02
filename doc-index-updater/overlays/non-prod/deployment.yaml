@@ -6,6 +6,9 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      annotations:
+        sidecar.istio.io/proxyCPU: 50m
     spec:
       containers:
         - name: doc-index-updater
@@ -21,3 +24,10 @@ spec:
               value: doc_index_updater=debug
             - name: PARS_UPLOAD_SITE_ORIGIN
               value: https://mhraparsnonprod.azureedge.net
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 200Mi

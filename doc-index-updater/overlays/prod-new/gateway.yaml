@@ -6,11 +6,29 @@ metadata:
 spec:
   servers:
     - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - doc-index-updater.api.mhra.gov.uk
+        - doc-index-updater.mhra.gov.uk
+      tls:
+        httpsRedirect: true # sends 301 redirect for http requests
+    - port:
         number: 443
-        name: https-443-doc-index-updater
+        name: https-443-api-mhra-gov-uk
         protocol: HTTPS
       hosts:
         - doc-index-updater.api.mhra.gov.uk
       tls:
         mode: SIMPLE
         credentialName: cert-doc-index-updater
+    - port:
+        number: 443
+        name: https-443-mhra-gov-uk
+        protocol: HTTPS
+      hosts:
+        - doc-index-updater.mhra.gov.uk
+      tls:
+        mode: SIMPLE
+        credentialName: doc-index-updater-mhra-gov-uk-cert
