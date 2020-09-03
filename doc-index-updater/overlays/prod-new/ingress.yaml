@@ -24,4 +24,5 @@ spec:
         allowCredentials: false
         allowHeaders:
           - Authorization
+          - username
         maxAge: "24h"
