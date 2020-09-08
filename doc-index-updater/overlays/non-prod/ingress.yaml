@@ -19,6 +19,7 @@ spec:
         allowOrigins:
           - prefix: https://mhraparsnonprod.azureedge.net
           - prefix: https://mhraparsnonprod.z33.web.core.windows.net
+          - prefix: http://localhost:3000
         allowMethods:
           - POST
         allowCredentials: false
