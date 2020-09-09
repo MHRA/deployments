@@ -31,7 +31,7 @@ spec:
             - name: AZURE_SEARCH_API_VERSION
               value: "2017-11-11"
             - name: AZURE_SEARCH_WORD_FUZZINESS
-              value: "0"
+              value: "1"
             - name: AZURE_SEARCH_EXACTNESS_BOOST
               value: "4"
           ports:
