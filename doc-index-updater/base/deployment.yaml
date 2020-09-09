@@ -41,6 +41,10 @@ spec:
               value: "2019-05-06"
             - name: SEARCH_SERVICE
               value: mhraproductsdevelopment
+            - name: AZURE_SEARCH_WORD_FUZZINESS
+              value: "0"
+            - name: AZURE_SEARCH_EXACTNESS_BOOST
+              value: "4"
             - name: SENTINEL_SFTP_SERVER
               valueFrom:
                 secretKeyRef:
