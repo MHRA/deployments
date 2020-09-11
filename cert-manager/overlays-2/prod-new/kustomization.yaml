@@ -1,4 +1,0 @@
-namespace: cert-manager
-
-resources:
-  - ../../init-2/

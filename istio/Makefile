@@ -3,11 +3,9 @@ overlay := non-prod
 resourcegroup-dev := mhra-products-development
 resourcegroup-non-prod := adazr-rg-1001
 resourcegroup-prod := apazr-rg-1001
-resourcegroup-prod-new := apazr-rg-1001
 clustername-dev := dev
 clustername-non-prod := non-prod
 clustername-prod := production
-clustername-prod-new := production
 
 
 .PHONY: default

@@ -8,7 +8,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argo-cd/applications/prod
+    path: argo-cd/applications/prod-new
     repoURL: https://github.com/MHRA/deployments.git
     targetRevision: master
   syncPolicy:
