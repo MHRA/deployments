@@ -8,7 +8,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: medicines-api/overlays/prod-new
+    path: medicines-api/overlays/prod
     repoURL: https://github.com/MHRA/deployments.git
     targetRevision: master
   syncPolicy:
