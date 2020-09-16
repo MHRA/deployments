@@ -22,7 +22,7 @@ spec:
               name: istio-ingressgateway-internal
               patches:
                 - path: spec.loadBalancerIP
-                  value: "10.5.66.36"
+                  value: "10.5.67.36"
                 - path: metadata.annotations
                   value:
                     service.beta.kubernetes.io/azure-load-balancer-internal: "true"

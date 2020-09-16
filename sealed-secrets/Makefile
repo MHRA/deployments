@@ -1,7 +1,6 @@
 overlay := non-prod
 
-vault-prod-new := mhraproducts4853
-vault-prod := mhra-prod
+vault-prod := mhraproducts4853
 vault-non-prod := mhra-non-prod-02
 vault-dev := mhra-non-prod-02
 vault-local := mhra-non-prod-02
