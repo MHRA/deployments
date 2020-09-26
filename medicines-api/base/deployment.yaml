@@ -34,6 +34,8 @@ spec:
               value: "1"
             - name: AZURE_SEARCH_EXACTNESS_BOOST
               value: "4"
+            - name: BMGF_AZURE_SEARCH_INDEX
+              value: "bmgf-index"
           ports:
             - containerPort: 8000
           resources:
