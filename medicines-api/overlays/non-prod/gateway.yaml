@@ -6,14 +6,6 @@ metadata:
 spec:
   servers:
     - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-        - medicines-api.non-prod.mhra.gov.uk
-      tls:
-        httpsRedirect: true # sends 301 redirect for http requests
-    - port:
         number: 443
         name: https-443-medicines-api
         protocol: HTTPS
