@@ -8,5 +8,5 @@ spec:
     - doc-index-updater.non-prod.mhra.gov.uk
   secretName: cert-doc-index-updater
   issuerRef:
-    name: staging
+    name: production
     kind: ClusterIssuer
