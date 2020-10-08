@@ -24,8 +24,6 @@ spec:
               value: doc_index_updater=debug
             - name: PARS_UPLOAD_SITE_ORIGIN
               value: https://mhraparsnonprod.azureedge.net
-            - name: EXPOSE_SERVER_ERROR_DETAILS
-              value: true
           resources:
             limits:
               cpu: "1"
