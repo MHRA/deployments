@@ -8,7 +8,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: doc-index-updater/overlays/dev
+    path: doc-index-updater/dev
     repoURL: https://github.com/MHRA/deployments.git
     targetRevision: master
   syncPolicy:
