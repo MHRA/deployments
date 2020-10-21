@@ -13,8 +13,8 @@ spec:
     listKind: ApplicationList
     plural: applications
     shortNames:
-    - app
-    - apps
+      - app
+      - apps
     singular: application
   scope: Namespaced
   validation:
@@ -22,47 +22,96 @@ spec:
       description: Application is a definition of Application resource.
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"
           type: string
         metadata:
           type: object
         operation:
           description: Operation contains requested operation parameters.
           properties:
+            info:
+              items:
+                properties:
+                  name:
+                    type: string
+                  value:
+                    type: string
+                required:
+                  - name
+                  - value
+                type: object
+              type: array
             initiatedBy:
-              description: OperationInitiator holds information about the operation
+              description:
+                OperationInitiator holds information about the operation
                 initiator
               properties:
                 automated:
-                  description: Automated is set to true if operation was initiated
+                  description:
+                    Automated is set to true if operation was initiated
                     automatically by the application controller.
                   type: boolean
                 username:
                   description: Name of a user who started operation.
                   type: string
               type: object
+            retry:
+              description: Retry controls failed sync retry behavior
+              properties:
+                backoff:
+                  description: Backoff is a backoff strategy
+                  properties:
+                    duration:
+                      description:
+                        Duration is the amount to back off. Default unit
+                        is seconds, but could also be a duration (e.g. "2m", "1h")
+                      type: string
+                    factor:
+                      description:
+                        Factor is a factor to multiply the base duration
+                        after each failed retry
+                      format: int64
+                      type: integer
+                    maxDuration:
+                      description:
+                        MaxDuration is the maximum amount of time allowed
+                        for the backoff strategy
+                      type: string
+                  type: object
+                limit:
+                  description:
+                    Limit is the maximum number of attempts when retrying
+                    a container
+                  format: int64
+                  type: integer
+              type: object
             sync:
               description: SyncOperation contains sync operation details.
               properties:
                 dryRun:
-                  description: DryRun will perform a `kubectl apply --dry-run` without
+                  description:
+                    DryRun will perform a `kubectl apply --dry-run` without
                     actually performing the sync
                   type: boolean
                 manifests:
-                  description: Manifests is an optional field that overrides sync
+                  description:
+                    Manifests is an optional field that overrides sync
                     source with a local directory for development
                   items:
                     type: string
                   type: array
                 prune:
-                  description: Prune deletes resources that are no longer tracked
+                  description:
+                    Prune deletes resources that are no longer tracked
                     in git
                   type: boolean
                 resources:
@@ -76,17 +125,21 @@ spec:
                         type: string
                       name:
                         type: string
+                      namespace:
+                        type: string
                     required:
-                    - kind
-                    - name
+                      - kind
+                      - name
                     type: object
                   type: array
                 revision:
-                  description: Revision is the revision in which to sync the application
+                  description:
+                    Revision is the revision in which to sync the application
                     to. If omitted, will use the revision specified in app spec.
                   type: string
                 source:
-                  description: Source overrides the source definition set in the application.
+                  description:
+                    Source overrides the source definition set in the application.
                     This is typically set in a Rollback operation and nil during a
                     Sync operation
                   properties:
@@ -97,7 +150,8 @@ spec:
                       description: Directory holds path/directory specific options
                       properties:
                         jsonnet:
-                          description: ApplicationSourceJsonnet holds jsonnet specific
+                          description:
+                            ApplicationSourceJsonnet holds jsonnet specific
                             options
                           properties:
                             extVars:
@@ -112,9 +166,14 @@ spec:
                                   value:
                                     type: string
                                 required:
-                                - name
-                                - value
+                                  - name
+                                  - value
                                 type: object
+                              type: array
+                            libs:
+                              description: Additional library search dirs
+                              items:
+                                type: string
                               type: array
                             tlas:
                               description: TLAS is a list of Jsonnet Top-level Arguments
@@ -128,8 +187,8 @@ spec:
                                   value:
                                     type: string
                                 required:
-                                - name
-                                - value
+                                  - name
+                                  - value
                                 type: object
                               type: array
                           type: object
@@ -140,10 +199,12 @@ spec:
                       description: Helm holds helm specific options
                       properties:
                         fileParameters:
-                          description: FileParameters are file parameters to the helm
+                          description:
+                            FileParameters are file parameters to the helm
                             template
                           items:
-                            description: HelmFileParameter is a file parameter to
+                            description:
+                              HelmFileParameter is a file parameter to
                               a helm template
                             properties:
                               name:
@@ -160,7 +221,8 @@ spec:
                             description: HelmParameter is a parameter to a helm template
                             properties:
                               forceString:
-                                description: ForceString determines whether to tell
+                                description:
+                                  ForceString determines whether to tell
                                   Helm to interpret booleans and numbers as strings
                                 type: boolean
                               name:
@@ -172,17 +234,20 @@ spec:
                             type: object
                           type: array
                         releaseName:
-                          description: The Helm release name. If omitted it will use
+                          description:
+                            The Helm release name. If omitted it will use
                             the application name
                           type: string
                         valueFiles:
-                          description: ValuesFiles is a list of Helm value files to
+                          description:
+                            ValuesFiles is a list of Helm value files to
                             use when generating a template
                           items:
                             type: string
                           type: array
                         values:
-                          description: Values is Helm values, typically defined as
+                          description:
+                            Values is Helm values, typically defined as
                             a block
                           type: string
                       type: object
@@ -190,11 +255,13 @@ spec:
                       description: Ksonnet holds ksonnet specific options
                       properties:
                         environment:
-                          description: Environment is a ksonnet application environment
+                          description:
+                            Environment is a ksonnet application environment
                             name
                           type: string
                         parameters:
-                          description: Parameters are a list of ksonnet component
+                          description:
+                            Parameters are a list of ksonnet component
                             parameter override values
                           items:
                             description: KsonnetParameter is a ksonnet component parameter
@@ -206,8 +273,8 @@ spec:
                               value:
                                 type: string
                             required:
-                            - name
-                            - value
+                              - name
+                              - value
                             type: object
                           type: array
                       type: object
@@ -225,19 +292,25 @@ spec:
                             type: string
                           type: array
                         namePrefix:
-                          description: NamePrefix is a prefix appended to resources
+                          description:
+                            NamePrefix is a prefix appended to resources
                             for kustomize apps
                           type: string
                         nameSuffix:
-                          description: NameSuffix is a suffix appended to resources
+                          description:
+                            NameSuffix is a suffix appended to resources
                             for kustomize apps
+                          type: string
+                        version:
+                          description: Version contains optional Kustomize version
                           type: string
                       type: object
                     path:
                       description: Path is a directory path within the Git repository
                       type: string
                     plugin:
-                      description: ConfigManagementPlugin holds config management
+                      description:
+                        ConfigManagementPlugin holds config management
                         plugin specific options
                       properties:
                         env:
@@ -250,24 +323,26 @@ spec:
                                 description: the value
                                 type: string
                             required:
-                            - name
-                            - value
+                              - name
+                              - value
                             type: object
                           type: array
                         name:
                           type: string
                       type: object
                     repoURL:
-                      description: RepoURL is the repository URL of the application
+                      description:
+                        RepoURL is the repository URL of the application
                         manifests
                       type: string
                     targetRevision:
-                      description: TargetRevision defines the commit, tag, or branch
+                      description:
+                        TargetRevision defines the commit, tag, or branch
                         in which to sync the application to. If omitted, will sync
                         to HEAD
                       type: string
                   required:
-                  - repoURL
+                    - repoURL
                   type: object
                 syncOptions:
                   description: SyncOptions provide per-sync sync-options, e.g. Validate=false
@@ -278,22 +353,26 @@ spec:
                   description: SyncStrategy describes how to perform the sync
                   properties:
                     apply:
-                      description: Apply wil perform a `kubectl apply` to perform
+                      description:
+                        Apply wil perform a `kubectl apply` to perform
                         the sync.
                       properties:
                         force:
-                          description: Force indicates whether or not to supply the
+                          description:
+                            Force indicates whether or not to supply the
                             --force flag to `kubectl apply`. The --force flag deletes
                             and re-create the resource, when PATCH encounters conflict
                             and has retried for 5 times.
                           type: boolean
                       type: object
                     hook:
-                      description: Hook will submit any referenced resources to perform
+                      description:
+                        Hook will submit any referenced resources to perform
                         the sync. This is the default strategy
                       properties:
                         force:
-                          description: Force indicates whether or not to supply the
+                          description:
+                            Force indicates whether or not to supply the
                             --force flag to `kubectl apply`. The --force flag deletes
                             and re-create the resource, when PATCH encounters conflict
                             and has retried for 5 times.
@@ -303,28 +382,39 @@ spec:
               type: object
           type: object
         spec:
-          description: ApplicationSpec represents desired application state. Contains
+          description:
+            ApplicationSpec represents desired application state. Contains
             link to repository with application definition and additional parameters
             link definition revision.
           properties:
             destination:
-              description: Destination overrides the kubernetes server and namespace
+              description:
+                Destination overrides the kubernetes server and namespace
                 defined in the environment ksonnet app.yaml
               properties:
+                name:
+                  description:
+                    Name of the destination cluster which can be used instead
+                    of server (url) field
+                  type: string
                 namespace:
-                  description: Namespace overrides the environment namespace value
+                  description:
+                    Namespace overrides the environment namespace value
                     in the ksonnet app.yaml
                   type: string
                 server:
-                  description: Server overrides the environment server value in the
+                  description:
+                    Server overrides the environment server value in the
                     ksonnet app.yaml
                   type: string
               type: object
             ignoreDifferences:
-              description: IgnoreDifferences controls resources fields which should
+              description:
+                IgnoreDifferences controls resources fields which should
                 be ignored during comparison
               items:
-                description: ResourceIgnoreDifferences contains resource filter and
+                description:
+                  ResourceIgnoreDifferences contains resource filter and
                   list of json paths which should be ignored during comparison with
                   live state.
                 properties:
@@ -341,12 +431,13 @@ spec:
                   namespace:
                     type: string
                 required:
-                - jsonPointers
-                - kind
+                  - jsonPointers
+                  - kind
                 type: object
               type: array
             info:
-              description: Infos contains a list of useful information (URLs, email
+              description:
+                Infos contains a list of useful information (URLs, email
                 addresses, and plain text) that relates to the application
               items:
                 properties:
@@ -355,16 +446,18 @@ spec:
                   value:
                     type: string
                 required:
-                - name
-                - value
+                  - name
+                  - value
                 type: object
               type: array
             project:
-              description: Project is a application project name. Empty name means
+              description:
+                Project is a application project name. Empty name means
                 that application belongs to 'default' project.
               type: string
             revisionHistoryLimit:
-              description: This limits this number of items kept in the apps revision
+              description:
+                This limits this number of items kept in the apps revision
                 history. This should only be changed in exceptional circumstances.
                 Setting to zero will store no history. This will reduce storage used.
                 Increasing will increase the space used to store the history, so we
@@ -372,7 +465,8 @@ spec:
               format: int64
               type: integer
             source:
-              description: Source is a reference to the location ksonnet application
+              description:
+                Source is a reference to the location ksonnet application
                 definition
               properties:
                 chart:
@@ -382,7 +476,8 @@ spec:
                   description: Directory holds path/directory specific options
                   properties:
                     jsonnet:
-                      description: ApplicationSourceJsonnet holds jsonnet specific
+                      description:
+                        ApplicationSourceJsonnet holds jsonnet specific
                         options
                       properties:
                         extVars:
@@ -397,9 +492,14 @@ spec:
                               value:
                                 type: string
                             required:
-                            - name
-                            - value
+                              - name
+                              - value
                             type: object
+                          type: array
+                        libs:
+                          description: Additional library search dirs
+                          items:
+                            type: string
                           type: array
                         tlas:
                           description: TLAS is a list of Jsonnet Top-level Arguments
@@ -413,8 +513,8 @@ spec:
                               value:
                                 type: string
                             required:
-                            - name
-                            - value
+                              - name
+                              - value
                             type: object
                           type: array
                       type: object
@@ -425,10 +525,12 @@ spec:
                   description: Helm holds helm specific options
                   properties:
                     fileParameters:
-                      description: FileParameters are file parameters to the helm
+                      description:
+                        FileParameters are file parameters to the helm
                         template
                       items:
-                        description: HelmFileParameter is a file parameter to a helm
+                        description:
+                          HelmFileParameter is a file parameter to a helm
                           template
                         properties:
                           name:
@@ -445,7 +547,8 @@ spec:
                         description: HelmParameter is a parameter to a helm template
                         properties:
                           forceString:
-                            description: ForceString determines whether to tell Helm
+                            description:
+                              ForceString determines whether to tell Helm
                               to interpret booleans and numbers as strings
                             type: boolean
                           name:
@@ -457,11 +560,13 @@ spec:
                         type: object
                       type: array
                     releaseName:
-                      description: The Helm release name. If omitted it will use the
+                      description:
+                        The Helm release name. If omitted it will use the
                         application name
                       type: string
                     valueFiles:
-                      description: ValuesFiles is a list of Helm value files to use
+                      description:
+                        ValuesFiles is a list of Helm value files to use
                         when generating a template
                       items:
                         type: string
@@ -474,11 +579,13 @@ spec:
                   description: Ksonnet holds ksonnet specific options
                   properties:
                     environment:
-                      description: Environment is a ksonnet application environment
+                      description:
+                        Environment is a ksonnet application environment
                         name
                       type: string
                     parameters:
-                      description: Parameters are a list of ksonnet component parameter
+                      description:
+                        Parameters are a list of ksonnet component parameter
                         override values
                       items:
                         description: KsonnetParameter is a ksonnet component parameter
@@ -490,8 +597,8 @@ spec:
                           value:
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                   type: object
@@ -509,19 +616,25 @@ spec:
                         type: string
                       type: array
                     namePrefix:
-                      description: NamePrefix is a prefix appended to resources for
+                      description:
+                        NamePrefix is a prefix appended to resources for
                         kustomize apps
                       type: string
                     nameSuffix:
-                      description: NameSuffix is a suffix appended to resources for
+                      description:
+                        NameSuffix is a suffix appended to resources for
                         kustomize apps
+                      type: string
+                    version:
+                      description: Version contains optional Kustomize version
                       type: string
                   type: object
                 path:
                   description: Path is a directory path within the Git repository
                   type: string
                 plugin:
-                  description: ConfigManagementPlugin holds config management plugin
+                  description:
+                    ConfigManagementPlugin holds config management plugin
                     specific options
                   properties:
                     env:
@@ -534,8 +647,8 @@ spec:
                             description: the value
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     name:
@@ -545,62 +658,100 @@ spec:
                   description: RepoURL is the repository URL of the application manifests
                   type: string
                 targetRevision:
-                  description: TargetRevision defines the commit, tag, or branch in
+                  description:
+                    TargetRevision defines the commit, tag, or branch in
                     which to sync the application to. If omitted, will sync to HEAD
                   type: string
               required:
-              - repoURL
+                - repoURL
               type: object
             syncPolicy:
               description: SyncPolicy controls when a sync will be performed
               properties:
                 automated:
-                  description: Automated will keep an application synced to the target
+                  description:
+                    Automated will keep an application synced to the target
                     revision
                   properties:
                     prune:
-                      description: 'Prune will prune resources automatically as part
-                        of automated sync (default: false)'
+                      description:
+                        "Prune will prune resources automatically as part
+                        of automated sync (default: false)"
                       type: boolean
                     selfHeal:
-                      description: 'SelfHeal enables auto-syncing if  (default: false)'
+                      description: "SelfHeal enables auto-syncing if  (default: false)"
                       type: boolean
                   type: object
+                retry:
+                  description: Retry controls failed sync retry behavior
+                  properties:
+                    backoff:
+                      description: Backoff is a backoff strategy
+                      properties:
+                        duration:
+                          description:
+                            Duration is the amount to back off. Default
+                            unit is seconds, but could also be a duration (e.g. "2m",
+                            "1h")
+                          type: string
+                        factor:
+                          description:
+                            Factor is a factor to multiply the base duration
+                            after each failed retry
+                          format: int64
+                          type: integer
+                        maxDuration:
+                          description:
+                            MaxDuration is the maximum amount of time allowed
+                            for the backoff strategy
+                          type: string
+                      type: object
+                    limit:
+                      description:
+                        Limit is the maximum number of attempts when retrying
+                        a container
+                      format: int64
+                      type: integer
+                  type: object
                 syncOptions:
-                  description: Options allow youe to specify whole app sync-options
+                  description: Options allow you to specify whole app sync-options
                   items:
                     type: string
                   type: array
               type: object
           required:
-          - destination
-          - project
-          - source
+            - destination
+            - project
+            - source
           type: object
         status:
-          description: ApplicationStatus contains information about application sync,
+          description:
+            ApplicationStatus contains information about application sync,
             health status
           properties:
             conditions:
               items:
-                description: ApplicationCondition contains details about current application
+                description:
+                  ApplicationCondition contains details about current application
                   condition
                 properties:
                   lastTransitionTime:
-                    description: LastTransitionTime is the time the condition was
+                    description:
+                      LastTransitionTime is the time the condition was
                       first observed.
                     format: date-time
                     type: string
                   message:
-                    description: Message contains human-readable message indicating
+                    description:
+                      Message contains human-readable message indicating
                       details about condition
                     type: string
                   type:
                     description: Type is an application condition type
                     type: string
                 required:
-                - message
-                - type
+                  - message
+                  - type
                 type: object
               type: array
             health:
@@ -608,25 +759,36 @@ spec:
                 message:
                   type: string
                 status:
+                  description: Represents resource health status
                   type: string
               type: object
             history:
-              description: RevisionHistories is a array of history, oldest first and
+              description:
+                RevisionHistories is a array of history, oldest first and
                 newest last
               items:
-                description: RevisionHistory contains information relevant to an application
+                description:
+                  RevisionHistory contains information relevant to an application
                   deployment
                 properties:
+                  deployStartedAt:
+                    description: DeployStartedAt holds the time the deployment started
+                    format: date-time
+                    type: string
                   deployedAt:
+                    description: DeployedAt holds the time the deployment completed
                     format: date-time
                     type: string
                   id:
+                    description: ID is an auto incrementing identifier of the RevisionHistory
                     format: int64
                     type: integer
                   revision:
+                    description: Revision holds the revision of the sync
                     type: string
                   source:
-                    description: ApplicationSource contains information about github
+                    description:
+                      ApplicationSource contains information about github
                       repository, path within repository and target application environment.
                     properties:
                       chart:
@@ -636,11 +798,13 @@ spec:
                         description: Directory holds path/directory specific options
                         properties:
                           jsonnet:
-                            description: ApplicationSourceJsonnet holds jsonnet specific
+                            description:
+                              ApplicationSourceJsonnet holds jsonnet specific
                               options
                             properties:
                               extVars:
-                                description: ExtVars is a list of Jsonnet External
+                                description:
+                                  ExtVars is a list of Jsonnet External
                                   Variables
                                 items:
                                   description: JsonnetVar is a jsonnet variable
@@ -652,9 +816,14 @@ spec:
                                     value:
                                       type: string
                                   required:
-                                  - name
-                                  - value
+                                    - name
+                                    - value
                                   type: object
+                                type: array
+                              libs:
+                                description: Additional library search dirs
+                                items:
+                                  type: string
                                 type: array
                               tlas:
                                 description: TLAS is a list of Jsonnet Top-level Arguments
@@ -668,8 +837,8 @@ spec:
                                     value:
                                       type: string
                                   required:
-                                  - name
-                                  - value
+                                    - name
+                                    - value
                                   type: object
                                 type: array
                             type: object
@@ -680,17 +849,20 @@ spec:
                         description: Helm holds helm specific options
                         properties:
                           fileParameters:
-                            description: FileParameters are file parameters to the
+                            description:
+                              FileParameters are file parameters to the
                               helm template
                             items:
-                              description: HelmFileParameter is a file parameter to
+                              description:
+                                HelmFileParameter is a file parameter to
                                 a helm template
                               properties:
                                 name:
                                   description: Name is the name of the helm parameter
                                   type: string
                                 path:
-                                  description: Path is the path value for the helm
+                                  description:
+                                    Path is the path value for the helm
                                     parameter
                                   type: string
                               type: object
@@ -698,11 +870,13 @@ spec:
                           parameters:
                             description: Parameters are parameters to the helm template
                             items:
-                              description: HelmParameter is a parameter to a helm
+                              description:
+                                HelmParameter is a parameter to a helm
                                 template
                               properties:
                                 forceString:
-                                  description: ForceString determines whether to tell
+                                  description:
+                                    ForceString determines whether to tell
                                     Helm to interpret booleans and numbers as strings
                                   type: boolean
                                 name:
@@ -714,17 +888,20 @@ spec:
                               type: object
                             type: array
                           releaseName:
-                            description: The Helm release name. If omitted it will
+                            description:
+                              The Helm release name. If omitted it will
                               use the application name
                             type: string
                           valueFiles:
-                            description: ValuesFiles is a list of Helm value files
+                            description:
+                              ValuesFiles is a list of Helm value files
                               to use when generating a template
                             items:
                               type: string
                             type: array
                           values:
-                            description: Values is Helm values, typically defined
+                            description:
+                              Values is Helm values, typically defined
                               as a block
                             type: string
                         type: object
@@ -732,14 +909,17 @@ spec:
                         description: Ksonnet holds ksonnet specific options
                         properties:
                           environment:
-                            description: Environment is a ksonnet application environment
+                            description:
+                              Environment is a ksonnet application environment
                               name
                             type: string
                           parameters:
-                            description: Parameters are a list of ksonnet component
+                            description:
+                              Parameters are a list of ksonnet component
                               parameter override values
                             items:
-                              description: KsonnetParameter is a ksonnet component
+                              description:
+                                KsonnetParameter is a ksonnet component
                                 parameter
                               properties:
                                 component:
@@ -749,8 +929,8 @@ spec:
                                 value:
                                   type: string
                               required:
-                              - name
-                              - value
+                                - name
+                                - value
                               type: object
                             type: array
                         type: object
@@ -768,19 +948,25 @@ spec:
                               type: string
                             type: array
                           namePrefix:
-                            description: NamePrefix is a prefix appended to resources
+                            description:
+                              NamePrefix is a prefix appended to resources
                               for kustomize apps
                             type: string
                           nameSuffix:
-                            description: NameSuffix is a suffix appended to resources
+                            description:
+                              NameSuffix is a suffix appended to resources
                               for kustomize apps
+                            type: string
+                          version:
+                            description: Version contains optional Kustomize version
                             type: string
                         type: object
                       path:
                         description: Path is a directory path within the Git repository
                         type: string
                       plugin:
-                        description: ConfigManagementPlugin holds config management
+                        description:
+                          ConfigManagementPlugin holds config management
                           plugin specific options
                         properties:
                           env:
@@ -793,38 +979,43 @@ spec:
                                   description: the value
                                   type: string
                               required:
-                              - name
-                              - value
+                                - name
+                                - value
                               type: object
                             type: array
                           name:
                             type: string
                         type: object
                       repoURL:
-                        description: RepoURL is the repository URL of the application
+                        description:
+                          RepoURL is the repository URL of the application
                           manifests
                         type: string
                       targetRevision:
-                        description: TargetRevision defines the commit, tag, or branch
+                        description:
+                          TargetRevision defines the commit, tag, or branch
                           in which to sync the application to. If omitted, will sync
                           to HEAD
                         type: string
                     required:
-                    - repoURL
+                      - repoURL
                     type: object
                 required:
-                - deployedAt
-                - id
-                - revision
+                  - deployedAt
+                  - id
+                  - revision
                 type: object
               type: array
             observedAt:
-              description: ObservedAt indicates when the application state was updated
-                without querying latest git state
+              description:
+                "ObservedAt indicates when the application state was updated
+                without querying latest git state Deprecated: controller no longer
+                updates ObservedAt field"
               format: date-time
               type: string
             operationState:
-              description: OperationState contains information about state of currently
+              description:
+                OperationState contains information about state of currently
                 performing operation on application.
               properties:
                 finishedAt:
@@ -832,45 +1023,95 @@ spec:
                   format: date-time
                   type: string
                 message:
-                  description: Message hold any pertinent messages when attempting
+                  description:
+                    Message hold any pertinent messages when attempting
                     to perform operation (typically errors).
                   type: string
                 operation:
                   description: Operation is the original requested operation
                   properties:
+                    info:
+                      items:
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: string
+                        required:
+                          - name
+                          - value
+                        type: object
+                      type: array
                     initiatedBy:
-                      description: OperationInitiator holds information about the
+                      description:
+                        OperationInitiator holds information about the
                         operation initiator
                       properties:
                         automated:
-                          description: Automated is set to true if operation was initiated
+                          description:
+                            Automated is set to true if operation was initiated
                             automatically by the application controller.
                           type: boolean
                         username:
                           description: Name of a user who started operation.
                           type: string
                       type: object
+                    retry:
+                      description: Retry controls failed sync retry behavior
+                      properties:
+                        backoff:
+                          description: Backoff is a backoff strategy
+                          properties:
+                            duration:
+                              description:
+                                Duration is the amount to back off. Default
+                                unit is seconds, but could also be a duration (e.g.
+                                "2m", "1h")
+                              type: string
+                            factor:
+                              description:
+                                Factor is a factor to multiply the base
+                                duration after each failed retry
+                              format: int64
+                              type: integer
+                            maxDuration:
+                              description:
+                                MaxDuration is the maximum amount of time
+                                allowed for the backoff strategy
+                              type: string
+                          type: object
+                        limit:
+                          description:
+                            Limit is the maximum number of attempts when
+                            retrying a container
+                          format: int64
+                          type: integer
+                      type: object
                     sync:
                       description: SyncOperation contains sync operation details.
                       properties:
                         dryRun:
-                          description: DryRun will perform a `kubectl apply --dry-run`
+                          description:
+                            DryRun will perform a `kubectl apply --dry-run`
                             without actually performing the sync
                           type: boolean
                         manifests:
-                          description: Manifests is an optional field that overrides
+                          description:
+                            Manifests is an optional field that overrides
                             sync source with a local directory for development
                           items:
                             type: string
                           type: array
                         prune:
-                          description: Prune deletes resources that are no longer
+                          description:
+                            Prune deletes resources that are no longer
                             tracked in git
                           type: boolean
                         resources:
                           description: Resources describes which resources to sync
                           items:
-                            description: SyncOperationResource contains resources
+                            description:
+                              SyncOperationResource contains resources
                               to sync.
                             properties:
                               group:
@@ -879,18 +1120,22 @@ spec:
                                 type: string
                               name:
                                 type: string
+                              namespace:
+                                type: string
                             required:
-                            - kind
-                            - name
+                              - kind
+                              - name
                             type: object
                           type: array
                         revision:
-                          description: Revision is the revision in which to sync the
+                          description:
+                            Revision is the revision in which to sync the
                             application to. If omitted, will use the revision specified
                             in app spec.
                           type: string
                         source:
-                          description: Source overrides the source definition set
+                          description:
+                            Source overrides the source definition set
                             in the application. This is typically set in a Rollback
                             operation and nil during a Sync operation
                           properties:
@@ -898,15 +1143,18 @@ spec:
                               description: Chart is a Helm chart name
                               type: string
                             directory:
-                              description: Directory holds path/directory specific
+                              description:
+                                Directory holds path/directory specific
                                 options
                               properties:
                                 jsonnet:
-                                  description: ApplicationSourceJsonnet holds jsonnet
+                                  description:
+                                    ApplicationSourceJsonnet holds jsonnet
                                     specific options
                                   properties:
                                     extVars:
-                                      description: ExtVars is a list of Jsonnet External
+                                      description:
+                                        ExtVars is a list of Jsonnet External
                                         Variables
                                       items:
                                         description: JsonnetVar is a jsonnet variable
@@ -918,12 +1166,18 @@ spec:
                                           value:
                                             type: string
                                         required:
-                                        - name
-                                        - value
+                                          - name
+                                          - value
                                         type: object
                                       type: array
+                                    libs:
+                                      description: Additional library search dirs
+                                      items:
+                                        type: string
+                                      type: array
                                     tlas:
-                                      description: TLAS is a list of Jsonnet Top-level
+                                      description:
+                                        TLAS is a list of Jsonnet Top-level
                                         Arguments
                                       items:
                                         description: JsonnetVar is a jsonnet variable
@@ -935,8 +1189,8 @@ spec:
                                           value:
                                             type: string
                                         required:
-                                        - name
-                                        - value
+                                          - name
+                                          - value
                                         type: object
                                       type: array
                                   type: object
@@ -947,56 +1201,68 @@ spec:
                               description: Helm holds helm specific options
                               properties:
                                 fileParameters:
-                                  description: FileParameters are file parameters
+                                  description:
+                                    FileParameters are file parameters
                                     to the helm template
                                   items:
-                                    description: HelmFileParameter is a file parameter
+                                    description:
+                                      HelmFileParameter is a file parameter
                                       to a helm template
                                     properties:
                                       name:
-                                        description: Name is the name of the helm
+                                        description:
+                                          Name is the name of the helm
                                           parameter
                                         type: string
                                       path:
-                                        description: Path is the path value for the
+                                        description:
+                                          Path is the path value for the
                                           helm parameter
                                         type: string
                                     type: object
                                   type: array
                                 parameters:
-                                  description: Parameters are parameters to the helm
+                                  description:
+                                    Parameters are parameters to the helm
                                     template
                                   items:
-                                    description: HelmParameter is a parameter to a
+                                    description:
+                                      HelmParameter is a parameter to a
                                       helm template
                                     properties:
                                       forceString:
-                                        description: ForceString determines whether
+                                        description:
+                                          ForceString determines whether
                                           to tell Helm to interpret booleans and numbers
                                           as strings
                                         type: boolean
                                       name:
-                                        description: Name is the name of the helm
+                                        description:
+                                          Name is the name of the helm
                                           parameter
                                         type: string
                                       value:
-                                        description: Value is the value for the helm
+                                        description:
+                                          Value is the value for the helm
                                           parameter
                                         type: string
                                     type: object
                                   type: array
                                 releaseName:
-                                  description: The Helm release name. If omitted it
+                                  description:
+                                    The Helm release name. If omitted it
                                     will use the application name
                                   type: string
                                 valueFiles:
-                                  description: ValuesFiles is a list of Helm value
+                                  description:
+                                    ValuesFiles is a list of Helm value
                                     files to use when generating a template
                                   items:
                                     type: string
                                   type: array
                                 values:
-                                  description: Values is Helm values, typically defined
+                                  description:
+                                    Values is Helm values, typically defined
                                     as a block
                                   type: string
                               type: object
@@ -1004,14 +1270,17 @@ spec:
                               description: Ksonnet holds ksonnet specific options
                               properties:
                                 environment:
-                                  description: Environment is a ksonnet application
+                                  description:
+                                    Environment is a ksonnet application
                                     environment name
                                   type: string
                                 parameters:
-                                  description: Parameters are a list of ksonnet component
+                                  description:
+                                    Parameters are a list of ksonnet component
                                     parameter override values
                                   items:
-                                    description: KsonnetParameter is a ksonnet component
+                                    description:
+                                      KsonnetParameter is a ksonnet component
                                       parameter
                                     properties:
                                       component:
@@ -1021,8 +1290,8 @@ spec:
                                       value:
                                         type: string
                                     required:
-                                    - name
-                                    - value
+                                      - name
+                                      - value
                                     type: object
                                   type: array
                               type: object
@@ -1032,7 +1301,8 @@ spec:
                                 commonLabels:
                                   additionalProperties:
                                     type: string
-                                  description: CommonLabels adds additional kustomize
+                                  description:
+                                    CommonLabels adds additional kustomize
                                     commonLabels
                                   type: object
                                 images:
@@ -1041,20 +1311,29 @@ spec:
                                     type: string
                                   type: array
                                 namePrefix:
-                                  description: NamePrefix is a prefix appended to
+                                  description:
+                                    NamePrefix is a prefix appended to
                                     resources for kustomize apps
                                   type: string
                                 nameSuffix:
-                                  description: NameSuffix is a suffix appended to
+                                  description:
+                                    NameSuffix is a suffix appended to
                                     resources for kustomize apps
+                                  type: string
+                                version:
+                                  description:
+                                    Version contains optional Kustomize
+                                    version
                                   type: string
                               type: object
                             path:
-                              description: Path is a directory path within the Git
+                              description:
+                                Path is a directory path within the Git
                                 repository
                               type: string
                             plugin:
-                              description: ConfigManagementPlugin holds config management
+                              description:
+                                ConfigManagementPlugin holds config management
                                 plugin specific options
                               properties:
                                 env:
@@ -1067,27 +1346,30 @@ spec:
                                         description: the value
                                         type: string
                                     required:
-                                    - name
-                                    - value
+                                      - name
+                                      - value
                                     type: object
                                   type: array
                                 name:
                                   type: string
                               type: object
                             repoURL:
-                              description: RepoURL is the repository URL of the application
+                              description:
+                                RepoURL is the repository URL of the application
                                 manifests
                               type: string
                             targetRevision:
-                              description: TargetRevision defines the commit, tag,
+                              description:
+                                TargetRevision defines the commit, tag,
                                 or branch in which to sync the application to. If
                                 omitted, will sync to HEAD
                               type: string
                           required:
-                          - repoURL
+                            - repoURL
                           type: object
                         syncOptions:
-                          description: SyncOptions provide per-sync sync-options,
+                          description:
+                            SyncOptions provide per-sync sync-options,
                             e.g. Validate=false
                           items:
                             type: string
@@ -1096,11 +1378,13 @@ spec:
                           description: SyncStrategy describes how to perform the sync
                           properties:
                             apply:
-                              description: Apply wil perform a `kubectl apply` to
+                              description:
+                                Apply wil perform a `kubectl apply` to
                                 perform the sync.
                               properties:
                                 force:
-                                  description: Force indicates whether or not to supply
+                                  description:
+                                    Force indicates whether or not to supply
                                     the --force flag to `kubectl apply`. The --force
                                     flag deletes and re-create the resource, when
                                     PATCH encounters conflict and has retried for
@@ -1108,11 +1392,13 @@ spec:
                                   type: boolean
                               type: object
                             hook:
-                              description: Hook will submit any referenced resources
+                              description:
+                                Hook will submit any referenced resources
                                 to perform the sync. This is the default strategy
                               properties:
                                 force:
-                                  description: Force indicates whether or not to supply
+                                  description:
+                                    Force indicates whether or not to supply
                                     the --force flag to `kubectl apply`. The --force
                                     flag deletes and re-create the resource, when
                                     PATCH encounters conflict and has retried for
@@ -1125,6 +1411,10 @@ spec:
                 phase:
                   description: Phase is the current phase of the operation
                   type: string
+                retryCount:
+                  description: RetryCount contains time of operation retries
+                  format: int64
+                  type: integer
                 startedAt:
                   description: StartedAt contains time of operation start
                   format: date-time
@@ -1133,21 +1423,25 @@ spec:
                   description: SyncResult is the result of a Sync operation
                   properties:
                     resources:
-                      description: Resources holds the sync result of each individual
+                      description:
+                        Resources holds the sync result of each individual
                         resource
                       items:
-                        description: ResourceResult holds the operation result details
+                        description:
+                          ResourceResult holds the operation result details
                           of a specific resource
                         properties:
                           group:
                             type: string
                           hookPhase:
-                            description: 'the state of any operation associated with
+                            description:
+                              "the state of any operation associated with
                               this resource OR hook note: can contain values for non-hook
-                              resources'
+                              resources"
                             type: string
                           hookType:
-                            description: the type of the hook, empty for non-hook
+                            description:
+                              the type of the hook, empty for non-hook
                               resources
                             type: string
                           kind:
@@ -1160,29 +1454,32 @@ spec:
                           namespace:
                             type: string
                           status:
-                            description: the final result of the sync, this is be
+                            description:
+                              the final result of the sync, this is be
                               empty if the resources is yet to be applied/pruned and
                               is always zero-value for hooks
                             type: string
                           syncPhase:
-                            description: indicates the particular phase of the sync
+                            description:
+                              indicates the particular phase of the sync
                               that this is for
                             type: string
                           version:
                             type: string
                         required:
-                        - group
-                        - kind
-                        - name
-                        - namespace
-                        - version
+                          - group
+                          - kind
+                          - name
+                          - namespace
+                          - version
                         type: object
                       type: array
                     revision:
                       description: Revision holds the revision of the sync
                       type: string
                     source:
-                      description: Source records the application source information
+                      description:
+                        Source records the application source information
                         of the sync, used for comparing auto-sync
                       properties:
                         chart:
@@ -1192,11 +1489,13 @@ spec:
                           description: Directory holds path/directory specific options
                           properties:
                             jsonnet:
-                              description: ApplicationSourceJsonnet holds jsonnet
+                              description:
+                                ApplicationSourceJsonnet holds jsonnet
                                 specific options
                               properties:
                                 extVars:
-                                  description: ExtVars is a list of Jsonnet External
+                                  description:
+                                    ExtVars is a list of Jsonnet External
                                     Variables
                                   items:
                                     description: JsonnetVar is a jsonnet variable
@@ -1208,12 +1507,18 @@ spec:
                                       value:
                                         type: string
                                     required:
-                                    - name
-                                    - value
+                                      - name
+                                      - value
                                     type: object
                                   type: array
+                                libs:
+                                  description: Additional library search dirs
+                                  items:
+                                    type: string
+                                  type: array
                                 tlas:
-                                  description: TLAS is a list of Jsonnet Top-level
+                                  description:
+                                    TLAS is a list of Jsonnet Top-level
                                     Arguments
                                   items:
                                     description: JsonnetVar is a jsonnet variable
@@ -1225,8 +1530,8 @@ spec:
                                       value:
                                         type: string
                                     required:
-                                    - name
-                                    - value
+                                      - name
+                                      - value
                                     type: object
                                   type: array
                               type: object
@@ -1237,17 +1542,20 @@ spec:
                           description: Helm holds helm specific options
                           properties:
                             fileParameters:
-                              description: FileParameters are file parameters to the
+                              description:
+                                FileParameters are file parameters to the
                                 helm template
                               items:
-                                description: HelmFileParameter is a file parameter
+                                description:
+                                  HelmFileParameter is a file parameter
                                   to a helm template
                                 properties:
                                   name:
                                     description: Name is the name of the helm parameter
                                     type: string
                                   path:
-                                    description: Path is the path value for the helm
+                                    description:
+                                      Path is the path value for the helm
                                       parameter
                                     type: string
                                 type: object
@@ -1255,11 +1563,13 @@ spec:
                             parameters:
                               description: Parameters are parameters to the helm template
                               items:
-                                description: HelmParameter is a parameter to a helm
+                                description:
+                                  HelmParameter is a parameter to a helm
                                   template
                                 properties:
                                   forceString:
-                                    description: ForceString determines whether to
+                                    description:
+                                      ForceString determines whether to
                                       tell Helm to interpret booleans and numbers
                                       as strings
                                     type: boolean
@@ -1272,17 +1582,20 @@ spec:
                                 type: object
                               type: array
                             releaseName:
-                              description: The Helm release name. If omitted it will
+                              description:
+                                The Helm release name. If omitted it will
                                 use the application name
                               type: string
                             valueFiles:
-                              description: ValuesFiles is a list of Helm value files
+                              description:
+                                ValuesFiles is a list of Helm value files
                                 to use when generating a template
                               items:
                                 type: string
                               type: array
                             values:
-                              description: Values is Helm values, typically defined
+                              description:
+                                Values is Helm values, typically defined
                                 as a block
                               type: string
                           type: object
@@ -1290,14 +1603,17 @@ spec:
                           description: Ksonnet holds ksonnet specific options
                           properties:
                             environment:
-                              description: Environment is a ksonnet application environment
+                              description:
+                                Environment is a ksonnet application environment
                                 name
                               type: string
                             parameters:
-                              description: Parameters are a list of ksonnet component
+                              description:
+                                Parameters are a list of ksonnet component
                                 parameter override values
                               items:
-                                description: KsonnetParameter is a ksonnet component
+                                description:
+                                  KsonnetParameter is a ksonnet component
                                   parameter
                                 properties:
                                   component:
@@ -1307,8 +1623,8 @@ spec:
                                   value:
                                     type: string
                                 required:
-                                - name
-                                - value
+                                  - name
+                                  - value
                                 type: object
                               type: array
                           type: object
@@ -1318,7 +1634,8 @@ spec:
                             commonLabels:
                               additionalProperties:
                                 type: string
-                              description: CommonLabels adds additional kustomize
+                              description:
+                                CommonLabels adds additional kustomize
                                 commonLabels
                               type: object
                             images:
@@ -1327,19 +1644,25 @@ spec:
                                 type: string
                               type: array
                             namePrefix:
-                              description: NamePrefix is a prefix appended to resources
+                              description:
+                                NamePrefix is a prefix appended to resources
                                 for kustomize apps
                               type: string
                             nameSuffix:
-                              description: NameSuffix is a suffix appended to resources
+                              description:
+                                NameSuffix is a suffix appended to resources
                                 for kustomize apps
+                              type: string
+                            version:
+                              description: Version contains optional Kustomize version
                               type: string
                           type: object
                         path:
                           description: Path is a directory path within the Git repository
                           type: string
                         plugin:
-                          description: ConfigManagementPlugin holds config management
+                          description:
+                            ConfigManagementPlugin holds config management
                             plugin specific options
                           properties:
                             env:
@@ -1352,41 +1675,45 @@ spec:
                                     description: the value
                                     type: string
                                 required:
-                                - name
-                                - value
+                                  - name
+                                  - value
                                 type: object
                               type: array
                             name:
                               type: string
                           type: object
                         repoURL:
-                          description: RepoURL is the repository URL of the application
+                          description:
+                            RepoURL is the repository URL of the application
                             manifests
                           type: string
                         targetRevision:
-                          description: TargetRevision defines the commit, tag, or
+                          description:
+                            TargetRevision defines the commit, tag, or
                             branch in which to sync the application to. If omitted,
                             will sync to HEAD
                           type: string
                       required:
-                      - repoURL
+                        - repoURL
                       type: object
                   required:
-                  - revision
+                    - revision
                   type: object
               required:
-              - operation
-              - phase
-              - startedAt
+                - operation
+                - phase
+                - startedAt
               type: object
             reconciledAt:
-              description: ReconciledAt indicates when the application state was reconciled
+              description:
+                ReconciledAt indicates when the application state was reconciled
                 using the latest git version
               format: date-time
               type: string
             resources:
               items:
-                description: ResourceStatus holds the current sync and health status
+                description:
+                  ResourceStatus holds the current sync and health status
                   of a resource
                 properties:
                   group:
@@ -1396,6 +1723,7 @@ spec:
                       message:
                         type: string
                       status:
+                        description: Represents resource health status
                         type: string
                     type: object
                   hook:
@@ -1409,7 +1737,8 @@ spec:
                   requiresPruning:
                     type: boolean
                   status:
-                    description: SyncStatusCode is a type which represents possible
+                    description:
+                      SyncStatusCode is a type which represents possible
                       comparison results
                     type: string
                   version:
@@ -1421,7 +1750,8 @@ spec:
             summary:
               properties:
                 externalURLs:
-                  description: ExternalURLs holds all external URLs of application
+                  description:
+                    ExternalURLs holds all external URLs of application
                     child resources.
                   items:
                     type: string
@@ -1433,28 +1763,39 @@ spec:
                   type: array
               type: object
             sync:
-              description: SyncStatus is a comparison result of application spec and
+              description:
+                SyncStatus is a comparison result of application spec and
                 deployed application.
               properties:
                 comparedTo:
-                  description: ComparedTo contains application source and target which
+                  description:
+                    ComparedTo contains application source and target which
                     was used for resources comparison
                   properties:
                     destination:
-                      description: ApplicationDestination contains deployment destination
+                      description:
+                        ApplicationDestination contains deployment destination
                         information
                       properties:
+                        name:
+                          description:
+                            Name of the destination cluster which can be
+                            used instead of server (url) field
+                          type: string
                         namespace:
-                          description: Namespace overrides the environment namespace
+                          description:
+                            Namespace overrides the environment namespace
                             value in the ksonnet app.yaml
                           type: string
                         server:
-                          description: Server overrides the environment server value
+                          description:
+                            Server overrides the environment server value
                             in the ksonnet app.yaml
                           type: string
                       type: object
                     source:
-                      description: ApplicationSource contains information about github
+                      description:
+                        ApplicationSource contains information about github
                         repository, path within repository and target application
                         environment.
                       properties:
@@ -1465,11 +1806,13 @@ spec:
                           description: Directory holds path/directory specific options
                           properties:
                             jsonnet:
-                              description: ApplicationSourceJsonnet holds jsonnet
+                              description:
+                                ApplicationSourceJsonnet holds jsonnet
                                 specific options
                               properties:
                                 extVars:
-                                  description: ExtVars is a list of Jsonnet External
+                                  description:
+                                    ExtVars is a list of Jsonnet External
                                     Variables
                                   items:
                                     description: JsonnetVar is a jsonnet variable
@@ -1481,12 +1824,18 @@ spec:
                                       value:
                                         type: string
                                     required:
-                                    - name
-                                    - value
+                                      - name
+                                      - value
                                     type: object
                                   type: array
+                                libs:
+                                  description: Additional library search dirs
+                                  items:
+                                    type: string
+                                  type: array
                                 tlas:
-                                  description: TLAS is a list of Jsonnet Top-level
+                                  description:
+                                    TLAS is a list of Jsonnet Top-level
                                     Arguments
                                   items:
                                     description: JsonnetVar is a jsonnet variable
@@ -1498,8 +1847,8 @@ spec:
                                       value:
                                         type: string
                                     required:
-                                    - name
-                                    - value
+                                      - name
+                                      - value
                                     type: object
                                   type: array
                               type: object
@@ -1510,17 +1859,20 @@ spec:
                           description: Helm holds helm specific options
                           properties:
                             fileParameters:
-                              description: FileParameters are file parameters to the
+                              description:
+                                FileParameters are file parameters to the
                                 helm template
                               items:
-                                description: HelmFileParameter is a file parameter
+                                description:
+                                  HelmFileParameter is a file parameter
                                   to a helm template
                                 properties:
                                   name:
                                     description: Name is the name of the helm parameter
                                     type: string
                                   path:
-                                    description: Path is the path value for the helm
+                                    description:
+                                      Path is the path value for the helm
                                       parameter
                                     type: string
                                 type: object
@@ -1528,11 +1880,13 @@ spec:
                             parameters:
                               description: Parameters are parameters to the helm template
                               items:
-                                description: HelmParameter is a parameter to a helm
+                                description:
+                                  HelmParameter is a parameter to a helm
                                   template
                                 properties:
                                   forceString:
-                                    description: ForceString determines whether to
+                                    description:
+                                      ForceString determines whether to
                                       tell Helm to interpret booleans and numbers
                                       as strings
                                     type: boolean
@@ -1545,17 +1899,20 @@ spec:
                                 type: object
                               type: array
                             releaseName:
-                              description: The Helm release name. If omitted it will
+                              description:
+                                The Helm release name. If omitted it will
                                 use the application name
                               type: string
                             valueFiles:
-                              description: ValuesFiles is a list of Helm value files
+                              description:
+                                ValuesFiles is a list of Helm value files
                                 to use when generating a template
                               items:
                                 type: string
                               type: array
                             values:
-                              description: Values is Helm values, typically defined
+                              description:
+                                Values is Helm values, typically defined
                                 as a block
                               type: string
                           type: object
@@ -1563,14 +1920,17 @@ spec:
                           description: Ksonnet holds ksonnet specific options
                           properties:
                             environment:
-                              description: Environment is a ksonnet application environment
+                              description:
+                                Environment is a ksonnet application environment
                                 name
                               type: string
                             parameters:
-                              description: Parameters are a list of ksonnet component
+                              description:
+                                Parameters are a list of ksonnet component
                                 parameter override values
                               items:
-                                description: KsonnetParameter is a ksonnet component
+                                description:
+                                  KsonnetParameter is a ksonnet component
                                   parameter
                                 properties:
                                   component:
@@ -1580,8 +1940,8 @@ spec:
                                   value:
                                     type: string
                                 required:
-                                - name
-                                - value
+                                  - name
+                                  - value
                                 type: object
                               type: array
                           type: object
@@ -1591,7 +1951,8 @@ spec:
                             commonLabels:
                               additionalProperties:
                                 type: string
-                              description: CommonLabels adds additional kustomize
+                              description:
+                                CommonLabels adds additional kustomize
                                 commonLabels
                               type: object
                             images:
@@ -1600,19 +1961,25 @@ spec:
                                 type: string
                               type: array
                             namePrefix:
-                              description: NamePrefix is a prefix appended to resources
+                              description:
+                                NamePrefix is a prefix appended to resources
                                 for kustomize apps
                               type: string
                             nameSuffix:
-                              description: NameSuffix is a suffix appended to resources
+                              description:
+                                NameSuffix is a suffix appended to resources
                                 for kustomize apps
+                              type: string
+                            version:
+                              description: Version contains optional Kustomize version
                               type: string
                           type: object
                         path:
                           description: Path is a directory path within the Git repository
                           type: string
                         plugin:
-                          description: ConfigManagementPlugin holds config management
+                          description:
+                            ConfigManagementPlugin holds config management
                             plugin specific options
                           properties:
                             env:
@@ -1625,48 +1992,51 @@ spec:
                                     description: the value
                                     type: string
                                 required:
-                                - name
-                                - value
+                                  - name
+                                  - value
                                 type: object
                               type: array
                             name:
                               type: string
                           type: object
                         repoURL:
-                          description: RepoURL is the repository URL of the application
+                          description:
+                            RepoURL is the repository URL of the application
                             manifests
                           type: string
                         targetRevision:
-                          description: TargetRevision defines the commit, tag, or
+                          description:
+                            TargetRevision defines the commit, tag, or
                             branch in which to sync the application to. If omitted,
                             will sync to HEAD
                           type: string
                       required:
-                      - repoURL
+                        - repoURL
                       type: object
                   required:
-                  - destination
-                  - source
+                    - destination
+                    - source
                   type: object
                 revision:
                   type: string
                 status:
-                  description: SyncStatusCode is a type which represents possible
+                  description:
+                    SyncStatusCode is a type which represents possible
                     comparison results
                   type: string
               required:
-              - status
+                - status
               type: object
           type: object
       required:
-      - metadata
-      - spec
+        - metadata
+        - spec
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -1682,38 +2052,43 @@ spec:
     listKind: AppProjectList
     plural: appprojects
     shortNames:
-    - appproj
-    - appprojs
+      - appproj
+      - appprojs
     singular: appproject
   scope: Namespaced
   validation:
     openAPIV3Schema:
-      description: 'AppProject provides a logical grouping of applications, providing
+      description:
+        "AppProject provides a logical grouping of applications, providing
         controls for: * where the apps may deploy to (cluster whitelist) * what may
         be deployed (repository whitelist, resource whitelist/blacklist) * who can
         access these applications (roles, OIDC group claims bindings) * and what they
-        can do (RBAC policies) * automation access to these roles (JWT tokens)'
+        can do (RBAC policies) * automation access to these roles (JWT tokens)"
       properties:
         apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
+          description:
+            "APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
           type: string
         kind:
-          description: 'Kind is a string value representing the REST resource this
+          description:
+            "Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"
           type: string
         metadata:
           type: object
         spec:
           description: AppProjectSpec is the specification of an AppProject
           properties:
-            clusterResourceWhitelist:
-              description: ClusterResourceWhitelist contains list of whitelisted cluster
+            clusterResourceBlacklist:
+              description:
+                ClusterResourceBlacklist contains list of blacklisted cluster
                 level resources
               items:
-                description: GroupKind specifies a Group and a Kind, but does not
+                description:
+                  GroupKind specifies a Group and a Kind, but does not
                   force a version.  This is useful for identifying concepts during
                   lookup stages without having partially valid types
                 properties:
@@ -1722,35 +2097,65 @@ spec:
                   kind:
                     type: string
                 required:
-                - group
-                - kind
+                  - group
+                  - kind
+                type: object
+              type: array
+            clusterResourceWhitelist:
+              description:
+                ClusterResourceWhitelist contains list of whitelisted cluster
+                level resources
+              items:
+                description:
+                  GroupKind specifies a Group and a Kind, but does not
+                  force a version.  This is useful for identifying concepts during
+                  lookup stages without having partially valid types
+                properties:
+                  group:
+                    type: string
+                  kind:
+                    type: string
+                required:
+                  - group
+                  - kind
                 type: object
               type: array
             description:
               description: Description contains optional project description
               type: string
             destinations:
-              description: Destinations contains list of destinations available for
+              description:
+                Destinations contains list of destinations available for
                 deployment
               items:
-                description: ApplicationDestination contains deployment destination
+                description:
+                  ApplicationDestination contains deployment destination
                   information
                 properties:
+                  name:
+                    description:
+                      Name of the destination cluster which can be used
+                      instead of server (url) field
+                    type: string
                   namespace:
-                    description: Namespace overrides the environment namespace value
+                    description:
+                      Namespace overrides the environment namespace value
                       in the ksonnet app.yaml
                     type: string
                   server:
-                    description: Server overrides the environment server value in
+                    description:
+                      Server overrides the environment server value in
                       the ksonnet app.yaml
                     type: string
                 type: object
               type: array
             namespaceResourceBlacklist:
-              description: NamespaceResourceBlacklist contains list of blacklisted
+              description:
+                NamespaceResourceBlacklist contains list of blacklisted
                 namespace level resources
               items:
-                description: GroupKind specifies a Group and a Kind, but does not
+                description:
+                  GroupKind specifies a Group and a Kind, but does not
                   force a version.  This is useful for identifying concepts during
                   lookup stages without having partially valid types
                 properties:
@@ -1759,15 +2164,17 @@ spec:
                   kind:
                     type: string
                 required:
-                - group
-                - kind
+                  - group
+                  - kind
                 type: object
               type: array
             namespaceResourceWhitelist:
-              description: NamespaceResourceWhitelist contains list of whitelisted
+              description:
+                NamespaceResourceWhitelist contains list of whitelisted
                 namespace level resources
               items:
-                description: GroupKind specifies a Group and a Kind, but does not
+                description:
+                  GroupKind specifies a Group and a Kind, but does not
                   force a version.  This is useful for identifying concepts during
                   lookup stages without having partially valid types
                 properties:
@@ -1776,21 +2183,35 @@ spec:
                   kind:
                     type: string
                 required:
-                - group
-                - kind
+                  - group
+                  - kind
                 type: object
               type: array
             orphanedResources:
-              description: OrphanedResources specifies if controller should monitor
+              description:
+                OrphanedResources specifies if controller should monitor
                 orphaned resources of apps in this project
               properties:
+                ignore:
+                  items:
+                    properties:
+                      group:
+                        type: string
+                      kind:
+                        type: string
+                      name:
+                        type: string
+                    type: object
+                  type: array
                 warn:
-                  description: Warn indicates if warning condition should be created
+                  description:
+                    Warn indicates if warning condition should be created
                     for apps which have orphaned resources
                   type: boolean
               type: object
             roles:
-              description: Roles are user defined RBAC roles associated with this
+              description:
+                Roles are user defined RBAC roles associated with this
                 project
               items:
                 description: ProjectRole represents a role that has access to a project
@@ -1799,16 +2220,19 @@ spec:
                     description: Description is a description of the role
                     type: string
                   groups:
-                    description: Groups are a list of OIDC group claims bound to this
+                    description:
+                      Groups are a list of OIDC group claims bound to this
                       role
                     items:
                       type: string
                     type: array
                   jwtTokens:
-                    description: JWTTokens are a list of generated JWT tokens bound
+                    description:
+                      JWTTokens are a list of generated JWT tokens bound
                       to this role
                     items:
-                      description: JWTToken holds the issuedAt and expiresAt values
+                      description:
+                        JWTToken holds the issuedAt and expiresAt values
                         of a token
                       properties:
                         exp:
@@ -1817,78 +2241,106 @@ spec:
                         iat:
                           format: int64
                           type: integer
+                        id:
+                          type: string
                       required:
-                      - iat
+                        - iat
                       type: object
                     type: array
                   name:
                     description: Name is a name for this role
                     type: string
                   policies:
-                    description: Policies Stores a list of casbin formated strings
+                    description:
+                      Policies Stores a list of casbin formated strings
                       that define access policies for the role in the project
                     items:
                       type: string
                     type: array
                 required:
-                - name
+                  - name
+                type: object
+              type: array
+            signatureKeys:
+              description:
+                List of PGP key IDs that commits to be synced to must be
+                signed with
+              items:
+                description:
+                  SignatureKey is the specification of a key required to
+                  verify commit signatures with
+                properties:
+                  keyID:
+                    description: The ID of the key in hexadecimal notation
+                    type: string
+                required:
+                  - keyID
                 type: object
               type: array
             sourceRepos:
-              description: SourceRepos contains list of repository URLs which can
+              description:
+                SourceRepos contains list of repository URLs which can
                 be used for deployment
               items:
                 type: string
               type: array
             syncWindows:
-              description: SyncWindows controls when syncs can be run for apps in
+              description:
+                SyncWindows controls when syncs can be run for apps in
                 this project
               items:
-                description: SyncWindow contains the kind, time, duration and attributes
+                description:
+                  SyncWindow contains the kind, time, duration and attributes
                   that are used to assign the syncWindows to apps
                 properties:
                   applications:
-                    description: Applications contains a list of applications that
+                    description:
+                      Applications contains a list of applications that
                       the window will apply to
                     items:
                       type: string
                     type: array
                   clusters:
-                    description: Clusters contains a list of clusters that the window
+                    description:
+                      Clusters contains a list of clusters that the window
                       will apply to
                     items:
                       type: string
                     type: array
                   duration:
-                    description: Duration is the amount of time the sync window will
+                    description:
+                      Duration is the amount of time the sync window will
                       be open
                     type: string
                   kind:
                     description: Kind defines if the window allows or blocks syncs
                     type: string
                   manualSync:
-                    description: ManualSync enables manual syncs when they would otherwise
+                    description:
+                      ManualSync enables manual syncs when they would otherwise
                       be blocked
                     type: boolean
                   namespaces:
-                    description: Namespaces contains a list of namespaces that the
+                    description:
+                      Namespaces contains a list of namespaces that the
                       window will apply to
                     items:
                       type: string
                     type: array
                   schedule:
-                    description: Schedule is the time the window will begin, specified
+                    description:
+                      Schedule is the time the window will begin, specified
                       in cron format
                     type: string
                 type: object
               type: array
           type: object
       required:
-      - metadata
-      - spec
+        - metadata
+        - spec
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
