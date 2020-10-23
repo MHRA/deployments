@@ -1,0 +1,167 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+  name: medicines-api
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: medicines-api
+  namespace: medicines-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: medicines-api
+  name: medicines-api
+  namespace: medicines-api
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+  selector:
+    app: medicines-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medicines-api
+  namespace: medicines-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: medicines-api
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/proxyCPU: 50m
+      labels:
+        app: medicines-api
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "8000"
+        - name: AZURE_SEARCH_INDEX
+          value: products-index
+        - name: AZURE_API_ADMIN_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api_key
+              name: search-creds
+        - name: SEARCH_SERVICE
+          value: mhraproductsnonprod
+        - name: RUST_LOG
+          value: api=debug,info
+        - name: AZURE_SEARCH_API_VERSION
+          value: "2017-11-11"
+        - name: AZURE_SEARCH_WORD_FUZZINESS
+          value: "1"
+        - name: AZURE_SEARCH_EXACTNESS_BOOST
+          value: "4"
+        - name: BMGF_AZURE_SEARCH_INDEX
+          value: bmgf-index
+        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:beaf2ea216b7a8e9389f924ccd79ab197414bb3e6ff519383a58e0d48199f808
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 20
+          timeoutSeconds: 30
+        name: medicines-api
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 30
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+      serviceAccountName: medicines-api
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: search-creds
+  namespace: medicines-api
+spec:
+  encryptedData:
+    api_key: AgBexritjJ2+mOSlxI0qfyV/4fhD0k3miwCMODb0+WhLegeL7ia0734TREy51M8tshKyzfhhohTwcbUeHyx1D15CHsGSOXjOZ+G9YS/Raqit+pIj9I2NPBn8spSZiknnzDOHst6SYoyjtNEA4N+ToUamPNPMkoCMCs/y+lamInr4s1cz/pdjDVaDdfcAH4Qq/i7WxdRVGjG/Tsq/ppFOzDpXE7XV2LyDJJSGcgrwFxDUFlJe2eNQuiyqmFzLIuY1NOFSGYlblaD9M5hBv9rOFqGAzlMxbxf19h7OtSOEbXHj2JF67NYRpUxGmbihBWMoD6NfroY1EFioFAN5UhTs+NDkSL16sq/w2KNxhOgYuoM044OE95V+pvhJsEPjfr7QsHywZwmbLLTVIkNY1imQOFYUeN3pDjrPOxqRr7TrWl8C+HPA5iZyjpIv8ROBI6N0Sxsh08vezsW7wquT43t2xxlAglkcpRy2JiHu/HMj+AMHRRCyk81DbP9RRCnt0CSN139OMSfSAVvSqsSqawQdawLpL1PEJPP8tKIuM8d1fjjwm7jCgly1VEpUUQPiVH0jl4TytK9fOW77jNyzHCPHkXyVjj4jVE8sTjT4MNBSXmlZuhbjEheBtZPshHi/zEL8A1OkmTdpT2KX9ivur0Zu/P6CEnfOZHX8OC2fHBJv6+wquxIAyulWkbYGjeTNA8b59dtV13rna/U7n5d+wRZjrCBnl0DLs8codO+ksRpLdkNmUg==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: search-creds
+      namespace: medicines-api
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: cert-medicines-api
+  namespace: istio-system
+spec:
+  dnsNames:
+  - medicines-api.non-prod.mhra.gov.uk
+  issuerRef:
+    kind: ClusterIssuer
+    name: production
+  secretName: cert-medicines-api
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: medicines-api-ingressgateway
+  namespace: istio-system
+spec:
+  servers:
+  - hosts:
+    - medicines-api.non-prod.mhra.gov.uk
+    port:
+      name: https-443-medicines-api
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: cert-medicines-api
+      mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: medicines-api
+  namespace: medicines-api
+spec:
+  gateways:
+  - istio-system/medicines-api-ingressgateway
+  hosts:
+  - medicines-api.non-prod.mhra.gov.uk
+  http:
+  - corsPolicy:
+      allowHeaders:
+      - Authorization
+      - Accept
+      - Content-Type
+      allowMethods:
+      - GET
+      - POST
+      allowOrigins:
+      - prefix: '*'
+      maxAge: 24h
+    route:
+    - destination:
+        host: medicines-api
+        port:
+          number: 80
