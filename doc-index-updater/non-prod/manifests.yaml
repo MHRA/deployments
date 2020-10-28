@@ -46,7 +46,7 @@ spec:
       containers:
       - env:
         - name: SERVICE_BUS_MESSAGE_LOCK_TIMEOUT
-          value: "10"
+          value: "20"
         - name: REDIS_SERVER
           value: doc-index-updater-non-prod.redis.cache.windows.net
         - name: REDIS_PORT
@@ -169,7 +169,7 @@ spec:
             secretKeyRef:
               key: key
               name: logs-storage-creds
-        image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:cf32794ac673c5a973c697fa0709ce759dab2bab6274d37b46d52c7f991dcc92
+        image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:66c7edf7dba8693ee6190222e2404a0d2af7f0ddf21569f83abb2e56321d2d31
         livenessProbe:
           httpGet:
             path: /healthz
