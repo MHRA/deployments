@@ -452,23 +452,6 @@ spec:
       app: doc-index-updater
 ---
 apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: doc-index-updater-deny
-  namespace: doc-index-updater
-spec:
-  action: DENY
-  rules:
-  - from:
-    - source:
-        notPrincipals:
-        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
-        - cluster.local/ns/istio-system/sa/istio-ingressgateway-internal-service-account
-  selector:
-    matchLabels:
-      app: doc-index-updater
----
-apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
 metadata:
   name: doc-index-updater
