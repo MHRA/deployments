@@ -459,6 +459,10 @@ metadata:
 spec:
   action: DENY
   rules:
+  - to:
+    - operation:
+        notPaths:
+        - /healthz
   - from:
     - source:
         notPrincipals:
