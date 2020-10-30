@@ -4,9 +4,9 @@ metadata:
   name: istiocontrolplane
 spec:
   profile: default
-  # meshConfig:
-  #   outboundTrafficPolicy:
-  #     mode: REGISTRY_ONLY
+  meshConfig:
+    outboundTrafficPolicy:
+      mode: REGISTRY_ONLY
   addonComponents:
     kiali:
       enabled: true
@@ -47,12 +47,6 @@ spec:
       - name: istio-egressgateway
         enabled: false
   values:
-    global:
-      outboundTrafficPolicy:
-        mode: REGISTRY_ONLY
-      # proxy:
-      #   accessLogEncoding: JSON
-      #   accessLogFile: /dev/stdout
     sidecarInjectorWebhook:
       rewriteAppHTTPProbe: true
     telemetry:
