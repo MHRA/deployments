@@ -1,5 +1,6 @@
 resources:
   - ../2-base
+  - authorization.yaml
 
 patchesStrategicMerge:
   - argocd-application-controller.yaml
