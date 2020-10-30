@@ -468,9 +468,6 @@ spec:
     - operation:
         notPaths:
         - /healthz
-  selector:
-    matchLabels:
-      app: doc-index-updater
 ---
 apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
