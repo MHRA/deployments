@@ -66,7 +66,7 @@ spec:
           value: "4"
         - name: BMGF_AZURE_SEARCH_INDEX
           value: bmgf-index
-        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:d233b9dd4621158965a6b9e7bd6dd2d4eaea5ca0d13ef1c53a19bb641239b71e
+        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:520e583a9415a96f7ae6d126f34ba7f096a76923a7ba54f3f1dbeeef33597596
         livenessProbe:
           httpGet:
             path: /healthz
@@ -165,3 +165,24 @@ spec:
         host: medicines-api
         port:
           number: 80
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: medicines-api-deny
+  namespace: medicines-api
+spec:
+  action: DENY
+  rules:
+  - from:
+    - source:
+        notPrincipals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-internal-service-account
+    to:
+    - operation:
+        notPaths:
+        - /healthz
+  selector:
+    matchLabels:
+      app: medicines-api
