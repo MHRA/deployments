@@ -10,7 +10,7 @@ spec:
       name: tcp-port
       protocol: TCP
     - number: 6380
-      name: https-port-for-tls-origination
+      name: https-port
       protocol: HTTPS
   resolution: DNS
 ---
