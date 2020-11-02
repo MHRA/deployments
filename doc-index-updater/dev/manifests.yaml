@@ -165,7 +165,7 @@ spec:
             secretKeyRef:
               key: key
               name: logs-storage-creds
-        image: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater@sha256:6f985b920a718ac6449d56152ae51b352720913cce7b3bebfbc7ed122926f301
+        image: mhraproductsdevelopmentregistry.azurecr.io/products/doc-index-updater@sha256:3c31c5fb63f1333b60ef51e0bcc65b670061c03dde558b6eecc4fc418392f2b3
         livenessProbe:
           httpGet:
             path: /healthz
