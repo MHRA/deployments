@@ -169,7 +169,7 @@ spec:
             secretKeyRef:
               key: key
               name: logs-storage-creds
-        image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:bf8d3fb845f5d61cd8e7aaec264b70e2b52e5f4149db2d03d77636f7be7fea2d
+        image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:66c7edf7dba8693ee6190222e2404a0d2af7f0ddf21569f83abb2e56321d2d31
         livenessProbe:
           httpGet:
             path: /healthz
@@ -450,6 +450,24 @@ spec:
   selector:
     matchLabels:
       app: doc-index-updater
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater-deny
+  namespace: doc-index-updater
+spec:
+  action: DENY
+  rules:
+  - from:
+    - source:
+        notPrincipals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-internal-service-account
+    to:
+    - operation:
+        notPaths:
+        - /healthz
 ---
 apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
