@@ -1,24 +1,5 @@
-### Get (and seal) credentials if they have changed:
+# Manifests relating to the Medicines API
 
-```bash
-(cd ./overlays/non-prod && ./keys.sh)
-```
+This dir contains the compiled manifests for the Medicines API application. The source configuration lives in the [Products monorepo](https://github.com/MHRA/products/manifests/medicines-api) and any updates should be made there.
 
-### Deploy
-
-- Deploy doc-index-updater:
-
-For non-prod cluster in AKS:
-
-```bash
-kustomize build ./overlays/non-prod | kubectl apply -f -
-```
-
-For local cluster:
-
-```bash
-kustomize build ./overlays/local | kubectl apply -f -
-
-# test:
-curl -vvv -H Host:doc-index-updater.localhost http://127.0.0.1/non-existent-route # should be 404
-```
+The configuration in this directory is automatically updated as the result of CI and release workflows and should not be edited directly.
