@@ -1,0 +1,20 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces:
+              - kube-system
+    - from:
+        - source:
+            namespaces:
+              - argocd
+            principals:
+              - cluster.local/ns/argocd/sa/argocd-application-controller
+              - cluster.local/ns/argocd/sa/argocd-dex-server
+              - cluster.local/ns/argocd/sa/argocd-server
