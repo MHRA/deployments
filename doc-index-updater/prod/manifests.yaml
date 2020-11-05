@@ -1,0 +1,485 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+  name: doc-index-updater
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: doc-index-updater
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+  selector:
+    app: doc-index-updater
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: doc-index-updater
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/proxyCPU: 50m
+      labels:
+        app: doc-index-updater
+    spec:
+      containers:
+      - env:
+        - name: SERVICE_BUS_MESSAGE_LOCK_TIMEOUT
+          value: "10"
+        - name: REDIS_SERVER
+          value: doc-index-updater-4853.redis.cache.windows.net
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: redis-creds
+        - name: AZURE_SEARCH_INDEX
+          value: products-index
+        - name: AZURE_API_ADMIN_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api_key
+              name: search-creds
+        - name: AZURE_SEARCH_API_VERSION
+          value: "2019-05-06"
+        - name: AZURE_SEARCH_WORD_FUZZINESS
+          value: "0"
+        - name: AZURE_SEARCH_EXACTNESS_BOOST
+          value: "4"
+        - name: SENTINEL_SFTP_SERVER
+          valueFrom:
+            secretKeyRef:
+              key: server
+              name: sentinel-creds
+        - name: SENTINEL_SFTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: sentinel-creds
+        - name: SENTINEL_PRIVATE_KEY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: private_key_password
+              name: sentinel-creds
+        - name: SENTINEL_PUBLIC_KEY_PATH
+          value: /etc/.ssh/id_rsa.pub
+        - name: SENTINEL_PRIVATE_KEY_PATH
+          value: /etc/.ssh/id_rsa
+        - name: SERVICE_BUS_NAMESPACE
+          value: doc-index-updater-4853
+        - name: SEARCH_SERVICE
+          value: mhraproducts4853
+        - name: RUST_LOG
+          value: doc_index_updater=debug,info
+        - name: PARS_UPLOAD_SITE_ORIGIN
+          value: https://pars.mhra.gov.uk
+        - name: CREATE_QUEUE_NAME
+          value: doc-index-updater-create-queue
+        - name: CREATE_QUEUE_POLICY_NAME
+          value: doc-index-updater-create-auth
+        - name: CREATE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: create_key
+              name: service-bus-creds
+        - name: CREATE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: create_key
+              name: service-bus-creds
+        - name: DELETE_QUEUE_NAME
+          value: doc-index-updater-delete-queue
+        - name: DELETE_QUEUE_POLICY_NAME
+          value: doc-index-updater-delete-auth
+        - name: DELETE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: delete_key
+              name: service-bus-creds
+        - name: DELETE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: delete_key
+              name: service-bus-creds
+        - name: STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              key: account
+              name: storage-creds
+        - name: STORAGE_CONTAINER
+          valueFrom:
+            secretKeyRef:
+              key: container
+              name: storage-creds
+        - name: STORAGE_CONTAINER_TEMPORARY
+          valueFrom:
+            secretKeyRef:
+              key: container_temporary
+              name: storage-creds
+        - name: STORAGE_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: storage-creds
+        - name: BASIC_AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: basic-auth-creds
+        - name: BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: basic-auth-creds
+        - name: LOG_STORAGE_CONTAINER
+          valueFrom:
+            secretKeyRef:
+              key: container
+              name: logs-storage-creds
+        - name: LOG_STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              key: account
+              name: logs-storage-creds
+        - name: LOG_STORAGE_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: logs-storage-creds
+        image: mhraproducts4853registry.azurecr.io/products/doc-index-updater@sha256:bf8d3fb845f5d61cd8e7aaec264b70e2b52e5f4149db2d03d77636f7be7fea2d
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 20
+          timeoutSeconds: 30
+        name: doc-index-updater
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 30
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - mountPath: /etc/.ssh
+          name: sftp-keys
+          readOnly: true
+      serviceAccountName: doc-index-updater
+      volumes:
+      - name: sftp-keys
+        secret:
+          items:
+          - key: public_key
+            path: id_rsa.pub
+          - key: private_key
+            path: id_rsa
+          secretName: sentinel-creds
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: basic-auth-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    password: AgAVhvW+EwboAEJ1rA0JBceFi/HAAEL1IKU+++2m6AT+wr4mQIpNIwKh8KLjSPy5iBSVQC28qlKM2wMWPgIAPEoCOO3LwfUBDp1wx9fRC9re8bT0QDCumWb7VQeNVFVRrIghXze9DCHOIleuPbfx4G7wp6+bIvQRGykYNJWmMBh3b6vBIhSY6y2VbakaskrM2MuaFiw8xwLQ56aEuSWAt3K5nc61pA5FdZyGowOzsqkZwsHsmfRkrlc/IxQvdGK8LSRJs5WqQ6jJSd/4mlxfwEpTl/1aA5h2lbluwDkDmGQuvTXi2ytUcCt/xQe1JfTyRtc8SBKjmhOD76AcpBUCnb1tGvwjihXQtMs0lgjKMYu9UneWuFEgWNx8AmFGXTnstL7ltWotrbqrx5FFH9awqdfHFfIZXywYL7Fy5FyuVIetiP+ZYTiVv2XknfjFYqEZh/GBiLAsADdyPr1XmMSmVYi831ii7rmTawqPnfLdCp14MYmPHc3NGfTOOjAWovxQ8IDl5leRJVCtozzYdm25Ru3ga24/L4m7QG1i+vltBuWXRy6CIGZD9AomWIu8z0uCyZY/6sH+oGepQUU5l6CA1TY5hIOv7UsFLrXO0bjwp4zqTMqW9FrJ2fqPKs0n8KIz61uEP8RPwV55s+C/fyv5tIbg/ME4o4OA9CtKj+e30muSNR8/u3bsLAPSyv6UefQtMugh/LZx0tW0PB/CVzayg2MkBGAqVK3n2gpMWerKzaN07A==
+    username: AgBBVoPO3N3+g9fvns7v6fo7tnv/MIlS7fiocYjHYW2pjBrX3fR6LkCzhy9QQ64yWU/RBLFG7/lf/ZR+XcePpRv67NL3NvCjXdUr5op0GOnx0/rTSXC/Emm+YobbfrsFEqvuqNEsudnaXeBcJHEc7FDyndaa8Yg+Z3mbsqg4f3R9u/tP5SvzM5DGw8LIVQbP7VLGTmLFRtsRGFGlDZlLAZL2P+0aGnCvwmhJMHqewO/Itag0X1s7oAQiZfDSEDD00tPVGpXnqBU67anzjnMkYIEHVTnhUwWmJWzKsf33enhdbN5jbspFg+G3jvd4vxQU69QoYXd5jWPkjZMNTsYGmgbaZ14eebHZkOvNk/SdflbyJCLBCiYw+raDHgi8TeQrl+AVe0PwXPxz/sRbiusEoVUl4hON6gXw9sfQl95+Q00yHCXiv/B2LteVDJps6J810ODjMxVDwtAtQ2e7aGbkwkE5zBO9Oyb4HiFMgL4MWtlRS+3rSqKLisqoZliVC8fYwjEAq/KAZESU3j9Fmp+ugDozZsJY1euY4RMMnDg/HrCCNKcyglNRX99y4w8SpfqFpCBi4sPhivtURdiEiNo5hs4qiJoi79k8VWvRelUjC187SeGvPtI+yAwyfA53+1PE1fP2ThWmp8L/OaFm3vklbWnipmOlxCBBoNoFhfqSmACz7s4z6IAS6NLuLizru0FKSme1JaC+OL+tNqU8PJJfwA==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: basic-auth-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: logs-storage-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    account: AgCDuAe+KmfsBWiUSY+5T/go3V6pkeA03ePPXWTr66FH6erJDuTgjagZS6eyrSEfd6aO27TH7fZ9fCQY1lpOG5utG5lsVKB5szF1aYJbLpammFLduuJwRYSru3aoqxBvFYb3uklVKkvRiKgehB0Ss7yaG5aXazKgvSpvRSp+emMqUYxoBf80Jvkskfp7pZdXVKWy1QqIXj4qSf3LRPVAcYM4xuM2Gn8HtZcuuGq7TFLIOUgbF48vSYids9eTHM7ckqbciXdvpMIW5J7PmKrQ3WN7uCtVAyKN+qqMG9qRLN0SBeVsQEqx8rZHwmJnFwT1mauFjiQQqZpLLHU7Sokh96JAWlE8ZykWg0MNZgSJsSYxkfhyPGGiL4iujfcJoE4vnboKMxWLQIn0/M5pLGPIVIQtOh8bD5nKqzeFmXLeRgkTp4IsLS7Mq0y9sQj5d6WN2XVn5r9DZdUfS9sDntWBnRToGBvaZQxbe27XvaTeTe9PA0SRp1f9RkewYjRhpToEWRHVuc9n/Ed9gsdtj1p9mX4W1RpEbbvsAt0nCeNy+4r8XjjLEx83DKWN6RnmWw1+/WxyZas9X8HhPBXCzh1gCLEkiZhl03ptLQO6ZkFr9hCI3pcM0yr4TS+n0e9+/lDnqUikzz+SvLyMxf+gqvbDSOp9vfkEypkN5ZKcN2zcpdYePOWTeWRkJUCtEq6QvqqbkP/c9b7NwirWv0HPprQ=
+    container: AgBbRRzz0k8THC0oDoWMtiQKC1fItYN4byXPE1oM0nOwdWG8NooFa3M7n2wVbYA2my2KjNl0fDPuQwy3cdh/ZV282Z/q0gjoJVLacZMkh1LEDYoPmza0Q74HgjFNvI6zhCpPNjjLzk5l+6YnWBBptMXbeSZx7MAWApOy4AH5I87ilVmtIaaXaMx91T4uvClxqDpgKgB17dASAEtmjFsNZfpnugeGj/ckzGZRfcgz1cqm/ZaBXhxPGTFQIyQ2rJABd+FvZJGf3Kc2GZeP1i1N2dD3rs8jrU2F/22NXHX+ae5Euqmyr9qKxAm5nHfPy8rIQMvFiaykaq9bJ3Glgt6Ttnpbsb1X8LmfEGNdm8ZAWrRthreyatjwMmpYm+iUDaKKhNZnOU0/tmywk7VTRxSeBz2Jh70d0ROCAnYJyBy6S8N6V5QNl2URybMINXqHE9/uolyv1U/01xH1aiRXQoUeeyFstCXXiPELbEOwQoPsGQvW0bUuhISZwgYRKShiTp/Cu3FYs4EPdR3jHNDqeOQd7bzN0QqRC3QBOo9Yj0oVN8cfVxqipwHN0ieetsqG1aUqtZ4Qach9Kjg/Aslz6WaG/SZ5qDqVRTy2phdquPU1ozBAXPkVDXH49wgHDUonmT/FG6O8fKPrhTCmkwOpfcN4Cjv+Tz1aoAw6FUHCjszoH8Xu/PLjeTxHvf0wPITtC56QAYHvyks/wqlO2Xz8amCbreCd
+    key: AgBkqYZsGBkKSyphZbLL5i/ww3xV2eLizUaM0KjmWG5/1PHHRkEKUz/hazb44wsCWdog4tjOi1sUku81jenUf9Mm7Lfq/0EZtiypqdFusx65KyrbN5U6iihvedxoUE0udv467+epE852LsKFLCYkS/sK/qA0pgyoKlh99dVOgaJaQO3bFOWo4c2pomSlvbG0MDcW9F0VgRdUkGKGFnVOch3cyZGNmMMEoMK667QMvDqfkw5WBEVzYejKoyz15FosAjgSlFS6p9UVesGUeT7nd281Ey18XYJnxAtz4cM/DDFpS9u6NJhw0Pf1fgubsZKN7ivF6v/gWPmlxxcDU1ZxLUu96XpwhzFxm+UR2KQg+BOMsuXq3VVmab6n8N8V0p8QDhFvjDppjEU34z/Fobjd/qQVOV9KWbaPPPG+F6Ap1Azb8y0NzoO+BuL8pCsu1F/hmtYMtiHjd6qhXwLetWAxizQr6/KPzECdAy9SQW1dLfgHSnZjoQknRG2MIuqnU5g6kkx3IE1fEsbdoB6GqrWErWjmb6ozlowFxi4m3vDdMn7OI5IhafP/Aiw/6Njb0IEfjOxOBZdJpq5KnFPR1THjyNdNYDilafKiaJOdtNBS4o/yYwvHn+PFRV0LHyzxAoAuUfSbD0dkBkMX6sEXD0LLbyYyWtXLLKhEOwthYBg8Mhx1Gom8iupch2MCRqYS9m1Dcimdk7BLW7FU+jvc20+3bGVd1C/x2WG1+driTaqtHKxoxeVMN3fOirUne34DTeKWmkRPZ+N2s7Obh9f4q+5b8jqnlJSAy23PY/ov32T3gUZCONt5uVkeSKGl
+  template:
+    metadata:
+      creationTimestamp: null
+      name: logs-storage-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: redis-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    key: AgBB1ulZe/G2klwc3y3EjPOnZsSrz6k3GKC78vNCLmINoHLDQrmND/tBLIN6fkxH+JGdGYf10HWSy6XmVHbHuj0BpHyyNuZzDgEIxgde7qHBR3P26+F6+EkvVE8KXDPvQb1y+zPKWDeTseDfOoj1GvlyO+xCosGfH04dGdMuWjQSgmYlDKoQI4cLckdAC9k8A94ydmmniwvdzkVe3mGwcm9Q1WrLg4wUBZhT0lOlLtDMhS7KIEq/q57verv+5BZovUteFG74ofx04MimLlmS87YTdbHXPZwjRAgP8mbFr+OPvMFw2jQDkS7m77ISMBSOn/nPaqelB9yyLdWtxAKRX5KnlaJjAh0/vYmrBoFQzRc7px1o7+VkGl9tO5l0bOuHnvf7JUXbFB+5ItvKwiIs+TS3gfZs5cZNoJn3GTpZ8j4LrkQNIdo3eAHQKZU9YjQ5PHoh3od1V65Sr4XbkTBBiEv3J+QtaZ2k+JqPH3zUssxfs28YTyRKhgPu098Qp6Psh9fvDpttdiPFmnvm1F0+aK5S+8lIBOpOdZ93+3YJaDED3em3Q4ZW1wgLWxOliRFFbF+hMZpI3qxjbtYokjnO/Q0lRG08Bi29qCkvKsiMUdGapIe6f/RPqDLcQkbYZUXpkhEPaN9d2pHvBqwehk/mFk6iHiyXlOcNfJdku7dH/qQGEwb4oMPp0rkohABEDFvOtWoER1wvoT8F4OLxCD3zYM5DwP6NrqQ8Q17fupicTEc0gGsEIIGEKSu/I7I6aA==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: redis-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: search-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    api_key: AgCLpz7VQzfDfIVE3l1kIQsa8LPxf+stCxyKJ36rSDtk1dIo21GwP0L4E5NwVjUxoqjCn+lvra5pdRmFGtLZAS9HZlOO5ypMyx8heAJTH+KtDaWR/ni3HD+R+CDL/SvZCK5GvR1AAVokDOPHS/Fyhalgp0gzSL8a9I3Hni5FNTLav14T3fh3xeQP9s9K4rMztjGfovGEy4GrFyTiYg0Ok5GTmTX20s9j4MY1Kgd4IemxrmNhU/4ACh80c8uNqVIQf87GL6BhhX0lAn3CDm8FkWZ/E/BSHQJUwsAltL5TDPgNOV4WOs1sCBqEnUCL441lKOEOLCh05aZzgWmv5rBRLR2eY/oV7mBwxiIZwf7guw/8IbXZGPjL1nlP4s3xqSr29aWtM5owP0FkZvit9Dzq4ec/LF3it/TxNzoVhLdxatTSmvuZKe8cvk7x/W073+9whU1Hdjsxm38qpYLEa/SYih7MaFzS8Q1ZETtGDVce86in9ZYUIaohqaa7ZyHLPb/2B46fR8LfNU/jrxEbDbP7R71SRVF4Rxkbq1yWHxne+zHpBhd3/ORQlshTgjmtwGz+EUTwMaVo4YWlZ2k3+IXcn8RbebBfzYNlK3tU9rVfhZDfaO0W8HUiME7CbcWhlDQERV/TovEDwiT5XfZZ27AzLAVTYH4cORgvx9kyNt0qKpu2lNSSHwu6hK/J9cxsBv96eQJrZqHKXwisC/nxF4I9Rh2bHZTlFhYp3S1pdvHyovHLTA==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: search-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: sentinel-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    private_key: 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
+    private_key_password: AgAXLEtR/8T2bgMoWnj9dzs4/yFbRAvMW2gwfasacfe4JyHPBRiPXJiZriYQrTwYjQ/7fV68SMKmCQCt/H5WEc1fFFnVj3j5mwNKe4NmIxJmA7oDpGI4moeW7MXkBm5Juu5HYB0umGwwkDd5i2R5Xsxccr8VVmEWtYkmRiZUOUaX2ZUoIwmk/q4ccPqZdIEismwFsmLfptpYrcvRYbYtgssQtgrH/WWgFa0Bacf7474LPHWoQwAHic6rJBHaONXyPczG2b8otNvtGM41SLKeEeuSLNryKACpIslkMCUurdZ9SILCqn6cSRVgkV6VyA4His+Bnv6L/BydbUfLoCVbGWtw3octQtx+g5fF5EzlQC6uF75iPuA9a59lngEGevWmHzGNjohli/4QFVsWFG+lwzJhhXk+/cMDxYrVSmh0m6w/Ejc+YWbSwB2mMEtVmIANA+Jsp3PTvfyljkvgDQJ87IHXOdozVWReqUNjfcZ0wxE7nNh9O2wIbISDEyjMvT+ZbtTfI3l09M6Q1Mxot9Q53sKOpVKPfRchYrh+w4rX7mpZDoJ2fMf27Ssiptcq28/bJ++7JGkLJYbHsbWoSGuqWUFVrtAgOw0+GeeNtA/WaJJQqWCjI4Q119XSi4P3mPR+nPlIWmhC38Sd69ooANJYzEykFnaPia7uKkJGaXdGOmTeBNWSeXodd62GYwDulOS47K4bSnAdLjb1UFXY85tKLygDEYn+O2q7LAfxJ60CDg==
+    public_key: AgAGK0FjYXUSzNazZGJ6CbGWX7bUjAl24yvyAmWyvqupAtUhEcxw2d3MOwXu/cvHA7uFItD7DJvJlAZ4h1bpOWGq5MmWXsOfSQcuxXk4JW91l9BcWhUoMK6IQYEIh2ArSxC2+R6u/bYN7vEbSQT9GROb/iE3igAAtqe271LJBc1agIDduDa2jOAiw2Cpd19g0dACowDF8XELYtsAdGKpMmHfuYVKm1AvwAlfeSogzQXLYv2XoLPeQiRBFkwwY9Lmo/j1TzMxkqH2nvoxvBHVOJ6Rrfx8rwvZcw9uFxanXE94wBlYIQFVYfK1IrGl9eOKhGgEKxn1YnBt9KSvT8qC/HQ5wlSYTlFOJwjgXN3eLV2SDXSD6lkqX1WJXj/BJF2Ex6Sfgghj9DoVPzCIMjU5gQcV3Z6UyJabjxZ6ybofe1fB28z+YmB3qRxotxB2fqAxHrdq7aAtmjmG6GPrXYC2oUd/Rr/Wo/SahebQwCwcitVtPM5DTa1v20SKU+c3A85+7+Hbu+WikaapY5vWcBZTGGPl/Bz6/s5QwQVnzXyYpIuk6p4yN5JpaZlXtDXoDsQ1Odf+DgNbgzU+CJCnC1nSD71ohZXHD2fOnum6h+WDQKTDO1mgxYly6X0vXuSdV4zjkzRic9jdoDDuYLpMk94Uu09CYMnhRmOhmty1pKMUG6fodMDwWf1iDMybAYv1l9yHXLHMFQ77Xq98rnf7ec3/H/VvrasEtGDci+USVVynbqgWMfXFG74/mIExP8WW/hKRmFzhfVIeF0mXghX8N5X/VzJgZxqO+k8wsoB9xcRjRQpmjTs1N6fb7Wz8FPRkp3vJX2j6aDDqiZP4yYmE+ZewPHvxTPy1VmRCMtqgi0ERRygzQuGejReQCVROXn+0UW2zLOYPu2HTECpNj+sDoZosxKToTs5wAAAbZIh8KnWdRIIOzNRed4HwV4K4mYfCONAeX0jG2uxwToQ7A77eQYGhp/8a87zIio5d71zg5KKEu/j3JR4jS9irt8HJE5sEjD6/DvwWvGPCNxtYMiuF2eNI/zuOQBEGe+D2MtNE6HEEYsFCm+CPX1S2i37HrbBh0Uv1MnqlMsB5vzplOcUTgR5vt4aLLyfqoOppBoI6q7dxzLz+W0dO1ybbEyvxK3ay8N5ymAu5yawGf/2WIMEKpUU/of0tkbITtwuzs/15IlGWGUdMMbEDYLaoQwqnSBtKv1kd+OZoePVV0B+96PiLGNEN0oqg3c4zhvtduZcrWC9ZXc9XN3bZ2iaDtvQ7vJcktVKL8BSKayi0DH6D1++2cz7u7Bf54QwLvNQvZqCu5g2gjE4sxPTOoJF9UXJrRSgrl/ZWd37WXCoWGEGrbKN7icu1L9QkkR9sFbQR8aBavHuw57yWYxutNl7+j7s+O8UD6rsuB+VL1+zTmmanfTL0LewpTvJx5SInmQrF0vITjQPhUCLy2I1ge1YbMVmt0wo=
+    server: AgA4KlnWbqCjoyRnfo46hdD+tCOVMoGNb16eB2LP5+qyedyiwPpU7ly6PoJLkwVHrjTzJWbz1uEIq+yBHNmNFzy4LaSRdHJ59KEksgFZDFJS+TqjM4w9Uy0vED16ewxzGU9wg8LEn/Q9CXDa3zF4U0LFqDsF4Df2vFWEUcoLq8GQGZvmi/HcmMHrW2VOvPgP8ItRgHUkhymoxgSff54cVFUyRFJWpyo8gQSBXZb96SAhTnBZnR54X7WgPP88hhLwpizO4urHv7Ipwo8Tcm2ki82TYpjDb/XQ4tUUpRpAO7nnsPT/2Ov7C0p+c5ji/o+1GVnRA3B1WKtz84PWDbOPK8PV+7zqQP0eY7Yvr2WP5aMPylajRqHjmeCC76nUxSozroSvAmm/jhpIthDhUGrPprBPLCdbJJHmsW5518x3hnqXSpURGxSmeqFU+u4WAKgvpChg0WIIwZ6m0uCaboqHoSQI/4h7MTz8UvPMmkAmgwUz0dNFh9MVIVYU4L9Zj6Rh2yQB8fhrxtpz26lcBijQrOck4sywvxJ7GOavVmzHrdQOX/u7bT6L7UqXvmhi6RupTNwu1d+TPrTnbzyQDLY1MtxIf0RtlQtz/9mtzi8qPZ3eA8D8D3B5Xcyvb7lwVOS9miJXD5mSPhZx7wZ7tAwmhiePRnGyxy15UZLA4aiHeAme3aJPhedRzI3riFLC0oaM2q23ZF2MSZVf5H12r/Hp
+    user: AgAjNZqDpy5R5QPgUkEGbA+mYQoNPi2ralf4MZ3jEZTVJ+hF7AHVZ22iCfAo4oARg2no9gyq+owzkrFvSgERrGkfbpXyjRgk4VFNJXhGrcKPTMgBUFApaGDgj/3ZAoxGYGGAWccChNFnXaRkxtP5fVxTtl/tgpgXAq/6Px0Tipk6pDo71bZSwQjoGsYq2zDAoYN11nm0fa/mxGalPN7E1spuxVVCCUeJ+RlxFg45Fxy7MkcXE+VXRCX1XZEnyaTzscPHP/wKr1shRv5hYS179M+xZyu8/pcjLciJ+pyYhXX8iXIHrrowg+jvb896jf5f4jlHJUcYSf2ATIGXocpvU6omQBuxRc8J4x2JARJD7o160PQlOHK1UkpuUIhdnTipbg1izEvqSUUKk3s87iKNu+MXriGFG49GJE/Xen7yg6PFfjvxp7gzkOV9DoHiCZDFT5bIhj4JphhAHkrelp5mF39g24mHe7u+oKpfSKw/rj4VV1Klgj0ICUDW64RLflqVTygDCYG0KOKtheeTDl8bxJ+27d2L4awxjk+hbvvVTIAZo+if3LZP/OFYff/LtXVekwcRhY8ooUohpAALQv3wCLlpTv996URX64ikGSWqeUDIAXmbe0SaOF4wHgbZE0tzyDIBKChXDUSVi4bC0y213qTmeA6Xhdtu+wN4OCOB4zOVwM+3FUGZ28gb+Tn1uZ/hwAfPr9hek4A50qQHR4V7
+  template:
+    metadata:
+      creationTimestamp: null
+      name: sentinel-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: service-bus-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    create_key: AgAJQce4JTUotgOV+RoaFaD9odnLEbgQeoumnrPeDMwsNiflCD3SSNJbVTpqYZalh1s0rxaUufKBvdoVxIBnuw8rkMkarDBNSRnC5f3KjifbSV6HGHKHT2wvVO4sQi0BASZnClscdihvLmhPARucbT3wN9G+JweFJ+QOV1CXhRWCOI8REmfNdywYxKwcCwcYcyGwnDUMAbAeMKYNEpM7l9UNyvaxZXFhQij3WyrNrT4s4/EcUvs9lEoBZ9hvYG9RfOqJ01T2NL+/PD5It/ApppQ3Ch0BRKlIzqMQJvGS7z4nHty8v9PVIi/OvOPe5cZjZ6Tn+SeBu9RSCAzafUGhlfMAS7wzBEzkZgT2lQmuJ09FYx7lfl1Vh2xwRnb/Lr/oZrFXRdB4QmFO6KzE2celWZUctx8dA9PRs66ssnwBjewBEOlhWWwf/BIK/RliSOPEQFaCeX92lZWPdhvAcahD6/kupwTlUROfmoIWh40ZYYGoxqWPOkJ6kxxHr3JSOZe+1oDJAr+4aNonkybFfR/tg5RZoQlzlGcCRlCuxXLsKrwS/gPfo2SUTJfHpOuXsrBabo+gA4jFuN3DZbC6nuwX3P0c2xVlq153zxa9jBf9BNJ+2tw77FUgg8xpjAkl4Z+RuQqugxTG2aBkrcFZb3WW07EiL03g9S1FyPmXL9ZOExVXQq8s7nYOi+fQ1UXU6Y7DcjU/J0JnHDYWABhnLku7VdEB7djtmvHYRWZW3mXsHh30nDLxQ0SMtcukQ2l3FA==
+    delete_key: AgBA+zms68dHyigPibRj0tMaY+AoiIPQoRnjyaA1QEDYLHaDnt7zjWaw79SQyOQJu7Ak3vkYUlTreinDUsMr7dch+3+EZJTMvUT1M1YlEi60JpPpQIDJCAVgM4jw5zP8GXYw+UGUP4iyl4knq9gERZ1N3Ssaxn0GsaO2R20oVUv7gUWCKJBNngCYn5h/+0bKHSrP95weAb8Qn9XsBNz/+5050Pb8mmPkVUbeRc1KKHxM8QYCwCWExfYSCwUT9ZOzovG2+luRUem2C47fCClao1VCTbao0tx9m6JXCR6LzZONc7rUh9UYZP1pWlSIffNqiulY0iTYs2zC2pVXMKt7QY5CXM5+ctkBrJUdPDRnxmB2Z0IRjBldpw+X7TlaA60SdE0WWaswXtLDYaDOM1tI/ySE46TgW6r5VtNNXLwsoe3iL8tr3RMRUirX0y5QIgDlKLsLmNzuHJbQO64jKITNq9NrTcQr2CejECvyXMfrZ8X480f9wRcIyrlQnFyYXoTleQGyeEwfaJjfzliIUeb13M6sz5Y3uxPNrfXzOA2zajYUlcSLTvZY1Rc5Jhwb6QzsGR1kDaSvQG+p/OuSuwVelvSbycMENGIWGx6seF7RkKpLuix91kFzXL3V2SKN5jq+eTPZfeqquuprk9+LPHul6/eT5ftMTXGABTSZqXinEEbCM1MJotrrcR6YVxU4OXnuOfEPqJYQDWby2UuYakY4gMfr+xqSuFO5nqrtP7xBDSZvV+zwWFExr6vsmjanog==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: service-bus-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: storage-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    account: AgCQLLFKtkJHbA4L3iMywuDN2Z4Zxfivlj5kVUzp/QUNZaOq0gbnrBB5Jryucoy9ltzLBOU5bzYijdIwSxsSudOSIObIOSAemET6yZqG+Jpfh14/+/WoCLi5pZW01BMTiJTb2SKa+/ujfef9uel3OTICyW3Gvq43JJ8OYgVnJQtvTUJu35qeBRJXdZOm7YEws0IfdTBQGu4VL/JC7ObkVYr+HjqLvcZQrJUlt6S39jZH5dUYirShHeqe3FroG9XhZyb7/hDFf24//BnTyU3f8m2ebIwp0434LuHqKMjKnDfBDNzNeQTd0leRoCIVdQLauYOwe72kWBbS0fzlh3ASXNs06WveRoaEX2M5jK1XMxPJdABKWRUumwRf+DdgbaM0dcSsAiLnK+haL7QJwkA3be+dHzwRosQY958sinxJ1FwfXoMp1xzb3HpVg+i2E8Hnk6VTQsPzrw12sq+6HWNmHunqOrYOl9BnDr7bVOzRdmivOBY6AyXVSS2WthL3Q2A8CVa1y/nfuyhtWAQBFlDGQztk7p6JQRDmQDVdP1ICR4S6y3Je5qfpHLB+I98fan1RxFDCeIG9Qs9AxoYP4rvLvIJWspH9O9rGoIQ/h4c42TFLEtApCiZ57n5HZiA3xeZTWC/1Vp3k+kbaMrTk/kh/z4Tx7igGwe88Hy2JQFocfcj8iT+dBo1GNXlojXGfhxvUDvelv7XWHRw4CBGsLYLxmUIT
+    container: AgAgzPpn+BshrqHkEI0jHQ61+mudaNZ4j7TCasQsBTFQACsQ2Femi4Vv0aNkmt6RFZXbm86XPSIm95fe2tcsQe7kVcvniErYYbr2Zh9IFMMtSVmJEWsw4udthWOLUUkAbfEFQriqwBR4XajQgAxPGM76ZdwQ7aIkgAWdZJVAfRh+/8TPoTV44X6g5GkpLCWWakN9yllqU0JyMujGeN+5KB5qyi6NQHOo0VFfIIaHGvxEmv9s1ftk5SiRGkxWFOTG7hh45I0UU4ARsiu94RLT47UMONiGE5/yRBepLVuw9bXbai6iGFGmX+fOm3mbzRU134EdyNfUwLuYpgaUS7fRBPIt21T7lGRh45NQsyrN2+7PdUBwZDJsL+xNPaayUTogiVeEGp7ovN1G46K/FRXngXfw1+potqiAO8pmM6FEDgFmJT+X4x7mVepEZJrdZTjAeXB7i4nYVrpBqBQoQdilK3uXD4a0Li+bOUkS1JxFnc5BafjjjnKLfbiE7ByrHogC+u7Ge4dzqzPAGFtpF85TbJxzyxOtUg4HHtiPG4cHAp2kVTs3b9YYLEd6f/Hlb/CtREedvLOyz3JDW3WE946PCtfA7OAf8VDN1P+7hPtBDbT8VGykpV2kEnLkmBF/H5AN31SWmN1mXxP0O+C8OU15I5bC/YUv8ArhCGOwg7wO/mHyZmB+pZxg2+rXMHR4dOT7QfuVUyvy
+    container_temporary: AgCWuM5zWvP8ftVH6mJjrJLMdwjKwaIyVkYEGviXjUpLUao0QP2E6T4twFITZZ0hHtLKVIkxMAEqM3v8U2V5SGF3qxlXo8vLRZ+bUV1VqcFbojl4UmzCpz4Xm+ttauZkwGiM8NsNxFdYGL7/yX7jEVvWuuTMtp7UbkHP/COO/fHUTF7szLYLYcY9J6ObjVFrf6Ss1L/nV3GrV6KEMt8+kBflwgYGcEOpX1N1jWVl1jyogFV/lr62lEbGDG2nEtyHtY8pfDAnoAL/q2BxUOQUc3lyl3VLrIvC/lxvQbVS37uLAmIuIddqKMRfYUih6bNpc436Zq5Zn9mRY0gAX2KODwFYMpc29WZ4FcCckhrGWFj58Lb72vdzM6M0gJxTXHptNDMLz8i+8WMVGlg8kn3thJqisjAxPaC/2IiZzN8r1Xx3vBzUFjS9ECgd8z3J6x4XcmS0yhWAl//GFqzn2rH+e3pySWxqdW4DefBA1rn67jfeZWx1kpYMaSiOUel5K09+/DIlcFMrvEhuVollkpWoaA93BadkWTY0S3AeYD3A+o3S2dBJQwUZoyIl8YMHFuL2k9kXLWByWvgsi2mIDGb8sO1chx3MMaCxW3EMBMRzV1ELEhcyWecs3Oq2tIfT9z8dJJp679wzdVheacA5XcKU9y8r4fLkImr9jEBCLCO1z/GUThUwNfzx4FtNBnW6rX1k6gB4F4lqwZgavd+SNqj/Lw==
+    key: AgALDPqt/fJEkqdpy7f6o+4UwDkVmj7FTVBAhAObR1w3QTYLHp+ty9EPPAZSjv11wfgqr+CFxpoK3gVA+m1sg+ROk/dbNd4xTiKJsccCjGa5z5hCJADvdWHx4Jzxzfr3XD2a0+CJyoaalgAsrcYxSYLZFjKwCz6Y2PUjQsAJKb9MaoCD5IcqZhplP15y3Rgefndh4knZ+O/yTYa0vFi7nAYvo9cj0InXnRTSGngi57RigB5g7DbL1trNpRCVA2FRtytbd1wq4zKLpQX9NKWvb48SUua19Nri6NyKC+eaZOgwj6i4hLjiJpjcIxRiAK/wC/cMy33G+4+wZFxIHrsuyldZrc7qnhaDZSKz5IRb3LKxKg+qtvb7hFKeJ1AfQTziMEYBZugk1L9lZqNHI3zH6+/etaz45kl+sTMk2w+XcIJYw054h7hkEfYy1SLScHDvs+7l2Cv1FLbEWfm8JNh4xA/2aGaucP2L2VOW8Lktv51Apz2IK1i0mUl5RLEnFm8vDLzfhVjeN3LnzbFf6qT2OpMeMbprGZziKmVmyPy4kHL9qxqh35o8TzZmqH68iT0j6X4v6w/QxKMPWV3EXbqkAXFkhfaTisl9jtdlz13nGHmsMpFbxdriOOpdRp/IkFVCIKlHyOf6jyc5e3MYzGatpaBCFnt7Q7ChFhMr3Fbi339U5Ri0V0uutHoxD+msbimZnz9VUO2jFwk9ZTyeGQKCqGJPScPyCwiS55pPN0vsv1ku19ceTRoAhch67Xb0OvuUwKPgGQGW8kEVHFqK0qa6/grKLioSMHEZLvQiTFxygjzxCgxH/8Uu8IF7
+  template:
+    metadata:
+      creationTimestamp: null
+      name: storage-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: doc-index-updater-mhra-gov-uk-cert
+  namespace: istio-system
+spec:
+  encryptedData:
+    tls.crt: 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
+    tls.key: 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
+  template:
+    metadata:
+      creationTimestamp: null
+      name: doc-index-updater-mhra-gov-uk-cert
+      namespace: istio-system
+    type: kubernetes.io/tls
+status: {}
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: cert-doc-index-updater
+  namespace: istio-system
+spec:
+  dnsNames:
+  - doc-index-updater.api.mhra.gov.uk
+  issuerRef:
+    kind: ClusterIssuer
+    name: production
+  secretName: cert-doc-index-updater
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: doc-index-updater-ingressgateway
+  namespace: istio-system
+spec:
+  servers:
+  - hosts:
+    - doc-index-updater.api.mhra.gov.uk
+    port:
+      name: https-443-api-mhra-gov-uk
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: cert-doc-index-updater
+      mode: SIMPLE
+  - hosts:
+    - doc-index-updater.mhra.gov.uk
+    port:
+      name: https-443-mhra-gov-uk
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: doc-index-updater-mhra-gov-uk-cert
+      mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  gateways:
+  - istio-system/doc-index-updater-ingressgateway
+  hosts:
+  - doc-index-updater.api.mhra.gov.uk
+  - doc-index-updater.mhra.gov.uk
+  http:
+  - corsPolicy:
+      allowCredentials: false
+      allowHeaders:
+      - Authorization
+      - username
+      allowMethods:
+      - POST
+      allowOrigins:
+      - prefix: https://pars.mhra.gov.uk
+      - prefix: https://mhrapars4853.azureedge.net
+      maxAge: 24h
+    route:
+    - destination:
+        host: doc-index-updater
+        port:
+          number: 80
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        notPaths:
+        - /pars
+        - /pars/*
+  - to:
+    - operation:
+        methods:
+        - OPTIONS
+        paths:
+        - /pars
+        - /pars/*
+  - from:
+    - source:
+        requestPrincipals:
+        - '*'
+    to:
+    - operation:
+        paths:
+        - /pars
+        - /pars/*
+  selector:
+    matchLabels:
+      app: doc-index-updater
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater-deny
+  namespace: doc-index-updater
+spec:
+  action: DENY
+  rules:
+  - from:
+    - source:
+        notPrincipals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-internal-service-account
+    to:
+    - operation:
+        notPaths:
+        - /healthz
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  jwtRules:
+  - audiences:
+    - 088430d1-a1e4-444a-8769-6d0d998ba67a
+    issuer: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/v2.0
+    jwksUri: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/discovery/v2.0/keys
+  selector:
+    matchLabels:
+      app: doc-index-updater
