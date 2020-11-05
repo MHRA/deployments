@@ -2,6 +2,8 @@
 
 This repo contains all the manifests for resources running under [Kubernetes](https://kubernetes.io/) (with [Istio](https://istio.io/)) at MHRA. It declares our intent, and then we use [GitOps](https://www.weave.works/technologies/gitops/) to realise this deployment configuration using [ArgoCD](https://argoproj.github.io/argo-cd/). Note that all secrets in this repo are encrypted using [Bitnami's Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets).
 
+All app-specific configurations (e.g. for the Document Index Updater and Medicines API) live in the Products repository so that they can be updated and applied alongside any changes to the applications.
+
 ![](./docs/ci-cd-gitops.svg)
 
 1. An engineer pushes a change to the [Products monorepo](https://github.com/MHRA/products)
@@ -9,6 +11,7 @@ This repo contains all the manifests for resources running under [Kubernetes](ht
 1. The workflow builds a Docker image, which also runs analysis and tests
 1. The workflow pushes the image to the relevant registry
 1. The workflow clones _this_ repository (shallow clone), uses [Kustomize](https://kustomize.io/) to edit the relevant configuration with the new image's tag (which is the image's content digest [SHA]), commits and pushes back to this repository
+1. The workflow also builds any application-specific manifest changes in the Products monorepo and outputs the result into the relevant application and environment directory within this repository, compiling them into a single `manifests.yaml` file
 1. Argo CD running in the cluster pulls the changed configuration
 1. Argo CD synchronises the configuration of the cluster with the configuration specified in _this_ repository
 1. If required, new images are pulled (by Kubernetes) from the relevant registry and new pods started
