@@ -1,0 +1,391 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+  name: doc-index-updater
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: doc-index-updater
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+  selector:
+    app: doc-index-updater
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: doc-index-updater
+  template:
+    metadata:
+      labels:
+        app: doc-index-updater
+    spec:
+      containers:
+      - env:
+        - name: REDIS_SERVER
+          value: doc-index-updater-dev.redis.cache.windows.net
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: redis-creds
+        - name: AZURE_SEARCH_INDEX
+          value: products-index
+        - name: AZURE_API_ADMIN_KEY
+          valueFrom:
+            secretKeyRef:
+              key: api_key
+              name: search-creds
+        - name: AZURE_SEARCH_API_VERSION
+          value: "2019-05-06"
+        - name: AZURE_SEARCH_WORD_FUZZINESS
+          value: "0"
+        - name: AZURE_SEARCH_EXACTNESS_BOOST
+          value: "4"
+        - name: SENTINEL_SFTP_SERVER
+          valueFrom:
+            secretKeyRef:
+              key: server
+              name: sentinel-creds
+        - name: SENTINEL_SFTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: sentinel-creds
+        - name: SENTINEL_PRIVATE_KEY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: private_key_password
+              name: sentinel-creds
+        - name: SENTINEL_PUBLIC_KEY_PATH
+          value: /etc/.ssh/id_rsa.pub
+        - name: SENTINEL_PRIVATE_KEY_PATH
+          value: /etc/.ssh/id_rsa
+        - name: SERVICE_BUS_NAMESPACE
+          value: doc-index-updater-dev
+        - name: SEARCH_SERVICE
+          value: mhraproductsdevelopment
+        - name: RUST_LOG
+          value: doc_index_updater=debug,info
+        - name: CREATE_QUEUE_NAME
+          value: doc-index-updater-create-queue
+        - name: CREATE_QUEUE_POLICY_NAME
+          value: doc-index-updater-create-auth
+        - name: CREATE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: create_key
+              name: service-bus-creds
+        - name: CREATE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: create_key
+              name: service-bus-creds
+        - name: DELETE_QUEUE_NAME
+          value: doc-index-updater-delete-queue
+        - name: DELETE_QUEUE_POLICY_NAME
+          value: doc-index-updater-delete-auth
+        - name: DELETE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: delete_key
+              name: service-bus-creds
+        - name: DELETE_QUEUE_POLICY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: delete_key
+              name: service-bus-creds
+        - name: STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              key: account
+              name: storage-creds
+        - name: STORAGE_CONTAINER
+          valueFrom:
+            secretKeyRef:
+              key: container
+              name: storage-creds
+        - name: STORAGE_CONTAINER_TEMPORARY
+          valueFrom:
+            secretKeyRef:
+              key: container_temporary
+              name: storage-creds
+        - name: STORAGE_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: storage-creds
+        - name: BASIC_AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: basic-auth-creds
+        - name: BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: basic-auth-creds
+        - name: LOG_STORAGE_CONTAINER
+          valueFrom:
+            secretKeyRef:
+              key: container
+              name: logs-storage-creds
+        - name: LOG_STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              key: account
+              name: logs-storage-creds
+        - name: LOG_STORAGE_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: key
+              name: logs-storage-creds
+        image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:b193d6737896f6d26af0d351adab1782c2f1b9779c2742c656bad5da94178610
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 20
+          timeoutSeconds: 30
+        name: doc-index-updater
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 30
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+        volumeMounts:
+        - mountPath: /etc/.ssh
+          name: sftp-keys
+          readOnly: true
+      serviceAccountName: doc-index-updater
+      volumes:
+      - name: sftp-keys
+        secret:
+          items:
+          - key: public_key
+            path: id_rsa.pub
+          - key: private_key
+            path: id_rsa
+          secretName: sentinel-creds
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: basic-auth-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    password: AgBIBcbVwYfQx397J7DgFM2jx/9fKFHCeY4Aqxcbz80XRl/5Tj61zSTvv0CDouZ1DrVjhYke11bRssNVhTrXiTyqOAOCtz/ELwbLfIvXyZHXifsHmIDbVUNaBwBTHpVipct27aWE2mQmClLsIisnIDFlKen/khjX2za7bi3iUzHDNSC0TKZc8jw1HzgKmhwqGzKaXwVUJ5goS4WmjuNz+V85QN7whZNgPf09z2yEVYoa7IOQiSOV7FvjspwISeUpMgkMOoFJejRJ8wV1GranzgRsGcF0G3fRjvS/KKo8GhKdRj9do68q+2p8BocLEF7LQaruFnoAR7MSho3Br0IvcFVYSqw1PNSWrcaT1v8u9v77jWPEj+G8Mr2D3NN4yVP81XXmd59qokl6ZV1+EB/CqtQFcDWMesxP80rfhMqByu2m0KiXBzOQrzYnUEaxvk56nDoWensjRRA4v76nP73oBsCn3DQyGKc4bqVKvv+yXeBcARiZlmPzpwoyiicGBhpDGhEv7VJD1zZmMFBzE84WviwFl3Spx/jv1eCPSqIheBR7CeF73geALvwk/Er/dOoz8Ky0tZ9qapqxK7CHXiZt9yMHVrujEQTqCA6NOb38/c6JjcVupK2Z0iiNeue/nUwmwWPtcVdw9Ry3qs6wtuRkpgCPk2p92eH0JKpRQyOJ7ClQD9A10Xkq5CMiatTJXeIB60Thy7YFjTcyIQ==
+    username: AgDPV/iY3xKnkzEbePlPPN6f8ytG4QNFFeFmw/JXKLSDQo4GPVM8V1z7QpSQNUyrCzl/5nufQ8rMVDJV3t6R4wUA85Bm7IBK2h05MKF+/EizcUMMl0533RNOX9P4hJHDkRErMxQAbItZPW7TUNqymPJB1//cN+n0de2BE/lgKny1pMQP0CsIyIeY0TozUi0cqr8rQVUkyXdOH2TzO3dj4MAl+TUMo3U+DlTki8ifXLn0MheWFqFoQ9k16NJmKVvdfJ1kGAC+wD7qNuLfmX6Xelb4KmxbqD+v7Q8Ij0XtoOa6IrPavOXfrO+eG2ffglGdTVoxoQjrWu8FzBFWJwtkJLdC4I67N05t7wHNytpgymyc6tcMVDhgR0yqfdAfrgXQWa8CBalwAXaReOMEG7wSXJ0LScpIYNRUA9+Gv0Wff55KrR1xVbxDH7SJlFW/o2mW7FuoMq6XMLAXgTfyufvxdn9/wO9N2f77coTGSOKBwFird05K7m+mAYxChj09asBd3wM4BF/35dbq/95gwgfEnwWniXYRWoBv88+t8s4TtUTZJ+ucYPduw6UHMf7kh1FQVQAmUK+Tl/khGqaJQVnPuY9LFPMNyP5PZl9yRcX2MxhReSIpxurceBshC4AVYEHnfv4VlkWEeag1m86CS+xGvuoj2dE75oR7BWN9ZEY71F4VDH89/0vTUI8MM57CiTMsh5fKkLf2tSxFmQ==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: basic-auth-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: logs-storage-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    account: AgBcsirF3tff3b3NMGODN8LBO1rnZ4KHJYIeMYfxvf4vXQIPOeMKok1hw3XZQoykfqXTiugBlmQjCMPWsgFRUKRF/pdZWwQbAdQComkR819MhgKVJx2HXs8B1VyFNJ0QHpsjyVxNylPWydkalM5TOzSO0XDuW1D/an573tig1h+3+AN+XRWUVbV5YyOxT3rO0I3Bcz7eQzmEZ6YbpLkgCPOwas0+Okh5ljtoPJI74T8sGMko0gz5JZLJTASjUkUOrBDZCkSTPeg/rc9/mpGypZzw8tbMl8KsaeAKoeVi71eeHUGLxWUUKe+/vMR7FoIx7clrCkA2hbJchOrri+AJBRVaqWV5D+3zRFZtB3h5uuEKYRaYJP+wvt+ZFjRxlwik3MokTXiAz3HhAcwpx2fRJBcob7rgco89ZZsb2RYNbuzyT8RlT9DdiO1AXaNCcavCQnE00o46NqtYX+6j3EtJXm5NVVKKC/DRfOjW7nVpb6jXwoq0VfGfHzI2j+nsTFpca390LQ+ACb5VRWxwK8dUPz6CxlqKZe9KNBGxxmdoe89R6gokGFG/abRqj/20Jnto+XLkKWIhwD0m+fEUlv4un5aXDxUP+jeSC2EnNdCDtqNhhTJAqdSbiMXBm7j92n4hK11ltplK9XolVv7JJo0StizTuDF+0kIswFJ4mLMehrVuUbhJCo1iAsGCyYWl93/N/5nbl90db1nWxjfpfw==
+    container: AgCuwKqgcuups2wl3M7K/8d6aXXZgQdO99IwR5RxUnQ6GiTlpChPsy1kGVtkDXpu5E+Nvdm2nuk4blqmVYapysvIbSBCiifA9bhAcLr3DbPBgtFe+gqQVZiAIq5ziak8gy8hxAw+awUX77JupXoExKM31aU9tqRzr+eBVp/65QTKi1vCEJ9GOzAwjY/XV0VMYLctCL7jdH3j3lH/m+Yz6vuu6I3plLbKUMkReWJDQA68qLxYg0uyH3BW+qMWf8L94FP8zJsNizh+8FyoY/ttH+HBUeAFHC8+oU+VgCMg51XiVnXjbnvMg50t2sxBModTxZoyM66XEpiW6zHcPj9n8Zxza9sxz/njdcs0gJ+Ykj3tguIt3+Hy1rtd8Z/Qigg20lUykvK+fldeq1MWH8Vg1XEpncLZ+zegoQfw6I64gze3+r0Q4X37OOkgDHzy4gOL54NjQwB8q904BndAjiByvfDwmv+BrPwoxWJRsV8aFmPpIquScg5wgvlaqMURgESgbtVeDaHpLvmCPyNhc7tZEmG1PPnpOlEiSGRJzJYRQD97SXw8FvNNMLkBjVDG1tgAKMdh4wiRUtafpATWuG7MMsdWgEP5gFMUy2bmOafpv7E3VGDPOIrzelUzYFB+rBjQdW2YygMG85fTQMvICfrtFdfBoVcOpLRoW/7FNFpwL6KCJOKPsfuJzNc+jdFYGdMHWAfP2XPp0fST2AHReTt/DK3v
+    key: AgBDMiJYYXmfKkxgwg6/Bob7Le5G/5VG+H7HknGumY8ECvmCCMcXpQAI8t5yseJxy+KJeVCgJnbCHIU/RThRZS5CEMnLWLzSKuZXWbrZtsMKNopxZMhlygt6qa/kdVRU8iTNyGTLhod595wP8z9f50OFT59tZ+yWNPJC5IxpUxELMPaVZyEQBCjk6T/qFynwnYxgkarBZVEa4IsEMGTlGx3pbFHWgbibB5bXTDQEYoFPisNoT32GMgjEa8xDNoGNg6NJ+0EQeoaSbLNYQLR8mZMSjNgHDkRdiMejNHTTmuXGEAbvb4qe4mFdFhg1EB2pZO7Nf6A2YmU49v9lURQovXcqxbM/g7/aeJ6tY97OaQSAUMOlGCnKDMsiMsFiPZwyOqqWV8CHphTlDLmcFrrWiy7waEhYNs3SI+oX+mTk7fRKCfZmNOydZkQDFMHAwCVzZPeEbe1r9LrX8nQQ6izC+Yd6AfamnbqE5xCcKWOwfyDwqPXVWMlJMx2UYhOrgPrTPFnmed6g6gKRDWE49q33nDJ1SgozVCxXdovmpHpKjkrKcirvoU6KG17ls9GFlngrjqmmhaXEvx80KiwjPOmlg7jDzWC4kWsYDQ0x1xOc5opIoCLijNs9A9IHyeGWtY/QT2g5ilVIQ54IMSI/1O1KjvRZb2m2pW810C8srgoYcpXUWSKWibT/mbRhs1uIbi3hcnfYie8e9fkU39AvYWZ8ZdA349xs2IdP5DEdpHwMgj2HyJqn/XvZ0MEFQvJTifqOZFIW+nIL6Q42rvxx4yfPMYKi2FKMnAMHGkAoYLTjZIPgArs5Fer2G+Fs
+  template:
+    metadata:
+      creationTimestamp: null
+      name: logs-storage-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: redis-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    key: AgBbXlg+F4NzcwqPhitloPYqRMka8ACKAJK62ieU1wJuvPXleGETPczkm6jipGG1uCFPfd8ZUbh6Wt6DavyGWLKOmCvCHPuIHvuwgpm4z8HITRpF78FtlvSiJCZuDBQ1N01nDmkqu6Wa0LVTFOSt9hPvpYtOViJoIqVNNqxrqJi+aaBXVcmIL/Z/INHNxlQQZwlr1JZjPdOzEICrTNlwpBb7iLBa5Wa9mKOMV+DpFhNn+FzCuv4V6P++JKv2q7f1/TA4ountMDgHVhaBjvmPwZsQtGljsCBiLPvzzq24Xla0ParOg9K66sE4rVBZ4nM8VVC2iGoq8ELuKec9HshEEbnOOEwBZvfjBAFanGXpFXctKLZolqYZJgcGAs7P52fXtZ7sWXIXtKu/NriXvUblTuTPxS3hJsHUA5Vcgd6NkCNp8B8SQebV/z28C5KxK4xbQeSgZYSqR+9iUcGfXShsvrGssmMqRjz9mWJwDvJ8uvsrQLaCrAuyB8mDvmrfUDfwUYkR8POnzvxG4xBDUjc4aHOdglviOWFGYO6H61XkTR0DSbm9Kf8yRFoU9NmZZ7SmsOTc5bopFtJzGWWAlIIGSXmqONPyTRRukxyDZ8f2P7nIA9+v0hbRun/AneVffYC/8aOGn+5koXNMexK8OEXYddXGf0kQIH97xMwr5FKJ/nxaUzZ0ze0yop3Uv773AhkJma1JpeEYLpNjpetPL7XNopedszxwRr0k0NjTk34bnARibVMzpwdjlm5jSrqBZg==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: redis-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: search-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    api_key: AgA3f83c/PzQHLLftQqrQ996FDfrTUiyLH9iXwUzXjzB0/PRoLE9sl/UoKCo6DXAFjub7hXbP0DcIFIoK6gVDS8sqQmfsHaaY5LyZdLUzv910NgZSLsIA8ywgYe/1qHtG9xeN6w8jz9K7MmFTw6rRh+p2KWUQP4ST9UUjFNJHJAFtdaPpv4KpF/CaxZpsU052mBkbSf/5UI1LXzJ/69vUW6Ug7vsIG/qZVRMD9pwQoJNoqgbUTa5w/0tnvppa7g1lvLKFRqCEEYXF5lg6isFMHhSRcNwmOJAo8EqAoipKsNAYksi2qvkCXE0Fag9WDcpq+mX1gfJvCU07lNP4xNW+rtT3ka4dJ/Fm08IljW+0IMw0fd0caMSe1vRlLuWP7i0WbvFuT3U33V0D9Z+cagEL67+TWcTOlVYs9vijtVIEKGpfa2udkpFtDHLbOL4pAsDT3tUaUpS1qFnHr0QQqKqsHDwzcDPYozLYTIbtuet0A2iBClHMLJwIkIJ/heDOSdSsCSrg6t50dXzWcAZKmIzhUrdKKU4KTyCHFwWS5uI2U4x1MPQ+alOv4PCQaD1Wv+FM98lXibBYFG0bc5rxESiQyqWoic4eQIkAUnqfNyYpcXOt5TCfY8O0U8N/yHk5I5giV7TDeejEbMGIqq3MX0HhmBa7qTfmvHgPsJiiyaSe9qGNmcUB0A4x2+LlIkqGSv3wG0aHhMLXqcGdXftNza2Jdsppp+ID8h5k1W1fLqWyJH6rg==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: search-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: sentinel-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    private_key: AgAAAPuAI3S8iHzZGxSQKaQs7dx+NBB/mol0pkj3XHQq1UHeY/5iWrKTrY6AqPK1IYtdyWq4slVIdyMhZ4kdDqHHSR1vMUAn7n+KnAC61qrfiqXagkuwz2AywOYS1jllHGcXtrjmtu1TQC1+TSSaG/HfW7JMhCe0J4tA2vTCQXO9++G9AUqVenew4nZHVtR0KjK/3I2fLS/pqZ/gG1OnRlBDWCOXEJRCeOdbwkCWYCle4Gcv5AiG79+B2abocFBR/7FJEcmn2O5HZnk7n3wfZRSfbt/ho60Zw4vOUsSsnE+BkiBOqjSCMXxhmJxCMMcqfdFCGhh+YAjpfRGS4rZ4UJKlOwOmEIyeI0QQ3XgYztiL7MGPqbFZrUzcBNYLiURadrv3NpZZ7PxyXUC+kIZl+xp19QY28ZFegu05yLh5YzB21OM7tZU3rIfFDivLn6iWA9p+168X9/t8JdN230lyBuGD0lMNtpPjWy1+Lmu2HNn3LW/9q1SiXb98dZ9ifqs2bJQrP54Zbt/KcMCiaJq1+YmMOlzStKXItMLNR/xDdiy5n87DkzJVghRURt7uaCY/c78tzfeueMt2Db7LFOqZwTIywaPA5iTA0HGO57AV3xfbDdKgFX7vK65EEGLCJTGMKEvCRDvl2MM/izZ9I7fQQUepKJpMANs3cRVxMT5HuEwLQ4RIAPeVDcD73UGrALWs/Rd2fcQXLvegw6Vy6Q==
+    private_key_password: AgA93P6qh8peDBCGO9ewzfQ/53eoHDhT5V2MzvgN7zUXzH5wPUHzcGI4atBNFyEcY+PgZo/eZ9jTYKBCZrTHBGW5Sz3t9sX7f2EzOihEwvXL2XantIceAXdYEeDrclwJCesuzY7VaxDS+gMB/pPvh3pj2G89h7izX+3uOHkzVjUASbcq2EPlLNEXkImjDMPDhuuGLEHDc0TooE/wIj9l9URS5BOgOPnFFpIy6c5o/X8L3OgCK2egzTSGoDjzyTZvj/qcqLtf901ZdNe3qZUIS3gXpBm+ZaTqdg4FHpuooFDfo7th3F7ZmSJ+B3MvCX3ff122BglAIg8yf2Z2m2A0f7oQ3gZV+NKGOApNTzBPHOKBrONbuXp4oR5DgPQxe64EN2P2SSXtnthkJSpV0O15VtvZwOT3vOpxHKQpw3roSOwfCAk9Atue/9bnk/543Ya6wSR4Oy4DqCh6De+GAnwhk9+n1JeEep4Y/XSkuK7O3E2G5H6YUC85UEVpuI3o4cYzN6bCRjFb0XW8HKMj2U8jGwr2bHXLxAcXe6JzZOyd/awX4B4oqKxbjX/vZ2/vkHjywmebwjErIS/32mahfNsnIKNe97k2JZG5s9UxtM7gdeadggvBELm3ksM9ZjDuJPPCHQG6eH2c7faBfiYjUJj9lN/TrRs59834QjEpjHRJY8/OcX53XtKReGmAh2ESkuLFVs3M70OKqf8TYqqUYg==
+    public_key: AgABL1crSa6R07NyQNbQHdpjQ2dOHbudM+y7tGjfXcq7VgIQ3/G1ftXnQE6ZJWJsswAIy4hHyqBFehVE6wvcfhveDRQ1k+wB52NIuRf1eK401XoEDEcAgjSjE/C8UQ04EonPZdQHEMrhqDqOwIz1YSiOmegy/t20INRaLNX+9nMvo/wTxm9x/B6uS9iIDVccAhMrYC8ovApCBrxQLqT1OQlaMyFce7ACzp/BNhwfNdE6z8ivL+OPoLLrgtpv8XFRcVxxRIyMVi2j2foVmlXsabkh9HZ3OTat9SH/XqdcH1GkljCcQ/UbFqTtLwVCwj5bIPRrtnWkKFOjAmrZPmsfoTjkmBSO8HyqeYwTmBSBVepWtAAm+nEp6UImz1RsmWDvvy3FUJtxspn21kF4RfH/GMvK9B4HmeQauYNexBysm8GA32NQJNd8brsmiIo+5jzQ3uQz5fFp5MEra0TLR8Hb3H6O26DCQTqsaZUDQpsId7xznCBaNx5O8HXHtFtsldxfLHn0duW9jjQpckPCcXaW69crQKtAjXGPi0TKlf6tA0FMdsc2g9CwzUijbnCgX94Fr0lcDYq9NtqPftCnMZ69RV/aD80Vz1dntvcsux7eqX4vrrK9m9h0vwijk7YWfO+3680AJ2ySVK6LozmxOcD3GeaXtkvpufoBKxyU+RyNVmurJN92IuGN/kBEh4e5d6T9FvdNzLh+rbXIdthZBQ==
+    server: AgCj5mKlrfwhwKZTCAR0vyEUPYVjK31PlmrEE1yeyrlxaO/vvvv5fbNLSo2EfnSAIk8tNZAK4iTrgG1xWdDk5gYAhoNaX+k3rn0aLTlB3ZmKaAv7SGKVf3dfNYK3or6Q5ERBtsl8VKlVXIQsq2omsfa+Arb2kU9pI0elPJ+KYXTPRWhDExmt5WCXwmoNoSzbYRALDf9lnjgWHCuGA0NQhcnT11KMLDtYl6pt2OAohhkEMM3kvDT0v2L5cvtBsqdQuaNXZxj9cJ3tZKEEbD3gLAW+NEQK4jgxXFSa2Fvk8fA3gKbrIa1j5Gpe3ibIZwBEWpdV1iiE7xiyu5acKk8JOdbw9buVs1yuIshoSJ9qVsthlHpOLd1vLnWizTjO/665PgNZPa1UqpQqadD/iZF1XQ0faGftwqzjv/edeOo7AsKH2kIfyz+hCrCm17OHxxUhltyT/nLYzim1GjndeW1ByQFv2GSTJ2PfWNVGJL8M31gMwL5TS6kRZ7L08jlVYZ2YICDJvS3bTTu2FKTkDhOQnqAz0PdI9rj4+W8ODjFu2RcTazPpw+tUlG9iiojEGIEbuMPfRC1ocFRg4F7/906BwXCKTBIRdggVG9YeNsrRvxpypVGKNgyBIowBj6lva0DyMu13VNFXFwJ0+N6//QZrDF9lLQFjdqgSa0a3I/VlqBKwOni21gvMYmXUqFHjNkNPoGkrtUwSmHjOkyk=
+    user: AgBDrHYceFJ7Y0Mi1+AHcIG0MBsdC8WhCl/ZcvHGrTs3149csxNo3yRhSoKaMvKbV+QGuEEWnS/W+jb0vWMfnkLEs9EST82ALiMFdJCDJ5OZjVyQAN33y4CQIc/I1MJc6hGJFePDScEnJzBCt0RmdEo+hHxufql/+XH25UzMv5eJUOcARU5oS5hCsx752tPcpHxYrxYuazNG2kPouETAIgS8mIoQaFhnPQFgMUQm+6Kzq+2X4JYuUsu8EtevM8tf+cir8yl+mUUApFRLQenUbKImmdG35KcOeSbA1zf62AU2cEfobIYxPfPVASA/r5QbQ1xyHZ7F0nqKEOVxOKTrzuWK1DPQwKbdzD4Is2CMeRuRSHFtHByCyO+k/f1+p3bsDDxEF1CYWjWxSGIjHVliRYQmaC2esflNRaYRzbQrfa/t0a+TzspI0jP9oqhAmMT2C6UPrQzIGWZ2wjjj6FhV8OJkABL3OVDtR2IlduO7Qysm955/+KdoVtFnBFF2qIhMoupgv4jh+nXMFBoPN78FMa7XdeukCyNvJXB58h4Ry3tJgf7VvYdOD/oWbBOiHOF8gwM5MF129ggS4JKtFrepAXY6/ddQnZHR5slILUnNiN0ebkw3nfZn69kefsP/9PnfkyKPf5WYWExn3AUUmBYtnI72F9nhF2sgsBRzhkzazybGeZYoUDsRoSPOl463WOATexvDuyn8fksbPQm8Dw==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: sentinel-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: service-bus-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    create_key: AgDPjZxLAcsvSdxcN1rzd742hgEatIAuSRlYAsYHTOuZeKy3adI+1+2r+OB/BCWMwoXxusWUgDDFCqom/1McoHecWFaKX4kfprZnJ5vsO2J6fhWzvvuqYP2GaGd1CieDmGi9lex6EKr4y3XZ7ihf/ZkF2oTFteK7/S3IExd+ts3Nyujmz/VF8HWIy3LhqzE3vHvKkwzz9g35JrnsAZCM4RFwtlffXDrB7IOyKJh2qh8i9McCtj7WZj0GqUzRMKocr7B3BlH84cqaDBcY4knpJPH+3DKYUXiG91Ozhax5Ftbm/hD9F0EQPipSseAfuOVi7y2EURO8yYr0pnYVOMMdGErnoEnn9DlM5KF5y7qkoI12dQBDpiERuh1iem0cEpEt9UuiHmDYcX0GuIDai0/FRW2TFfON0Hmi6ghJqSV/m1yjmPtTKXbCV4YtJAu33aR2k1Tdg6HeTy/+msL6/Tsn/roI7RXMQGl8r+LHT7Yn9ntltuh2UHH4fWaiu3F3wKLxdlh5d6xAU+SxPHmzl3opRP9Px88eYITXfDyD5I4Vz5S86kcghl57IfEV5UHX8ZQr37/CTbbekFtx9Zs1KJS3dXtjrgBmHhIarGkdWTHhQXDQcDNLVzDw71zDd/7QiOmCtwmwPF2hCv+Ynh4VYJrXtalp9f4KrGcjNUOsbGo20WCScZ7hHtygOqO7b53frbXNJA5F9Ffl2v2/saPET9AePXnx8usoUHeIt8MbBqflS/Zn+UBEtplUY8ZVjx/53w==
+    delete_key: AgCsamGy0Ftvti8QdysIWgcx8iTzm4tmwIOY4CVNFw/IWPspmL4nd4bURhLIxiQ8F8aq0yOZtJYKAnICs5DDxBdhqNAPezrEprveq8WKKnzPSUdU9bBmNckhDu8JAmL89ql6E3BGNnMCjuBtCVVydPt18qXP0qRuaXn9ppNjnNq11a/DdXTIOeMxgEJKulEa4rLTFW4NKmxz54W82/Tw4B5H/WAqUmX2oanXHDv4Kh7vXq1L4x/nozNF9M5ODoxM/9G4woNa4Yi5b375MU4gfqbG6smLt07Int+SAS+rGCg+mZ6qq5xkyJk6YN+xc0DAZBY+R9PzV5EPhSxdW0vCgFTl8KgmbrshVKA3XQz/pxNlq+D5FmxU0Av7roEMZ3Jf3KCxN3YMlsnYdR6WBrmulhjUEXfjSZzycuo1cEOFtdwnuG8mPFmBy+mYuuMx4yF95C/bfM9UHrE7ZuZE/RW2Zdb67ldq4r3mpVp8bZQQrHgKfk3AKiy+Etct8ENyc7HrqcO7xoDdvhlSgk4L2u0K1vJm4jxevWgLTP/aWloiHJCUS+/fDsYZdGvIgi4OMDOfysXbVH5+FkKkHAzmLOyWhAGXfsxMFku05ZYC64MfnxXd62BXpVzhgNCyFc7LL71/AAKGcF1lLSYOrTbM3kwuuwz5scv2MWoQl3WFfiUnMfI+ZsZs/WLt1IZ2FsTWq51cLXUHVdoCAf+MRuYt0h5/vC19IH4+f27nocOdTcbSd5cIRhHwDalibNKR+V48gQ==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: service-bus-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: storage-creds
+  namespace: doc-index-updater
+spec:
+  encryptedData:
+    account: AgAjOs3iAocJFxOdPLsbOHidKkGnj/Iw9CEX8F8CYOTpc78qlm+i/6+QNLtCgw7MbtqI9JlZkWlisKhYnjU+HU8q5N7pGKAovl+SmHiNs04RtjZ+4ZL6I+g2wINoKFl8Hrjrygyvj8VTeavFm+P+gdzu6P1tYqcXb+wAzl3uS6UczT2GF9OzgQUfnoDljwXyN7IGym4Z+L6dinAcNi0EiYR28eR1MwzfwdF3Suj8WbOxIjyrSsqnmk7toeVuMJIMyCctkObhZwtoXJOdi5DQC5DZDvLmsOFYyQmvQImvwXzqpZH822dDMNLPv9SdKhPXPd8pX/GebL9F7I2zl43v33SCDX/vYKdHXI6Q91zqgthpiImO1RDPwDBufFMpnPRaNi4ek+GYZWhUWyRORTNi5LM80LxqOWZyEUR4JvtwTzzpNpzHChtG5nx/WIG4yPVP2DT6RVL4gcV+dmD637VDmxfFx71jDYgLFaHecxLe6CDD6NVVKT/NJYdrhseknR0bcrCqbDLLtC6MkkAi+JNoPqDSvv5xMYaFQhi0xtAJ9lVPwh5DvFIHSmZKjbF+wyB2XwB+Wxpw64xVEVS1q3Sfl9mUdoSzMk7YHHJV00GE0KS9/iC7TJEdps16/vlyvp+oMTEOlJEnaLPKOUbDGR77AvSpJ4O51cj+7H9RqE4A9z9UEPiz0W8htNSYG4SyJZKMTdsRCmC3ZZQTCAIpCci9zQVFCJ2t
+    container: AgAZnEmqIOBEgL8WllEyseVt+f2CIGBF4Lz3+z+r0vKBYVuFS9/qKjhTJVMA50+LISdwKzVh9e/RJEH431Qh8khaPpCtFoiCO7EXWR2ytFmryb4Her5QfdUChU3AVY8nXQd5r26m4do9cRTJubwwL4U+CaisG++ltHkG+XweAJMUMHhIn5hKe+QmnM44XN6Kv6SiwENgPFhCiQ/u9u47IWd49qtZK02k5UKrkx+t2HCCwnOC6d/V9JXCwFhEx7jOdkjGXad13snlcmf/x8AzgEqmRXFql0cVGp0UvstzpaxZCX4vyQCAYBBhoC45AXRrHDzd28ASgd53d95QH+b4KO+EKw2a+5KaYl3d+viQUoNBLsL1QzUNs04ZF0mTV7l2rrbcsNMhzQ+/tYvNo011Gb4Y9koCsfogYBsVYtH7L83lVhggd05eVOYGl1iatyxING8IHRrb+bgVXVLtwRGXVudMNoGeog2QLRhR7bh7Npze1BWQjYgpdOPteYu397qJ6CtCM6oetTwZJqFAcqHa2fe3arKfkpZVEhY9jph1nXYDfNp2kMuY8FGHGLHlh5z79dzJaFijrnnI4eRLRBAUndg4vgx3jwNgkHFIzztytKbEOJH7kwvixiOHzZMl/CkHWqz7Hr/SKUdR2JZz8HJQFguGJzKtmReEVdg0IsN5XIKjmcopT6LZigTbSRTUzoE4bp63txiu
+    key: AgDAtrBtMrQqGi59r828YX3TZXOuVYn/eldoH7K66m/1kYX0OGy6adMfUv/sbZaSL2CTBxc/JVgtHveG950CGS3UXanW6tPcUgfnCH8/NmVMVUVfgxBFvGPfiK+oNKFrvvF2R/anMC4Esf65HfFWAjzDzY778105Egh+cqmssYjkSnlw7e3NpRFm64v0WUeNzaKQOViDHtJLbk5tSXtOp5PoTcRgtlz9ESA8jzPPQElx+eMoZ5YHgC9NEU6ZybpKFr3vvZPmSHggkyAQ+c0rK3QxIIoILvJSY4yyOzqgbeUmPPiGtE7VptF/UnFzMI43kvlLr9kgOLOonWwwfdDHO90dtjAeooOr8lqbzXoUguRVrOQwtDy2yovCf0NAnQAxerI9Wry+S7sy13yYLRWAw+Ouu10z6oKxiu3me5ULXh0+OzzhFCCS73kIp0nRqZ4Hdc3wrFMZ82Ye+VNf+9Y9fo/NixPxJNlhxrloFBJx0P1CyQT5EVEbfWabvTV5XwTTcp/FUvASdBBPbJTBLOjv4jeF7jHhaPu1bgKrR5w6WFmHemH8wpurW575z41kKZtBcFadj5fxlm7Fyg1VTweXoDf0HQn5k34ivCcPtO9c4dezKTu/7j8qNTbVMuuETFoSF2Huzn7v71X1xIm0gKAJ6YQZe36mrJuUzrDUvlYloSVTlvDd1ku766EdqHt25/5lP+4eJF95Cxwpm0uUcG6/hZxyjFwPf8yXVgCLR/CfZ3OdXeWhhsADnRnyeUoXVIVOPmIce7x2AJ5hJaYu4nXvkJewcEulivRHscVGLQ1YJosLceCIo2TupjMd
+  template:
+    metadata:
+      creationTimestamp: null
+      name: storage-creds
+      namespace: doc-index-updater
+status: {}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  gateways:
+  - istio-system/istio-ingressgateway
+  hosts:
+  - doc-index-updater-local.test.mhra.gov.uk
+  http:
+  - route:
+    - destination:
+        host: doc-index-updater
+        port:
+          number: 80
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        notPaths:
+        - /pars
+        - /pars/*
+  - to:
+    - operation:
+        methods:
+        - OPTIONS
+        paths:
+        - /pars
+        - /pars/*
+  - from:
+    - source:
+        requestPrincipals:
+        - '*'
+    to:
+    - operation:
+        paths:
+        - /pars
+        - /pars/*
+  selector:
+    matchLabels:
+      app: doc-index-updater
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: doc-index-updater
+  namespace: doc-index-updater
+spec:
+  jwtRules:
+  - audiences:
+    - 26f95b21-63b2-475f-8a35-d39cea4cfd61
+    issuer: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/v2.0
+    jwksUri: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/discovery/v2.0/keys
+  selector:
+    matchLabels:
+      app: doc-index-updater
