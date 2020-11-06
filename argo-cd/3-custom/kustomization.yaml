@@ -9,6 +9,7 @@ patchesStrategicMerge:
   - argocd-redis.yaml
   - argocd-repo-server.yaml
   - argocd-server-deployment.yaml
+  - install.yaml
 
 patchesJSON6902:
   - target:
