@@ -17,12 +17,12 @@ metadata:
   name: argo-rbac
   namespace: doc-index-updater
 rules:
-- apiGroups:
-  - '*'
-  resources:
-  - '*'
-  verbs:
-  - '*'
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -34,9 +34,9 @@ roleRef:
   kind: Role
   name: argo-rbac
 subjects:
-- kind: ServiceAccount
-  name: argocd-server
-  namespace: argocd
+  - kind: ServiceAccount
+    name: argocd-server
+    namespace: argocd
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
@@ -48,9 +48,9 @@ roleRef:
   kind: Role
   name: argo-rbac
 subjects:
-- kind: ServiceAccount
-  name: argocd-application-controller
-  namespace: argocd
+  - kind: ServiceAccount
+    name: argocd-application-controller
+    namespace: argocd
 ---
 apiVersion: v1
 kind: Service
@@ -61,9 +61,9 @@ metadata:
   namespace: doc-index-updater
 spec:
   ports:
-  - name: http
-    port: 80
-    targetPort: 8000
+    - name: http
+      port: 80
+      targetPort: 8000
   selector:
     app: doc-index-updater
 ---
@@ -85,170 +85,170 @@ spec:
         app: doc-index-updater
     spec:
       containers:
-      - env:
-        - name: SERVICE_BUS_MESSAGE_LOCK_TIMEOUT
-          value: "20"
-        - name: REDIS_SERVER
-          value: doc-index-updater-non-prod.redis.cache.windows.net
-        - name: REDIS_PORT
-          value: "6379"
-        - name: REDIS_KEY
-          valueFrom:
-            secretKeyRef:
-              key: key
-              name: redis-creds
-        - name: AZURE_SEARCH_INDEX
-          value: products-index
-        - name: AZURE_API_ADMIN_KEY
-          valueFrom:
-            secretKeyRef:
-              key: api_key
-              name: search-creds
-        - name: AZURE_SEARCH_API_VERSION
-          value: "2019-05-06"
-        - name: AZURE_SEARCH_WORD_FUZZINESS
-          value: "0"
-        - name: AZURE_SEARCH_EXACTNESS_BOOST
-          value: "4"
-        - name: SENTINEL_SFTP_SERVER
-          valueFrom:
-            secretKeyRef:
-              key: server
-              name: sentinel-creds
-        - name: SENTINEL_SFTP_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: user
-              name: sentinel-creds
-        - name: SENTINEL_PRIVATE_KEY_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: private_key_password
-              name: sentinel-creds
-        - name: SENTINEL_PUBLIC_KEY_PATH
-          value: /etc/.ssh/id_rsa.pub
-        - name: SENTINEL_PRIVATE_KEY_PATH
-          value: /etc/.ssh/id_rsa
-        - name: SERVICE_BUS_NAMESPACE
-          value: doc-index-updater-non-prod
-        - name: SEARCH_SERVICE
-          value: mhraproductsnonprod
-        - name: RUST_LOG
-          value: doc_index_updater=debug
-        - name: PARS_UPLOAD_SITE_ORIGIN
-          value: https://mhraparsnonprod.azureedge.net
-        - name: CREATE_QUEUE_NAME
-          value: doc-index-updater-create-queue
-        - name: CREATE_QUEUE_POLICY_NAME
-          value: doc-index-updater-create-auth
-        - name: CREATE_QUEUE_POLICY_KEY
-          valueFrom:
-            secretKeyRef:
-              key: create_key
-              name: service-bus-creds
-        - name: CREATE_QUEUE_POLICY_KEY
-          valueFrom:
-            secretKeyRef:
-              key: create_key
-              name: service-bus-creds
-        - name: DELETE_QUEUE_NAME
-          value: doc-index-updater-delete-queue
-        - name: DELETE_QUEUE_POLICY_NAME
-          value: doc-index-updater-delete-auth
-        - name: DELETE_QUEUE_POLICY_KEY
-          valueFrom:
-            secretKeyRef:
-              key: delete_key
-              name: service-bus-creds
-        - name: DELETE_QUEUE_POLICY_KEY
-          valueFrom:
-            secretKeyRef:
-              key: delete_key
-              name: service-bus-creds
-        - name: STORAGE_ACCOUNT
-          valueFrom:
-            secretKeyRef:
-              key: account
-              name: storage-creds
-        - name: STORAGE_CONTAINER
-          valueFrom:
-            secretKeyRef:
-              key: container
-              name: storage-creds
-        - name: STORAGE_CONTAINER_TEMPORARY
-          valueFrom:
-            secretKeyRef:
-              key: container_temporary
-              name: storage-creds
-        - name: STORAGE_MASTER_KEY
-          valueFrom:
-            secretKeyRef:
-              key: key
-              name: storage-creds
-        - name: BASIC_AUTH_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: basic-auth-creds
-        - name: BASIC_AUTH_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: basic-auth-creds
-        - name: LOG_STORAGE_CONTAINER
-          valueFrom:
-            secretKeyRef:
-              key: container
-              name: logs-storage-creds
-        - name: LOG_STORAGE_ACCOUNT
-          valueFrom:
-            secretKeyRef:
-              key: account
-              name: logs-storage-creds
-        - name: LOG_STORAGE_MASTER_KEY
-          valueFrom:
-            secretKeyRef:
-              key: key
-              name: logs-storage-creds
-        image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:66c7edf7dba8693ee6190222e2404a0d2af7f0ddf21569f83abb2e56321d2d31
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 20
-          timeoutSeconds: 30
-        name: doc-index-updater
-        ports:
-        - containerPort: 8000
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 15
-          timeoutSeconds: 30
-        resources:
-          limits:
-            cpu: "1"
-            memory: 1Gi
-          requests:
-            cpu: 100m
-            memory: 200Mi
-        volumeMounts:
-        - mountPath: /etc/.ssh
-          name: sftp-keys
-          readOnly: true
+        - env:
+            - name: SERVICE_BUS_MESSAGE_LOCK_TIMEOUT
+              value: "20"
+            - name: REDIS_SERVER
+              value: doc-index-updater-non-prod.redis.cache.windows.net
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: key
+                  name: redis-creds
+            - name: AZURE_SEARCH_INDEX
+              value: products-index
+            - name: AZURE_API_ADMIN_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api_key
+                  name: search-creds
+            - name: AZURE_SEARCH_API_VERSION
+              value: "2019-05-06"
+            - name: AZURE_SEARCH_WORD_FUZZINESS
+              value: "0"
+            - name: AZURE_SEARCH_EXACTNESS_BOOST
+              value: "4"
+            - name: SENTINEL_SFTP_SERVER
+              valueFrom:
+                secretKeyRef:
+                  key: server
+                  name: sentinel-creds
+            - name: SENTINEL_SFTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: sentinel-creds
+            - name: SENTINEL_PRIVATE_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: private_key_password
+                  name: sentinel-creds
+            - name: SENTINEL_PUBLIC_KEY_PATH
+              value: /etc/.ssh/id_rsa.pub
+            - name: SENTINEL_PRIVATE_KEY_PATH
+              value: /etc/.ssh/id_rsa
+            - name: SERVICE_BUS_NAMESPACE
+              value: doc-index-updater-non-prod
+            - name: SEARCH_SERVICE
+              value: mhraproductsnonprod
+            - name: RUST_LOG
+              value: doc_index_updater=debug
+            - name: PARS_UPLOAD_SITE_ORIGIN
+              value: https://mhraparsnonprod.azureedge.net
+            - name: CREATE_QUEUE_NAME
+              value: doc-index-updater-create-queue
+            - name: CREATE_QUEUE_POLICY_NAME
+              value: doc-index-updater-create-auth
+            - name: CREATE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: create_key
+                  name: service-bus-creds
+            - name: CREATE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: create_key
+                  name: service-bus-creds
+            - name: DELETE_QUEUE_NAME
+              value: doc-index-updater-delete-queue
+            - name: DELETE_QUEUE_POLICY_NAME
+              value: doc-index-updater-delete-auth
+            - name: DELETE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: delete_key
+                  name: service-bus-creds
+            - name: DELETE_QUEUE_POLICY_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: delete_key
+                  name: service-bus-creds
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  key: account
+                  name: storage-creds
+            - name: STORAGE_CONTAINER
+              valueFrom:
+                secretKeyRef:
+                  key: container
+                  name: storage-creds
+            - name: STORAGE_CONTAINER_TEMPORARY
+              valueFrom:
+                secretKeyRef:
+                  key: container_temporary
+                  name: storage-creds
+            - name: STORAGE_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: key
+                  name: storage-creds
+            - name: BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: basic-auth-creds
+            - name: BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: basic-auth-creds
+            - name: LOG_STORAGE_CONTAINER
+              valueFrom:
+                secretKeyRef:
+                  key: container
+                  name: logs-storage-creds
+            - name: LOG_STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  key: account
+                  name: logs-storage-creds
+            - name: LOG_STORAGE_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: key
+                  name: logs-storage-creds
+          image: mhraproductsnonprodregistry.azurecr.io/products/doc-index-updater@sha256:66c7edf7dba8693ee6190222e2404a0d2af7f0ddf21569f83abb2e56321d2d31
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 20
+            timeoutSeconds: 30
+          name: doc-index-updater
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 30
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: /etc/.ssh
+              name: sftp-keys
+              readOnly: true
       serviceAccountName: doc-index-updater
       volumes:
-      - name: sftp-keys
-        secret:
-          items:
-          - key: public_key
-            path: id_rsa.pub
-          - key: private_key
-            path: id_rsa
-          secretName: sentinel-creds
+        - name: sftp-keys
+          secret:
+            items:
+              - key: public_key
+                path: id_rsa.pub
+              - key: private_key
+                path: id_rsa
+            secretName: sentinel-creds
 ---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
@@ -397,7 +397,7 @@ metadata:
   namespace: istio-system
 spec:
   dnsNames:
-  - doc-index-updater.non-prod.mhra.gov.uk
+    - doc-index-updater.non-prod.mhra.gov.uk
   issuerRef:
     kind: ClusterIssuer
     name: production
@@ -407,27 +407,57 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: doc-index-updater-ingressgateway
-  namespace: istio-system
+  namespace: doc-index-updater
 spec:
+  selector:
+    app: istio-ingressgateway
   servers:
-  - hosts:
-    - doc-index-updater.non-prod.mhra.gov.uk
-    port:
-      name: https-443-non-prod-mhra-gov-uk
-      number: 443
-      protocol: HTTPS
-    tls:
-      credentialName: cert-doc-index-updater
-      mode: SIMPLE
-  - hosts:
-    - doc-index-updater.test.mhra.gov.uk
-    port:
-      name: https-443-test-mhra-gov-uk
-      number: 443
-      protocol: HTTPS
-    tls:
-      credentialName: test-mhra-gov-uk-cert
-      mode: SIMPLE
+    - hosts:
+        - doc-index-updater.non-prod.mhra.gov.uk
+      port:
+        name: https-443-non-prod-mhra-gov-uk
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: cert-doc-index-updater
+        mode: SIMPLE
+    - hosts:
+        - doc-index-updater.test.mhra.gov.uk
+      port:
+        name: https-443-test-mhra-gov-uk
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: test-mhra-gov-uk-cert
+        mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: doc-index-updater-ingressgateway-internal
+  namespace: doc-index-updater
+spec:
+  selector:
+    app: istio-ingressgateway-internal
+  servers:
+    - hosts:
+        - doc-index-updater.non-prod.mhra.gov.uk
+      port:
+        name: https-443-non-prod-mhra-gov-uk
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: cert-doc-index-updater
+        mode: SIMPLE
+    - hosts:
+        - doc-index-updater.test.mhra.gov.uk
+      port:
+        name: https-443-test-mhra-gov-uk
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: test-mhra-gov-uk-cert
+        mode: SIMPLE
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -436,28 +466,29 @@ metadata:
   namespace: doc-index-updater
 spec:
   gateways:
-  - istio-system/doc-index-updater-ingressgateway
+    - istio-system/doc-index-updater-ingressgateway
+    - istio-system/doc-index-updater-ingressgateway-internal
   hosts:
-  - doc-index-updater.non-prod.mhra.gov.uk
-  - doc-index-updater.test.mhra.gov.uk
+    - doc-index-updater.non-prod.mhra.gov.uk
+    - doc-index-updater.test.mhra.gov.uk
   http:
-  - corsPolicy:
-      allowCredentials: false
-      allowHeaders:
-      - Authorization
-      - username
-      allowMethods:
-      - POST
-      allowOrigins:
-      - prefix: https://mhraparsnonprod.azureedge.net
-      - prefix: https://mhraparsnonprod.z33.web.core.windows.net
-      - prefix: http://localhost:3000
-      maxAge: 24h
-    route:
-    - destination:
-        host: doc-index-updater
-        port:
-          number: 80
+    - corsPolicy:
+        allowCredentials: false
+        allowHeaders:
+          - Authorization
+          - username
+        allowMethods:
+          - POST
+        allowOrigins:
+          - prefix: https://mhraparsnonprod.azureedge.net
+          - prefix: https://mhraparsnonprod.z33.web.core.windows.net
+          - prefix: http://localhost:3000
+        maxAge: 24h
+      route:
+        - destination:
+            host: doc-index-updater
+            port:
+              number: 80
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -467,27 +498,27 @@ metadata:
 spec:
   action: ALLOW
   rules:
-  - to:
-    - operation:
-        notPaths:
-        - /pars
-        - /pars/*
-  - to:
-    - operation:
-        methods:
-        - OPTIONS
-        paths:
-        - /pars
-        - /pars/*
-  - from:
-    - source:
-        requestPrincipals:
-        - '*'
-    to:
-    - operation:
-        paths:
-        - /pars
-        - /pars/*
+    - to:
+        - operation:
+            notPaths:
+              - /pars
+              - /pars/*
+    - to:
+        - operation:
+            methods:
+              - OPTIONS
+            paths:
+              - /pars
+              - /pars/*
+    - from:
+        - source:
+            requestPrincipals:
+              - "*"
+      to:
+        - operation:
+            paths:
+              - /pars
+              - /pars/*
   selector:
     matchLabels:
       app: doc-index-updater
@@ -500,15 +531,15 @@ metadata:
 spec:
   action: DENY
   rules:
-  - from:
-    - source:
-        notPrincipals:
-        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
-        - cluster.local/ns/istio-system/sa/istio-ingressgateway-internal-service-account
-    to:
-    - operation:
-        notPaths:
-        - /healthz
+    - from:
+        - source:
+            notPrincipals:
+              - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+              - cluster.local/ns/istio-system/sa/istio-ingressgateway-internal-service-account
+      to:
+        - operation:
+            notPaths:
+              - /healthz
 ---
 apiVersion: security.istio.io/v1beta1
 kind: RequestAuthentication
@@ -517,10 +548,10 @@ metadata:
   namespace: doc-index-updater
 spec:
   jwtRules:
-  - audiences:
-    - ac2b59e9-77ca-4d39-8186-b96d305c9aae
-    issuer: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/v2.0
-    jwksUri: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/discovery/v2.0/keys
+    - audiences:
+        - ac2b59e9-77ca-4d39-8186-b96d305c9aae
+      issuer: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/v2.0
+      jwksUri: https://login.microsoftonline.com/e527ea5c-6258-4cd2-a27f-8bd237ec4c26/discovery/v2.0/keys
   selector:
     matchLabels:
       app: doc-index-updater
