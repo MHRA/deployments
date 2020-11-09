@@ -466,8 +466,8 @@ metadata:
   namespace: doc-index-updater
 spec:
   gateways:
-    - istio-system/doc-index-updater-ingressgateway
-    - istio-system/doc-index-updater-ingressgateway-internal
+    - doc-index-updater-ingressgateway
+    - doc-index-updater-ingressgateway-internal
   hosts:
     - doc-index-updater.non-prod.mhra.gov.uk
     - doc-index-updater.test.mhra.gov.uk
