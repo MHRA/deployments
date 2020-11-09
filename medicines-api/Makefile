@@ -2,11 +2,11 @@ overlay := non-prod
 
 .PHONY: default
 default: ## Deploy using Kustomize
-	kustomize build ./overlays/$(overlay) | kubectl apply --validate=false -f -
+	cat ./$(overlay)/manifests.yaml | kubectl apply --validate=false -f -
 
 .PHONY: delete
 delete: ## Delete
-	kustomize build ./overlays/$(overlay) | kubectl delete --ignore-not-found -f -
+	cat ./$(overlay)/manifests.yaml | kubectl delete --ignore-not-found -f -
 
 .PHONY: help
 help: ## Display this help screen
