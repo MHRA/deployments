@@ -28,3 +28,35 @@ spec:
                     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
                     service.beta.kubernetes.io/azure-load-balancer-internal-subnet: aparz-spoke-products-sn-01
                     service.beta.kubernetes.io/azure-load-balancer-resource-group: apazr-rg-1001
+                    - path: metadata.labels.app
+                    value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.selector.app
+                  value: istio-ingressgateway-internal
+                - path: spec.selector.istio
+                  value: internal-ingressgateway
+            - kind: Deployment
+              name: istio-ingressgateway-internal
+              patches:
+                - path: metadata.labels
+                  value:
+                    app: istio-ingressgateway-internal
+                    istio: internal-ingressgateway
+                - path: spec.selector.matchLabels
+                  value:
+                    app: istio-ingressgateway-internal
+                    istio: internal-ingressgateway
+                - path: spec.template.metadata.labels
+                  value:
+                    app: istio-ingressgateway-internal
+                    istio: internal-ingressgateway
+            - kind: HorizontalPodAutoscaler
+              name: istio-ingressgateway-internal
+              patches:
+                - path: metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.scaleTargetRef.name
+                  value: istio-ingressgateway-internal
