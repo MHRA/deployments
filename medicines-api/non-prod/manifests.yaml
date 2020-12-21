@@ -107,7 +107,7 @@ spec:
           value: "4"
         - name: BMGF_AZURE_SEARCH_INDEX
           value: bmgf-index
-        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:6338c524b4c4d6a38500f42768855db76037de604b010ef600f11ec0fca7bd99
+        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:527b606eda7fed77f5991675d16094a3a6bb33ca922a4d9bb2ddb45c44b91896
         livenessProbe:
           httpGet:
             path: /healthz
