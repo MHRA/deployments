@@ -12,7 +12,7 @@ helmInstall: ## Install cert-manager config using helm
 	helm upgrade cert-manager jetstack/cert-manager \
 		--install \
 		--namespace cert-manager \
-		--version v0.15.1 \
+		--version  v1.2.0 \
 		--set installCRDs=true
 	@until kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=480s; \
 	do \
