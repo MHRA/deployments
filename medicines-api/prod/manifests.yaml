@@ -150,14 +150,14 @@ spec:
       namespace: medicines-api
 status: {}
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: cert-medicines-api
   namespace: istio-system
 spec:
   dnsNames:
-  - medicines.api.mhra.gov.uk
+    - medicines.api.mhra.gov.uk
   issuerRef:
     kind: ClusterIssuer
     name: production
