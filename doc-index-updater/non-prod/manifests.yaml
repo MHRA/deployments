@@ -390,14 +390,14 @@ spec:
     type: kubernetes.io/tls
 status: {}
 ---
-apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
   name: cert-doc-index-updater
   namespace: istio-system
 spec:
   dnsNames:
-    - doc-index-updater.non-prod.mhra.gov.uk
+  - doc-index-updater.non-prod.mhra.gov.uk
   issuerRef:
     kind: ClusterIssuer
     name: production
