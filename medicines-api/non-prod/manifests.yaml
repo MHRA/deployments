@@ -107,7 +107,7 @@ spec:
           value: "4"
         - name: BMGF_AZURE_SEARCH_INDEX
           value: bmgf-index
-        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:527b606eda7fed77f5991675d16094a3a6bb33ca922a4d9bb2ddb45c44b91896
+        image: mhraproductsnonprodregistry.azurecr.io/products/medicines-api@sha256:ec41b8172c399f51de6a751651676d74c1531146f2b0ad537416f762d1c72ad8
         livenessProbe:
           httpGet:
             path: /healthz
@@ -149,7 +149,7 @@ spec:
       name: search-creds
       namespace: medicines-api
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: cert-medicines-api
