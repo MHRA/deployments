@@ -5,6 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: argocd-cm
     app.kubernetes.io/part-of: argocd
+  namespace: argocd
 data:
   repositories: |
     - url: https://github.com/MHRA/deployments.git
