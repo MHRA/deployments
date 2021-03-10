@@ -1,6 +1,7 @@
 resources:
   - ../2-base
   - authorization.yaml
+  - istio-rbac.yaml
 
 patchesStrategicMerge:
   - argocd-application-controller.yaml
