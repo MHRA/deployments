@@ -21,6 +21,12 @@ spec:
               patches:
                 - path: spec.loadBalancerIP
                   value: "${PUBLIC_IP}"
+            - kind: Deployment
+              name: istio-ingressgateway
+              patches:
+                - path: spec.replicas
+                  value: 2
+
       - name: istio-ingressgateway-internal
         enabled: true
         k8s:
@@ -58,6 +64,8 @@ spec:
                   value:
                     app: istio-ingressgateway-internal
                     istio: internal-ingressgateway
+                - path: spec.replicas
+                  value: 2
             - kind: HorizontalPodAutoscaler
               name: istio-ingressgateway-internal
               patches:
@@ -67,3 +75,14 @@ spec:
                   value: internal-ingressgateway
                 - path: spec.scaleTargetRef.name
                   value: istio-ingressgateway-internal
+            - kind: PodDisruptionBudget
+              name: istio-ingressgateway-internal
+              patches:
+                - path: metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.selector.matchLabels.app
+                  value: istio-ingressgateway-internal
+                - path: spec.selector.matchLabels.istio
+                  value: internal-ingressgateway
