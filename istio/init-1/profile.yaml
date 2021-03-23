@@ -19,6 +19,11 @@ spec:
   components:
     telemetry:
       enabled: true
+      k8s:
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "500M"
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
@@ -29,6 +34,12 @@ spec:
               patches:
                 - path: spec.loadBalancerIP
                   value: "${PUBLIC_IP}"
+            - kind: Deployment
+              name: istio-ingressgateway
+              patches:
+                - path: spec.replicas
+                  value: 2
+
       - name: istio-ingressgateway-internal
         enabled: true
         k8s:
@@ -43,6 +54,51 @@ spec:
                     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
                     service.beta.kubernetes.io/azure-load-balancer-internal-subnet: adarz-spoke-products-sn-01
                     service.beta.kubernetes.io/azure-load-balancer-resource-group: adazr-rg-1001
+                - path: metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.selector.app
+                  value: istio-ingressgateway-internal
+                - path: spec.selector.istio
+                  value: internal-ingressgateway
+            - kind: Deployment
+              name: istio-ingressgateway-internal
+              patches:
+                - path: metadata.labels
+                  value:
+                    app: istio-ingressgateway-internal
+                    istio: internal-ingressgateway
+                - path: spec.selector.matchLabels
+                  value:
+                    app: istio-ingressgateway-internal
+                    istio: internal-ingressgateway
+                - path: spec.template.metadata.labels
+                  value:
+                    app: istio-ingressgateway-internal
+                    istio: internal-ingressgateway
+                - path: spec.replicas
+                  value: 2
+            - kind: HorizontalPodAutoscaler
+              name: istio-ingressgateway-internal
+              patches:
+                - path: metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.scaleTargetRef.name
+                  value: istio-ingressgateway-internal
+            - kind: PodDisruptionBudget
+              name: istio-ingressgateway-internal
+              patches:
+                - path: metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.selector.matchLabels.app
+                  value: istio-ingressgateway-internal
+                - path: spec.selector.matchLabels.istio
+                  value: internal-ingressgateway
     egressGateways:
       - name: istio-egressgateway
         enabled: false
