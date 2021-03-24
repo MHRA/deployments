@@ -64,6 +64,11 @@ spec:
               patches:
                 - path: spec.replicas
                   value: 2
+            - kind: HorizontalPodAutoscaler
+              name: istio-ingressgateway
+              patches:
+                - path: spec.minReplicas
+                  value: 2
 
       - name: istio-ingressgateway-internal
         enabled: true
@@ -113,6 +118,8 @@ spec:
                   value: internal-ingressgateway
                 - path: spec.scaleTargetRef.name
                   value: istio-ingressgateway-internal
+                - path: spec.minReplicas
+                  value: 2
             - kind: PodDisruptionBudget
               name: istio-ingressgateway-internal
               patches:
