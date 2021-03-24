@@ -26,6 +26,11 @@ spec:
             patches:
               - path: spec.replicas
                 value: 2
+          - kind: HorizontalPodAutoscaler
+            name: istiod
+            patches:
+              - path: spec.minReplicas
+                value: 2
     telemetry:
       enabled: true
       k8s:
@@ -38,6 +43,11 @@ spec:
             name: istio-telemetry
             patches:
               - path: spec.replicas
+                value: 2
+          - kind: HorizontalPodAutoscaler
+            name: istio-telemetry
+            patches:
+              - path: spec.minReplicas
                 value: 2
     ingressGateways:
       - name: istio-ingressgateway
