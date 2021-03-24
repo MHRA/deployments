@@ -210,7 +210,7 @@ spec:
             secretKeyRef:
               key: key
               name: logs-storage-creds
-        image: mhraproducts4853registry.azurecr.io/products/doc-index-updater@sha256:1e3487c5b0cdb48385af735908469b63ed645160396f6c4e2f101bac0eb57d0c
+        image: mhraproducts4853registry.azurecr.io/products/doc-index-updater@sha256:3ff15948f18e21b74dbf23dae3af3dbbe41fb92a60b6a040b9e7b074dc82dd29
         livenessProbe:
           httpGet:
             path: /healthz
@@ -391,7 +391,7 @@ spec:
     type: kubernetes.io/tls
 status: {}
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: cert-doc-index-updater
