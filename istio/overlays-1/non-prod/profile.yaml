@@ -4,13 +4,6 @@ metadata:
   name: istiocontrolplane
 spec:
   components:
-    telemetry:
-      enabled: true
-      k8s:
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "500M"
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
