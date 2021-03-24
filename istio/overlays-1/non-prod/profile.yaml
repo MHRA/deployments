@@ -4,13 +4,6 @@ metadata:
   name: istiocontrolplane
 spec:
   components:
-    telemetry:
-      enabled: true
-      k8s:
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "500M"
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
@@ -26,7 +19,11 @@ spec:
               patches:
                 - path: spec.replicas
                   value: 2
-
+            - kind: HorizontalPodAutoscaler
+              name: istio-ingressgateway
+              patches:
+                - path: spec.minReplicas
+                  value: 2
       - name: istio-ingressgateway-internal
         enabled: true
         k8s:
@@ -75,6 +72,8 @@ spec:
                   value: internal-ingressgateway
                 - path: spec.scaleTargetRef.name
                   value: istio-ingressgateway-internal
+                - path: spec.minReplicas
+                  value: 2
             - kind: PodDisruptionBudget
               name: istio-ingressgateway-internal
               patches:
