@@ -49,18 +49,18 @@ spec:
             - kind: Deployment
               name: istio-ingressgateway-internal
               patches:
-                - path: metadata.labels
-                  value:
-                    app: istio-ingressgateway-internal
-                    istio: internal-ingressgateway
-                - path: spec.selector.matchLabels
-                  value:
-                    app: istio-ingressgateway-internal
-                    istio: internal-ingressgateway
-                - path: spec.template.metadata.labels
-                  value:
-                    app: istio-ingressgateway-internal
-                    istio: internal-ingressgateway
+                - path: metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: metadata.labels.istio
+                  value: internal-ingressgateway
+                - path: spec.selector.matchLabels.app
+                  value: istio-ingressgateway-internal
+                - path: spec.selector.matchLabels.istio
+                  value: internal-ingressgateway
+                - path: spec.template.metadata.labels.app
+                  value: istio-ingressgateway-internal
+                - path: spec.template.metadata.labels.istio
+                  value: internal-ingressgateway
                 - path: spec.replicas
                   value: 2
             - kind: HorizontalPodAutoscaler
