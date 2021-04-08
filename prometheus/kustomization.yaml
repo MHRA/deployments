@@ -1,0 +1,7 @@
+resources:
+  - prometheus-cm.yaml
+  - generated/prometheus-cr.yaml
+  - generated/prometheus-crb.yaml
+  - generated/prometheus-deployment.yaml
+  - generated/prometheus-sa.yaml
+  - generated/prometheus-svc.yaml
