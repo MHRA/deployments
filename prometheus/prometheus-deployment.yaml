@@ -28,10 +28,10 @@ spec:
         traffic.sidecar.istio.io/includeInboundPorts: "" # do not intercept any inbound ports
         traffic.sidecar.istio.io/includeOutboundIPRanges: "" # do not intercept any outbound traffic
         # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
-        proxy.istio.io/config: |
-          proxyMetadata:
-            OUTPUT_CERTS: /etc/istio-output-certs
-        sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
+        # proxy.istio.io/config: |
+        #   proxyMetadata:
+        #     OUTPUT_CERTS: /etc/istio-output-certs
+        # sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
       creationTimestamp: null
       labels:
         app: prometheus
@@ -164,6 +164,8 @@ spec:
               value: cluster.local
             - name: ISTIO_KUBE_APP_PROBERS
               value: '{"/app-health/prometheus-server/livez":{"httpGet":{"path":"/-/healthy","port":9090},"timeoutSeconds":30},"/app-health/prometheus-server/readyz":{"httpGet":{"path":"/-/ready","port":9090},"timeoutSeconds":30}}'
+            - name: OUTPUT_CERTS
+              value: /etc/istio-output-certs
           image: docker.io/istio/proxyv2:1.9.2
           imagePullPolicy: Always
           name: istio-proxy
@@ -207,6 +209,8 @@ spec:
               name: istio-token
             - mountPath: /etc/istio/pod
               name: istio-podinfo
+            - mountPath: /etc/istio-output-certs
+              name: istio-certs
       initContainers:
         - args:
             - istio-iptables
