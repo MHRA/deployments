@@ -1,7 +1,9 @@
 
 .PHONY: apply
 apply: ## Apply kubernetes manifests
-	kustomize build . | kubectl apply -f -
+	kustomize build overlay \
+		| istioctl kube-inject -f - \
+		| kubectl apply -f -
 
 .PHONY: restart-prometheus
 restart-prometheus: ## Restart prometheus so config changes take effect
@@ -9,7 +11,10 @@ restart-prometheus: ## Restart prometheus so config changes take effect
 
 .PHONY: delete
 delete: ## Delete resources
-	kustomize build . | kubectl delete  --ignore-not-found -f - || true
+	kustomize build overlay \
+		| istioctl kube-inject -f - \
+		| kubectl apply -f - \
+		| kubectl delete  --ignore-not-found -f - || true
 
 .PHONY: help
 help: ## Display this help screen

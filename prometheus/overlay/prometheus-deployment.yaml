@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: istio-system
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /stats/prometheus
+        prometheus.io/port: "15020"
+        prometheus.io/scrape: "true"
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/status: '{"initContainers":["istio-init"],"containers":["istio-proxy"],"volumes":["istio-envoy","istio-data","istio-podinfo","istio-token","istiod-ca-cert"],"imagePullSecrets":null}'
+        traffic.sidecar.istio.io/includeInboundPorts: "" # do not intercept any inbound ports
+        traffic.sidecar.istio.io/includeOutboundIPRanges: "" # do not intercept any outbound traffic
+        # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+        proxy.istio.io/config: |
+          proxyMetadata:
+            OUTPUT_CERTS: /etc/istio-output-certs
+        sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
+    spec:
+      containers:
+        - name: prometheus-server
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1337
+            runAsNonRoot: true
+            runAsUser: 1337
+          volumeMounts:
+            - mountPath: /etc/prom-certs/
+              name: istio-certs
+      volumes:
+        - emptyDir:
+            medium: Memory
+          name: istio-certs
