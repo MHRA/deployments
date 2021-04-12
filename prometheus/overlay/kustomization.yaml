@@ -2,4 +2,5 @@ resources:
   - ../generated
 
 patchesStrategicMerge:
+  - prometheus-cm.yaml
   - prometheus-deployment.yaml
