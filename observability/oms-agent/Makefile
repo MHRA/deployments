@@ -1,14 +1,10 @@
 
 .PHONY: default
-default: apply restart-prometheus ## Create resources
+default: apply ## Create resources
 
 .PHONY: apply
 apply: ## Apply kubernetes manifests
 	kustomize build . | kubectl apply -f -
-
-.PHONY: restart-prometheus
-restart-prometheus: ## Restart prometheus so config changes take effect
-	kubectl delete pods -l app=prometheus -n istio-system
 
 .PHONY: delete
 delete: ## Delete resources
