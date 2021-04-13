@@ -1,0 +1,6 @@
+resources:
+  - kube-state-metrics-cr.yaml
+  - kube-state-metrics-crb.yaml
+  - kube-state-metrics-deployment.yaml
+  - kube-state-metrics-sa.yaml
+  - kube-state-metrics-svc.yaml

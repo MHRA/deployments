@@ -1,10 +1,10 @@
 .PHONY: default
 default: ## Deploy using Kustomize
-	kustomize build ./base | kubectl apply -f -
+	kustomize build ./overlay | kubectl apply -f -
 
 .PHONY: delete
 delete: ## Deploy using Kustomize
-	kustomize build ./base | kubectl delete  --ignore-not-found -f - || true
+	kustomize build ./overlay | kubectl delete  --ignore-not-found -f - || true
 
 .PHONY: help
 help: ## Display this help screen
