@@ -427,6 +427,7 @@ spec:
       protocol: HTTPS
     tls:
       credentialName: test-mhra-gov-uk-cert
+      minProtocolVersion: TLSV1_2
       mode: SIMPLE
 ---
 apiVersion: networking.istio.io/v1beta1
