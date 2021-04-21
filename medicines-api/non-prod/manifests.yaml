@@ -177,6 +177,7 @@ spec:
       protocol: HTTPS
     tls:
       credentialName: cert-medicines-api
+      minProtocolVersion: TLSV1_2
       mode: SIMPLE
 ---
 apiVersion: networking.istio.io/v1alpha3
