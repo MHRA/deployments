@@ -7,15 +7,6 @@ spec:
   meshConfig:
     outboundTrafficPolicy:
       mode: REGISTRY_ONLY
-  addonComponents:
-    kiali:
-      enabled: true
-    grafana:
-      enabled: false
-    prometheus:
-      enabled: true
-    tracing:
-      enabled: true
   components:
     pilot:
       enabled: true
@@ -31,24 +22,6 @@ spec:
             patches:
               - path: spec.minReplicas
                 value: 2
-    telemetry:
-      enabled: true
-      k8s:
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "500M"
-        overlays:
-          - kind: Deployment
-            name: istio-telemetry
-            patches:
-              - path: spec.replicas
-                value: 2
-          - kind: HorizontalPodAutoscaler
-            name: istio-telemetry
-            patches:
-              - path: spec.minReplicas
-                value: 2
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
@@ -58,9 +31,3 @@ spec:
   values:
     sidecarInjectorWebhook:
       rewriteAppHTTPProbe: true
-    telemetry:
-      enabled: true
-      v1:
-        enabled: false
-      v2:
-        enabled: true

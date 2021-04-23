@@ -1,0 +1,6 @@
+resources:
+  - ../generated
+
+patchesStrategicMerge:
+  - kube-state-metrics-deployment.yaml
+  - kube-state-metrics-svc.yaml

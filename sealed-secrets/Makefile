@@ -10,7 +10,7 @@ default: ## Create resources
 	[ $$(kubectl get secret \
 		-n kube-system \
 		--selector "sealedsecrets.bitnami.com/sealed-secrets-key=active" \
-		--no-headers | wc -l) -eq 1 ] || ( \
+		--no-headers | wc -l) -gt 0 ] || ( \
 			az keyvault secret show \
 				--vault-name $(vault-$(overlay))  \
 				--name sealing-key \
