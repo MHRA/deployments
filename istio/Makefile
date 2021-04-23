@@ -37,6 +37,17 @@ init1: ## Install SSL certs and Istio profile
 init2: ## Install custom manifests
 	kustomize build overlays-2/$(overlay) | kubectl apply -f -
 
+.PHONY: restart_proxies
+restart_proxies: ## Restarts all istio dataplane proxies, can be used when rolling out upgrade
+	kubectl rollout restart deployment/argocd-application-controller -n argocd
+	kubectl rollout restart deployment/argocd-dex-server -n argocd
+	kubectl rollout restart deployment/argocd-redis -n argocd
+	kubectl rollout restart deployment/argocd-repo-server -n argocd
+	kubectl rollout restart deployment/argocd-server -n argocd
+	kubectl rollout restart deployment/doc-index-updater -n doc-index-updater
+	kubectl rollout restart deployment/medicines-api -n medicines-api
+	cd ../observability/prometheus && make
+
 .PHONY: delete
 delete: ## Remove Istio
 	kubectl delete istiooperators.install.istio.io -n istio-system istiocontrolplane --ignore-not-found || true
